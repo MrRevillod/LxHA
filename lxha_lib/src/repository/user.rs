@@ -14,10 +14,9 @@ use mongodb::{
 
 use axum_responses::{extra::ToJson, AxumResult, HttpResponse};
 
-use crate::{
-    models::user::*,
-    config::types::DatabaseReference,
-};
+use crate::app::DatabaseReference;
+
+use crate::models::user::*;
 
 #[derive(Debug, Clone)]
 pub struct UserRespository {

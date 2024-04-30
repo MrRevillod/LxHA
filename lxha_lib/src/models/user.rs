@@ -38,7 +38,6 @@ pub struct ProfileWithInstance {
     pub id: ObjectId,
     pub username: String,
     pub email: String,
-    pub password: String,
     pub validated: bool,
     pub instances: Vec<Instance>,
 }

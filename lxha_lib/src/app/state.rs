@@ -1,9 +1,8 @@
 
 use std::sync::Arc;
 
+use super::{env, DatabaseReference};
 use crate::repository::user::UserRespository;
-
-use super::{env, types::DatabaseReference};
 
 use mongodb::{
     Client, Database,

@@ -4,10 +4,8 @@ use axum::extract::State;
 use mongodb::bson::{doc, oid::ObjectId};
 use axum_responses::{AxumResponse, HttpResponse};
 
-use crate::{
-    models::user::*,
-    config::types::Context, 
-};
+use lxha_lib::app::Context;
+use lxha_lib::models::user::*;
 
 pub async fn test_controller(State(ctx): Context) -> AxumResponse {
 

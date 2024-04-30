@@ -1,11 +1,11 @@
 
 mod controllers;
 mod middlewares;
-mod repository;
 mod routes;
-mod models;
 mod services;
 mod config;
+
+extern crate lxha_lib;
 
 use std::ops::Deref;
 
@@ -13,9 +13,10 @@ use axum::routing::{get, Router};
 use tokio::net::TcpListener;
 use tower_cookies::CookieManagerLayer;
 
-use config::{
-    variables::SERVER_ADDR,
-    state::{database_connection, AppContext}, 
+use config::variables::SERVER_ADDR;
+
+use lxha_lib::app::state::{
+    database_connection, AppContext
 };
 
 use controllers::test::test_controller;
