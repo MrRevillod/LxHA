@@ -1,28 +1,28 @@
 
+mod utils;
+mod routes;
+mod models;
 mod controllers;
 mod middlewares;
-mod routes;
-mod services;
-mod config;
 
 extern crate lxha_lib;
 
-use std::ops::Deref;
-
-use axum::routing::{get, Router};
+use axum::routing::Router;
 use tokio::net::TcpListener;
 use tower_cookies::CookieManagerLayer;
+use std::{ops::Deref, sync::Arc, path::Path};
 
-use config::variables::SERVER_ADDR;
-
-use lxha_lib::app::state::{
-    database_connection, AppContext
+use lxha_lib::app::{
+    constants::AUTH_SERVICE_ADDR, 
+    state::{database_connection, AppContext}
 };
 
-use controllers::test::test_controller;
+use routes::auth_router;
 
 #[tokio::main]
 async fn main() {
+
+    let _ = dotenv::from_path(Path::new("../../.env"));
 
     let cookies = CookieManagerLayer::new();
 
@@ -34,14 +34,15 @@ async fn main() {
     let ctx = AppContext::new(database);
 
     let app = Router::new()
-        .route("/test", get(test_controller))
+        .nest("/auth", auth_router(Arc::clone(&ctx)))
         .layer(cookies)
         .with_state(ctx)
     ;
 
-    let listener = TcpListener::bind(SERVER_ADDR.deref()).await.unwrap();
+    let listener = TcpListener::bind(AUTH_SERVICE_ADDR.deref()).await.unwrap();
 
-    println!("\n🦀 Server running on http://localhost:3000");
+    println!("\n🦀 Server running on {}", *AUTH_SERVICE_ADDR);
 
     axum::serve(listener, app).await.unwrap();
 }
+
