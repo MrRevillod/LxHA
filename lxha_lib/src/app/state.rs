@@ -1,8 +1,10 @@
 
 use std::sync::Arc;
+use super::{constants::{DB_NAME, DB_URI}, env, DatabaseReference};
 
-use super::{env, DatabaseReference};
-use crate::repository::user::UserRespository;
+use crate::repository::{
+    token::TokenRepository, user::UserRespository
+};
 
 use mongodb::{
     Client, Database,
@@ -13,7 +15,9 @@ use mongodb::{
 #[derive(Debug)]
 pub struct AppContext {
     pub db: DatabaseReference,
-    pub users: UserRespository
+    pub users: UserRespository,
+    pub tokens: TokenRepository,
+    // pub instances: InstanceRepository
 }
 
 impl AppContext {
@@ -24,6 +28,7 @@ impl AppContext {
 
         let app = AppContext {
             users: UserRespository::new(Arc::clone(&arc_db)),
+            tokens: TokenRepository::new(Arc::clone(&arc_db)),
             db: Arc::clone(&arc_db),
         };
 
@@ -33,14 +38,11 @@ impl AppContext {
 
 pub async fn database_connection() -> Result<Database, MongoError> {
 
-    let uri = env("DATABASE_URI");
-    let db_name = env("DATABASE_NAME");
-
     let opts = ClientOptions::parse_with_resolver_config(
-        &uri, ResolverConfig::cloudflare()).await?
+        &DB_URI.to_string(), ResolverConfig::cloudflare()).await?
     ;
 
     let client = Client::with_options(opts)?;
 
-    Ok(client.database(&db_name))
+    Ok(client.database(&DB_NAME))
 }
