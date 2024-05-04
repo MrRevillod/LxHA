@@ -1,11 +1,12 @@
 
+use serde_json::Value;
 use axum_responses::extra::ToJson;
 use mongodb::bson::oid::ObjectId;
 use serde::{Serialize, Deserialize};
 
 use super::instance::Instance;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Role {
     USER,
     ADMINISTRATOR,
@@ -52,6 +53,18 @@ impl User {
             email: self.email.clone(),
             validated: self.validated.clone()
         }
+    }
+    
+    pub fn into_json_profile(&self) -> Value {
+
+        let profile = Profile {
+            id: self.id,
+            username: self.username.clone(),
+            email: self.email.clone(),
+            validated: self.validated.clone()
+        };
+
+        profile.to_json()
     }
 }
 
