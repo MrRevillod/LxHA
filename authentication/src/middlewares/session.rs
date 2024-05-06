@@ -53,7 +53,7 @@ pub async fn session_validation(cookies: Cookies,
         Err(_)   => return Err(HttpResponse::UNAUTHORIZED)
     };
 
-    req.extensions_mut().insert(user);
+    req.extensions_mut().insert(user.unwrap());
     req.extensions_mut().insert(token.unwrap());
 
     Ok(next.run(req).await)
