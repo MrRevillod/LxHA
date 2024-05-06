@@ -22,3 +22,4 @@ tokio = "1.37.0"
 tower-cookies = "0.10.0"
 chrono = "0.4.38"
 time = "0.3.36"
+tower-http = { version = "0.5.1", features = ["cors"] }
