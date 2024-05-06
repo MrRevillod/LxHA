@@ -1,8 +1,6 @@
 
-// import { useAuthStore } from "../store/AuthStore"
-
 import { useForm } from "react-hook-form"
-import { useAuthStore } from "../store/AuthStore"
+import { useAuthStore } from "../../store/AuthStore"
 
 export const LoginPage = () => {
 
