@@ -1,6 +1,6 @@
 
 use std::sync::Arc;
-use super::{constants::{DB_NAME, DB_URI}, env, DatabaseReference};
+use super::{constants::{DB_NAME, DB_URI}, DatabaseReference};
 
 use crate::repository::{
     token::TokenRepository, user::UserRespository

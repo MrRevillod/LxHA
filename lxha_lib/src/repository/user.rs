@@ -1,11 +1,10 @@
 
+use mongodb::bson;
 use std::sync::Arc;
 use futures::TryStreamExt;
-use mongodb::bson;
-
-use serde_json::Value;
 
 use std::vec;
+use serde_json::Value;
 
 use mongodb::{
     Collection,
@@ -20,7 +19,6 @@ use crate::models::user::*;
 
 #[derive(Debug, Clone)]
 pub struct UserRespository {
-    db: DatabaseReference,
     collection: Collection<User>,
 }
 
@@ -28,7 +26,6 @@ impl UserRespository {
     
     pub fn new(db: DatabaseReference) -> Self {
         UserRespository {
-            db: Arc::clone(&db),
             collection: Arc::clone(&db).collection::<User>("users"),
         }
     }
