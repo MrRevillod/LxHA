@@ -28,7 +28,7 @@ use routes::auth_router;
 #[tokio::main]
 async fn main() {
 
-    let _ = dotenv::from_path(Path::new("../../.env"));
+    let _ = dotenv::from_path(Path::new("/home/omellado/proyectos/LxHA/lxha_lib/.env"));
 
     let http_headers = vec![ORIGIN, AUTHORIZATION, ACCEPT, CONTENT_TYPE];
 
@@ -61,7 +61,7 @@ async fn main() {
     let ctx = AppContext::new(database);
 
     let app = Router::new()
-        .nest("/", auth_router(Arc::clone(&ctx)))
+        .nest("/api/auth", auth_router(Arc::clone(&ctx)))
         .layer(cookies)
         .layer(cors)
         .with_state(ctx)

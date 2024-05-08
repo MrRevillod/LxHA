@@ -13,6 +13,7 @@ lazy_static!(
 
     pub static ref AUTH_SERVICE_ADDR: String = env("AUTH_SERVICE_ADDR");
     pub static ref FRONTEND_SERVICE_ADDR: String = env("FRONTEND_SERVICE_ADDR");
+    pub static ref DASHBOARD_SERVICE_ADDR: String = env("DASHBOARD_SERVICE_ADDR");
 
     // Other env variables
 
