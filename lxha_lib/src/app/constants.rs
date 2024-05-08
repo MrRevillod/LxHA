@@ -12,7 +12,7 @@ lazy_static!(
     // Microservices env variables
 
     pub static ref AUTH_SERVICE_ADDR: String = env("AUTH_SERVICE_ADDR");
-    pub static ref CLIENT_SERVICE_ADDR: String = env("CLIENT_SERVICE_ADDR");
+    pub static ref FRONTEND_SERVICE_ADDR: String = env("FRONTEND_SERVICE_ADDR");
 
     // Other env variables
 
