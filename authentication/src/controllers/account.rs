@@ -49,7 +49,7 @@ pub async fn send_reset_password_email(State(ctx): Context,
     let token = new_token("ONETIME", &user, &key)?;
 
     let recovery_url = format!("{}/auth/reset-password/{}/{}", 
-        *CLIENT_SERVICE_ADDR, user.id.to_hex(), token
+        *FRONTEND_SERVICE_ADDR, user.id.to_hex(), token
     );
 
     // send_recovery_email(&user.email, &recovery_url).await?; COMUNICACIÓN CON MAILER
