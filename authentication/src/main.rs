@@ -69,7 +69,7 @@ async fn main() {
 
     let listener = TcpListener::bind(AUTH_SERVICE_ADDR.deref()).await.unwrap();
     
-    println!("\n🦀 Server running on {}", *AUTH_SERVICE_ADDR);
+    println!("\n🦀 Authentication server running on {}", *AUTH_SERVICE_ADDR);
 
     axum::serve(listener, app).await.unwrap();
 }

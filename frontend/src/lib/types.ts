@@ -1,12 +1,16 @@
 
 export type User = {
-  id: string,
-  username: string,
-  email: string,
-  validated: boolean
+    id: string,
+    username: string,
+    email: string,
+    validated: boolean
 }
 
-export type loginData = {
-  username: string,
-  password: string
+export type LoginData = {
+    username: string,
+    password: string
+}
+
+export type RequestResetPasswordData = {
+    email: string
 }
