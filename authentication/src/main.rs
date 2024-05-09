@@ -19,8 +19,8 @@ use tower_cookies::CookieManagerLayer;
 use std::{ops::Deref, sync::Arc, path::Path};
 
 use lxha_lib::app::{
-    constants::{AUTH_SERVICE_ADDR, CLIENT_SERVICE_ADDR}, 
-    state::{database_connection, AppContext}
+    state::{database_connection, AppContext},
+    constants::{AUTH_SERVICE_ADDR, FRONTEND_SERVICE_ADDR}, 
 };
 
 use routes::auth_router;
@@ -28,7 +28,7 @@ use routes::auth_router;
 #[tokio::main]
 async fn main() {
 
-    let _ = dotenv::from_path(Path::new("../../.env"));
+    let _ = dotenv::from_path(Path::new("/home/omellado/proyectos/LxHA/lxha_lib/.env"));
 
     let http_headers = vec![ORIGIN, AUTHORIZATION, ACCEPT, CONTENT_TYPE];
 
@@ -41,7 +41,7 @@ async fn main() {
     ];
 
     let origins = vec![
-        CLIENT_SERVICE_ADDR.parse::<HeaderValue>().unwrap()
+        FRONTEND_SERVICE_ADDR.parse::<HeaderValue>().unwrap()
     ];
 
     let cors = CorsLayer::new()
@@ -61,7 +61,7 @@ async fn main() {
     let ctx = AppContext::new(database);
 
     let app = Router::new()
-        .nest("/auth", auth_router(Arc::clone(&ctx)))
+        .nest("/api/auth", auth_router(Arc::clone(&ctx)))
         .layer(cookies)
         .layer(cors)
         .with_state(ctx)
@@ -69,7 +69,7 @@ async fn main() {
 
     let listener = TcpListener::bind(AUTH_SERVICE_ADDR.deref()).await.unwrap();
     
-    println!("\n🦀 Server running on {}", *AUTH_SERVICE_ADDR);
+    println!("\n🦀 Authentication server running on {}", *AUTH_SERVICE_ADDR);
 
     axum::serve(listener, app).await.unwrap();
 }

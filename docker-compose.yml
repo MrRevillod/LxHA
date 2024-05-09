@@ -1,0 +1,61 @@
+services:
+  proxy:
+    container_name: lxha-proxy
+    image: nginx
+    volumes:
+      - ./nginx/lxha.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      net-out:
+
+  dashboard:
+    container_name: lxha-dashboard
+    build: ./dashboard/
+    networks:
+      net-out:
+        ipv4_address: 172.10.0.30
+      net-in:
+        ipv4_address: 172.20.0.30
+
+  mailer:
+    container_name: lxha-mailer
+    build: ./mailer/
+    networks:
+      net-out:
+        ipv4_address: 172.10.0.40
+
+  auth:
+    container_name: lxha-auth
+    build: ./authentication/
+    networks:
+      net-out:
+        ipv4_address: 172.10.0.50
+
+  db:
+    container_name: lxha-db
+    image: mongo
+    restart: always
+    networks:
+      net-out:
+        ipv4_address: 172.10.0.20
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 1234lxha
+      MONGO_INITDB_DATABASE: lxha
+
+networks:
+  net-out:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.10.0.0/24
+          gateway: 172.10.0.1
+
+  net-in:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1

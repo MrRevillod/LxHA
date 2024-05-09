@@ -1,27 +1,31 @@
 
-import { create } from 'zustand'
+import { api } from "../lib/axios"
+import { create } from "zustand"
+import { useUserStore } from "./UserStore"
+import { useHttpStore } from "./HttpStore"
+import { RequestResetPasswordData, LoginData } from "../lib/types"
 
-import { api } from '../lib/axios'
-import { loginData } from '../lib/types'
-import { useUserStore } from './UserStore'
+// TODO! Replace any types
 
 interface AuthStore {
     isAuthenticated: boolean,
     isAdmin: boolean,
-    useLogin: (data: loginData) => Promise<void>,
-    useLogout: () => Promise<void>,
+    useLogin: (data: LoginData) => Promise<void>,
+    useLogout: () => Promise<void>
     useValidateSession: () => Promise<void>,
     useValidatePermisions: () => Promise<void>,
-    useValidateAccount: (id: string, token: string) => Promise<void>
+    useValidateAccount: (id: string | undefined, token: string | undefined) => Promise<void>,
+    useRequestResetPassword: (body: RequestResetPasswordData) => Promise<void>,
+    useValidateResetPasswordPage: (id: string | undefined, token: string | undefined) => Promise<void>,
+    useResetPassword: (id: string | undefined, token: string | undefined, body: any) => Promise<void>
 }
 
 export const useAuthStore = create<AuthStore>((set) => ({
 
-    isLoading: false,
     isAuthenticated: false,
     isAdmin: false,
 
-    useLogin: async (data: loginData) => {
+    useLogin: async (data: LoginData) => {
 
         try {
 
@@ -29,35 +33,59 @@ export const useAuthStore = create<AuthStore>((set) => ({
             set({ isAuthenticated: res.status === 200 })
 
             useUserStore.setState({ user: res.data?.user })
+            useHttpStore.setState({ status: res.status, message: res.data?.message })
 
-        } catch {
-            
-            useUserStore.setState({ user: null })
+        } catch (error: any) { 
+
             set({ isAuthenticated: false })
+            useUserStore.setState({ user: null })
+
+            useHttpStore.setState({ 
+                status: error.response.status, 
+                message: error.response.data?.message}
+            )
         }
     },
 
     useLogout: async () => {
 
         try {
+
             const res = await api.post("/auth/logout")
             set({ isAuthenticated: !(res.status === 200) })
 
-        } catch { 
-            useUserStore.setState({ user: null })
+            useHttpStore.setState({ status: res.status, message: res.data?.message })
+
+        } catch (error: any) { 
+
             set({ isAuthenticated: false })
+            useUserStore.setState({ user: null })
+
+            useHttpStore.setState({ 
+                status: error.response.status, 
+                message: error.response.data?.message}
+            )
         }
     },
 
     useValidateSession: async () => {
 
         try {
+
             const res = await api.post("/auth/validate-session")
             set({ isAuthenticated: res.status === 200 })
+            
+            useHttpStore.setState({ status: res.status, message: res.data?.message })
 
-        } catch { 
-            useUserStore.setState({ user: null })
+        } catch (error: any) { 
+
             set({ isAuthenticated: false })
+            useUserStore.setState({ user: null })
+
+            useHttpStore.setState({ 
+                status: error.response.status, 
+                message: error.response.data?.message}
+            )
         }
     },
 
@@ -67,12 +95,18 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
             const res = await api.post("/auth/validate-role")
 
-            if (res.status === 200) {
-                set({ isAdmin: true })
-            }
+            if (res.status === 200) set({ isAdmin: true })
 
-        } catch {
+            useHttpStore.setState({ status: res.status, message: res.data?.message })
+
+        } catch (error: any) {
+
             useUserStore.setState({ isAdmin: false })
+            
+            useHttpStore.setState({ 
+                status: error.response.status, 
+                message: error.response.data?.message}
+            )
         }
     },
 
@@ -81,13 +115,62 @@ export const useAuthStore = create<AuthStore>((set) => ({
         try {
 
             const res = await api.post(`/auth/validate/${id}/${token}`)
+            useHttpStore.setState({ status: res.status, message: res.data?.message })
 
-            if (res.status === 200) {
-                console.log(res.data?.message)
-            }
+        } catch (error: any) { 
+            
+            useHttpStore.setState({ 
+                status: error.response.status, 
+                message: error.response.data?.message}
+            )
+        }
+    },
 
+    useRequestResetPassword: async (body: RequestResetPasswordData) => {
+        
+        try {
 
-        } catch { return }
-    }
+            const res =  await api.post("/auth/reset-password", body)
+            useHttpStore.setState({ status: res.status, message: res.data?.message })
 
+        } catch (error: any) { 
+            
+            useHttpStore.setState({ 
+                status: error.response.status, 
+                message: error.response.data?.message}
+            )
+        }
+    },
+
+    useValidateResetPasswordPage: async (id, token) => {
+        
+        try {
+
+            const res = await api.post(`/auth/reset-password/${id}/${token}`)
+            useHttpStore.setState({ status: res.status, message: res.data?.message })
+
+        } catch (error: any) { 
+            
+            useHttpStore.setState({ 
+                status: error.response.status, 
+                message: error.response.data?.message}
+            )
+        }
+    },
+
+    useResetPassword: async (id, token, body) => {
+        
+        try {
+
+            const res = await api.patch(`/auth/reset-password/${id}/${token}`, body)
+            useHttpStore.setState({ status: res.status, message: res.data?.message })
+
+        } catch (error: any) { 
+            
+            useHttpStore.setState({ 
+                status: error.response.status, 
+                message: error.response.data?.message}
+            )
+        }
+    },
 }))

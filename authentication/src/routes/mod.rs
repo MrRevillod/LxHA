@@ -20,7 +20,6 @@ use crate::{
     middlewares::session::session_validation,
     middlewares::role::protected_role_validation,
     middlewares::validations::owner_validation,
-    middlewares::validations::is_valid_id_and_token,
 };
 
 pub async fn test_controller(State(ctx): Context) -> AxumResponse {
@@ -63,10 +62,6 @@ pub fn auth_router(state: Arc<AppContext>) -> Router<Arc<AppContext>> {
         .route("/validate-owner", post(authenticate)
             .route_layer(from_fn(owner_validation))
             .route_layer(from_fn_with_state(Arc::clone(&state), session_validation))
-        )
-
-        .route("/validate-account/:id/:token", post(validate_account)
-            .route_layer(from_fn_with_state(Arc::clone(&state), is_valid_id_and_token))
         )
 
         .route("/reset-password", post(send_reset_password_email)) // send the req with user email

@@ -10,7 +10,7 @@ use mongodb::bson::oid::ObjectId;
 
 use lxha_lib::{utils::*, app::Context, models::user::*};
 
-pub async fn is_valid_id(State(ctx): Context, Path(id): Path<String>, 
+pub async fn _is_valid_id(State(ctx): Context, Path(id): Path<String>, 
     mut req: Request, next: Next) -> Result<MwResponse, HttpResponse> {
 
     let oid = oid_from_str(&id)?;
@@ -23,7 +23,7 @@ pub async fn is_valid_id(State(ctx): Context, Path(id): Path<String>,
     Ok(next.run(req).await)
 }
 
-pub async fn is_valid_id_and_token(State(ctx): Context,
+pub async fn _is_valid_id_and_token(State(ctx): Context,
     Path((id, token)): Path<(String, String)>, 
     mut req: Request, next: Next) -> Result<MwResponse, HttpResponse> {
 
