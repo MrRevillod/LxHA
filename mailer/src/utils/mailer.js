@@ -23,7 +23,7 @@ export const sender = async (template, subject, email, url ) => {
     }
 
     transporter.sendMail({
-        from: `Workflow Services ${MAIL_ADRESS}`,
+        from: `LXHA ${MAIL_ADRESS}`,
         to: email,
         subject,
         html: template(url)

@@ -3,7 +3,7 @@ import cors from "cors"
 import express from "express"
 
 import { router } from "./router.js"
-import { MAILER_PORT } from "./config.js"
+import { MAILER_PORT,MAIL_ADRESS } from "./config.js"
 
 const app = express()
 
