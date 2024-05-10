@@ -15,10 +15,10 @@ jsonwebtoken = "9.3.0"
 lazy_static = "1.4.0"
 mongodb = "2.8.2"
 regex = "1.10.4"
-reqwest = "0.12.4"
+reqwest = { version = "0.12", features = ["json", "native-tls"] }
 serde = "1.0.198"
 serde_json = "1.0.116"
-tokio = "1.37.0"
+tokio = { version = "1", features = ["full"] }
 tower-cookies = "0.10.0"
 chrono = "0.4.38"
 time = "0.3.36"

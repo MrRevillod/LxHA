@@ -1,5 +1,6 @@
 mod routes;
 mod controllers;
+mod incus_api;
 // mod models;
 // mod middlewares;
 
@@ -17,7 +18,7 @@ use tower_cookies::CookieManagerLayer;
 use std::{ops::Deref, sync::Arc, path::Path};
 
 use lxha_lib::app::{
-    constants::{DASHBOARD_SERVICE_ADDR, CLIENT_SERVICE_ADDR}, 
+    constants::{DASHBOARD_SERVICE_ADDR, FRONTEND_SERVICE_ADDR}, 
     state::{database_connection, AppContext}
 };
 
@@ -26,7 +27,7 @@ use routes::dashboard_router;
 #[tokio::main]
 async fn main() {
 
-    let _ = dotenv::from_path(Path::new("../../.env"));
+    let _ = dotenv::from_path(Path::new("/home/omellado/proyectos/LxHA/lxha_lib/.env"));
 
     let http_headers = vec![ORIGIN, AUTHORIZATION, ACCEPT, CONTENT_TYPE];
 
@@ -39,7 +40,7 @@ async fn main() {
     ];
 
     let origins = vec![
-        CLIENT_SERVICE_ADDR.parse::<HeaderValue>().unwrap()
+        FRONTEND_SERVICE_ADDR.parse::<HeaderValue>().unwrap()
     ];
 
     let cors = CorsLayer::new()
@@ -66,7 +67,7 @@ async fn main() {
 
     let listener = TcpListener::bind(DASHBOARD_SERVICE_ADDR.deref()).await.unwrap();
     
-    println!("\n🦀 Server running on {}", *DASHBOARD_SERVICE_ADDR);
+    println!("\n🦀 Dashboard running on {}", *DASHBOARD_SERVICE_ADDR);
 
     axum::serve(listener, app).await.unwrap();
 }
