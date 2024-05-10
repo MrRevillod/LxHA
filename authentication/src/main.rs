@@ -20,7 +20,7 @@ use std::{ops::Deref, sync::Arc, path::Path};
 
 use lxha_lib::app::{
     state::{database_connection, AppContext},
-    constants::{AUTH_SERVICE_ADDR, FRONTEND_SERVICE_ADDR}, 
+    constants::{AUTH_SERVICE_ADDR, DASHBOARD_SERVICE_URL, FRONTEND_SERVICE_URL}, 
 };
 
 use routes::auth_router;
@@ -28,7 +28,7 @@ use routes::auth_router;
 #[tokio::main]
 async fn main() {
 
-    let _ = dotenv::from_path(Path::new("/home/omellado/proyectos/LxHA/lxha_lib/.env"));
+    let _ = dotenv::from_path(Path::new("../../.env"));
 
     let http_headers = vec![ORIGIN, AUTHORIZATION, ACCEPT, CONTENT_TYPE];
 
@@ -41,7 +41,8 @@ async fn main() {
     ];
 
     let origins = vec![
-        FRONTEND_SERVICE_ADDR.parse::<HeaderValue>().unwrap()
+        FRONTEND_SERVICE_URL.parse::<HeaderValue>().unwrap(),
+        DASHBOARD_SERVICE_URL.parse::<HeaderValue>().unwrap()
     ];
 
     let cors = CorsLayer::new()

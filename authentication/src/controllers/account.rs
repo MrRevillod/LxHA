@@ -2,12 +2,11 @@
 use crate::utils::session::*;
 
 use lxha_lib::{
-    utils::oid_from_str,
-    app::{Context, constants::*},
+    app::{constants::*, Context}, utils::{oid_from_str, reqwest::http_request}
 };
 
 use bcrypt::hash;
-use serde_json::Value;
+use serde_json::{json, Value};
 use mongodb::bson::doc;
 use axum_responses::{AxumResponse, HttpResponse};
 use axum::{Json, extract::{State, Path}};
@@ -30,14 +29,19 @@ pub async fn send_reset_password_email(State(ctx): Context,
     let token = new_token("ONETIME", &user, &key)?;
 
     let recovery_url = format!("{}/auth/reset-password/{}/{}", 
-        *FRONTEND_SERVICE_ADDR, user.id.to_hex(), token
+        *FRONTEND_SERVICE_URL, user.id.to_hex(), token
     );
 
     println!("{}", recovery_url);
 
-    // send_recovery_email(&user.email, &recovery_url).await?; COMUNICACIÓN CON MAILER
+    let body = json!({ "email": &email, "url": recovery_url });
+    let response = http_request("MAILER", "/api/forgot-password", "POST", body).await;
 
-    Ok(HttpResponse::CUSTOM(200, "Password recovery instructions sended to your email."))
+    match response.status().as_u16() {
+        200 => Ok(HttpResponse::OK),
+        401 => Err(HttpResponse::BAD_REQUEST),
+        _   => Err(HttpResponse::INTERNAL_SERVER_ERROR)
+    }
 }
 
 pub async fn reset_password_validation(State(ctx): Context,
