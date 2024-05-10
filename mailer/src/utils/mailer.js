@@ -16,14 +16,14 @@ export const mailValidator = (mail) => {
     return regex.test(mail)
 }
 
-export const sender = async (template, subject, email, url ) => {
+export const sender = async (template, subject, email, url) => {
 
     if (!mailValidator(email)) {
         return { code: 400, message: "Invalid email" }
     }
 
     transporter.sendMail({
-        from: `Workflow Services ${MAIL_ADRESS}`,
+        from: `LXHA ${MAIL_ADRESS}`,
         to: email,
         subject,
         html: template(url)

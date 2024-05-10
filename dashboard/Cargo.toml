@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 axum = "0.7.5"
-axum_responses = "0.1.4"
+axum_responses = "0.1.6"
 bcrypt = "0.15.1"
 cookie = "0.18.1"
 dotenv = "0.15.0"

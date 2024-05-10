@@ -32,10 +32,8 @@ pub async fn send_reset_password_email(State(ctx): Context,
         *FRONTEND_SERVICE_URL, user.id.to_hex(), token
     );
 
-    println!("{}", recovery_url);
-
     let body = json!({ "email": &email, "url": recovery_url });
-    let response = http_request("MAILER", "/api/forgot-password", "POST", body).await;
+    let response = http_request("MAILER", "/reset-password", "POST", body).await;
 
     match response.status().as_u16() {
         200 => Ok(HttpResponse::OK),
