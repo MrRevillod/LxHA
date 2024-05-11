@@ -4,8 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+lxha_lib = { path = "../lxha_lib" }
 axum = "0.7.5"
-axum_responses = "0.1.4"
+axum_responses = "0.1.6"
 bcrypt = "0.15.1"
 cookie = "0.18.1"
 dotenv = "0.15.0"
@@ -19,3 +20,4 @@ serde = "1.0.198"
 serde_json = "1.0.116"
 tokio = "1.37.0"
 tower-cookies = "0.10.0"
+tower-http = { version = "0.5.1", features = ["cors"] }
