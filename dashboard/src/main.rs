@@ -1,7 +1,7 @@
 mod routes;
 mod controllers;
 mod incus_api;
-// mod models;
+mod models;
 // mod middlewares;
 
 extern crate lxha_lib;

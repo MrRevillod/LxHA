@@ -1,14 +1,19 @@
 use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
-use axum::extract::{State, Query, Path};
+use axum::extract::{State, Query, Path, Json};
 use axum_responses::extra::ToJson;
-// use lxha_lib::app::{Context, constants::JWT_SECRET};
 use lxha_lib::app::Context;
 use axum_responses::{AxumResponse, HttpResponse};
+
+use crate::models::{
+    InstanceData
+};
+
 use crate::incus_api::{
     types::Instance,
     get::get_all_instances,
-    get::get_instance
+    get::get_instance,
+    post::new_instance,
 };
 
 
@@ -39,10 +44,17 @@ pub async fn instance_controller(Path(instance_name): Path<String>) -> AxumRespo
 
     let instance = get_instance(instance_name).await.unwrap();
 
+    if instance.name == "" {
+        return Err(HttpResponse::NOT_FOUND)
+    }
+
     Ok(HttpResponse::JSON(200, "Instance get successfuly", "instance", instance.to_json()))
 }
 
-pub async fn launch_instance_controller() -> AxumResponse {
+pub async fn create_instance_controller(State(ctx): Context, Json(body): Json<InstanceData>) -> AxumResponse {
 
+
+
+    
     Ok(HttpResponse::OK)
 }

@@ -1,8 +1,8 @@
 
 pub mod get;
 pub mod types;
-/*
 pub mod post;
+/*
 pub mod put;
 pub mod delete;
 */
