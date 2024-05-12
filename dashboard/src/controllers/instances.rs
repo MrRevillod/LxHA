@@ -1,18 +1,48 @@
-use lxha_lib::models::user::User;
-use lxha_lib::models::token::Token;
-use lxha_lib::app::{Context, constants::JWT_SECRET};
-
-use serde::Deserialize;
-use mongodb::bson::doc;
-use tower_cookies::Cookies;
-use axum::{extract::State, Extension, Json};
+use std::collections::HashMap;
+use serde::{Serialize, Deserialize};
+use axum::extract::{State, Query, Path};
+use axum_responses::extra::ToJson;
+// use lxha_lib::app::{Context, constants::JWT_SECRET};
+use lxha_lib::app::Context;
 use axum_responses::{AxumResponse, HttpResponse};
+use crate::incus_api::{
+    types::Instance,
+    get::get_all_instances,
+    get::get_instance
+};
 
-use crate::incus_api::get::get_all_instances;
 
-pub async fn list_instances_controller(State(ctx): Context) -> AxumResponse {
+pub async fn list_instances_controller(Query(params): Query<HashMap<String, String>>) -> AxumResponse {
 
+    #[derive(Serialize, Deserialize, Debug)]
+    struct Instances {
+        instances: Vec::<Instance>,
+    }
 
+    impl ToJson for Instances {}
+
+    let user = match params.get("user") {
+        Some(u) => u.to_string(),
+        None => String::from("")
+    };
+
+    let instances_list = get_all_instances(user).await.unwrap();
+
+    let instances = Instances {
+        instances: instances_list
+    };
+
+    Ok(HttpResponse::JSON(200, "List successfuly", "content", instances.to_json()))
+}
+
+pub async fn instance_controller(Path(instance_name): Path<String>) -> AxumResponse {
+
+    let instance = get_instance(instance_name).await.unwrap();
+
+    Ok(HttpResponse::JSON(200, "Instance get successfuly", "instance", instance.to_json()))
+}
+
+pub async fn launch_instance_controller() -> AxumResponse {
 
     Ok(HttpResponse::OK)
 }

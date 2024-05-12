@@ -18,16 +18,19 @@ use tower_cookies::CookieManagerLayer;
 use std::{ops::Deref, sync::Arc, path::Path};
 
 use lxha_lib::app::{
-    constants::{DASHBOARD_SERVICE_ADDR, FRONTEND_SERVICE_ADDR}, 
+    constants::{DASHBOARD_SERVICE_ADDR, FRONTEND_SERVICE_URL}, 
     state::{database_connection, AppContext}
 };
 
-use routes::dashboard_router;
+use routes::instances::instances_router;
 
 #[tokio::main]
 async fn main() {
 
     let _ = dotenv::from_path(Path::new("/home/omellado/proyectos/LxHA/lxha_lib/.env"));
+    // let _ = dotenv::from_path(Path::new("../../lxha_lib/.env"));
+
+    // println!("{}", INCUS_API.deref());
 
     let http_headers = vec![ORIGIN, AUTHORIZATION, ACCEPT, CONTENT_TYPE];
 
@@ -40,7 +43,7 @@ async fn main() {
     ];
 
     let origins = vec![
-        FRONTEND_SERVICE_ADDR.parse::<HeaderValue>().unwrap()
+        FRONTEND_SERVICE_URL.parse::<HeaderValue>().unwrap()
     ];
 
     let cors = CorsLayer::new()
@@ -60,7 +63,7 @@ async fn main() {
     let ctx = AppContext::new(database);
 
     let app = Router::new()
-        .nest("/api/dashboard", dashboard_router(Arc::clone(&ctx)))
+        .nest("/api/dashboard/instances", instances_router(Arc::clone(&ctx)))
         .layer(cookies)
         .layer(cors)
         .with_state(ctx);
