@@ -68,7 +68,7 @@ checksum = "c6fa2087f2753a7da8cc1c0dbfcf89579dd57458e36769de5ac750b4671737ca"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.63",
+ "syn 2.0.61",
 ]
 
 [[package]]
@@ -169,9 +169,9 @@ dependencies = [
 
 [[package]]
 name = "axum_responses"
-version = "0.1.6"
+version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8c45cb9be7133356ce141c8295c7c9a39e7875c392c1d4c56022eb5d9c8a79e1"
+checksum = "9abd69f686e9bf11bef19b04595b9717c2d2cf61ef03651b3cb5df44b7264f3e"
 dependencies = [
  "axum",
  "axum-test",
@@ -328,7 +328,9 @@ checksum = "a21f936df1771bf62b77f047b726c4625ff2e8aa607c01ec06e5a05bd8463401"
 dependencies = [
  "android-tzdata",
  "iana-time-zone",
+ "js-sys",
  "num-traits",
+ "wasm-bindgen",
  "windows-targets 0.52.5",
 ]
 
@@ -436,18 +438,22 @@ dependencies = [
  "axum",
  "axum_responses",
  "bcrypt",
+ "chrono",
  "cookie",
  "dotenv",
  "futures",
  "jsonwebtoken",
  "lazy_static",
+ "lxha_lib",
  "mongodb",
  "regex",
  "reqwest",
  "serde",
  "serde_json",
+ "time",
  "tokio",
  "tower-cookies",
+ "tower-http",
 ]
 
 [[package]]
@@ -541,9 +547,9 @@ checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 
 [[package]]
 name = "errno"
-version = "0.3.9"
+version = "0.3.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "534c5cf6194dfab3db3242765c03bbe257cf92f22b38f6bc0c58d59108a820ba"
+checksum = "a258e46cdc063eb8519c00b9fc845fc47bcfca4130e2f08e88665ceda8474245"
 dependencies = [
  "libc",
  "windows-sys 0.52.0",
@@ -653,7 +659,7 @@ checksum = "87750cf4b7a4c0625b1529e4c543c2182106e4dedc60a2a6455e00d212c489ac"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.63",
+ "syn 2.0.61",
 ]
 
 [[package]]
@@ -1059,6 +1065,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "lxha_lib"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "axum_responses",
+ "dotenv",
+ "futures",
+ "lazy_static",
+ "mongodb",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "match_cfg"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1275,7 +1297,7 @@ checksum = "a948666b637a0f465e8564c73e89d4dde00d72d4d473cc972f390fc3dcee7d9c"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.63",
+ "syn 2.0.61",
 ]
 
 [[package]]
@@ -1361,7 +1383,7 @@ checksum = "2f38a4412a78282e09a2cf38d195ea5420d15ba0602cb375210efbc877243965"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.63",
+ "syn 2.0.61",
 ]
 
 [[package]]
@@ -1796,7 +1818,7 @@ checksum = "c5e405930b9796f1c00bee880d03fc7e0bb4b9a11afc776885ffe84320da2865"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.63",
+ "syn 2.0.61",
 ]
 
 [[package]]
@@ -1975,9 +1997,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.63"
+version = "2.0.61"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf5be731623ca1a1fb7d8be6f261a3be6d3e2337b8a1f97be944d020c8fcb704"
+checksum = "c993ed8ccba56ae856363b1845da7266a7cb78e1d146c8a32d54b45a8b831fc9"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2058,7 +2080,7 @@ checksum = "e2470041c06ec3ac1ab38d0356a6119054dedaea53e12fbefc0de730a1c08524"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.63",
+ "syn 2.0.61",
 ]
 
 [[package]]
@@ -2134,7 +2156,7 @@ checksum = "5b8a1e28f2deaa14e508979454cb3a223b10b938b45af148bc0986de36f1923b"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.63",
+ "syn 2.0.61",
 ]
 
 [[package]]
@@ -2199,6 +2221,22 @@ dependencies = [
  "futures-util",
  "http 1.1.0",
  "parking_lot",
+ "pin-project-lite",
+ "tower-layer",
+ "tower-service",
+]
+
+[[package]]
+name = "tower-http"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e9cd434a998747dd2c4276bc96ee2e0c7a2eadf3cae88e52be55a05fa9053f5"
+dependencies = [
+ "bitflags 2.5.0",
+ "bytes",
+ "http 1.1.0",
+ "http-body",
+ "http-body-util",
  "pin-project-lite",
  "tower-layer",
  "tower-service",
@@ -2409,7 +2447,7 @@ dependencies = [
  "once_cell",
  "proc-macro2",
  "quote",
- "syn 2.0.63",
+ "syn 2.0.61",
  "wasm-bindgen-shared",
 ]
 
@@ -2443,7 +2481,7 @@ checksum = "e94f17b526d0a461a191c78ea52bbce64071ed5c04c9ffe424dcb38f74171bb7"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.63",
+ "syn 2.0.61",
  "wasm-bindgen-backend",
  "wasm-bindgen-shared",
 ]
@@ -2698,7 +2736,7 @@ checksum = "15e934569e47891f7d9411f1a451d947a60e000ab3bd24fbb970f000387d1b3b"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.63",
+ "syn 2.0.61",
 ]
 
 [[package]]

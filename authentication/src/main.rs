@@ -61,7 +61,7 @@ async fn main() {
     let ctx = AppContext::new(database);
 
     let app = Router::new()
-        .nest("/auth", auth_router(Arc::clone(&ctx)))
+        .nest("/api/auth", auth_router(Arc::clone(&ctx)))
         .layer(cookies)
         .layer(cors)
         .with_state(ctx)
@@ -69,7 +69,7 @@ async fn main() {
 
     let listener = TcpListener::bind(AUTH_SERVICE_ADDR.deref()).await.unwrap();
     
-    println!("\n🦀 Server running on {}", *AUTH_SERVICE_ADDR);
+    println!("\n🦀 Authenticator running on {}", *AUTH_SERVICE_ADDR);
 
     axum::serve(listener, app).await.unwrap();
 }
