@@ -53,8 +53,11 @@ pub async fn instance_controller(Path(instance_name): Path<String>) -> AxumRespo
 
 pub async fn create_instance_controller(State(ctx): Context, Json(body): Json<InstanceData>) -> AxumResponse {
 
+    let (status, message) = new_instance(body.clone()).await.unwrap();
 
-
+    let created_instance = get_instance(body.name).await.unwrap();
     
+    println!("{:#?}", created_instance);
+
     Ok(HttpResponse::OK)
 }
