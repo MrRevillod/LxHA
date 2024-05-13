@@ -14,3 +14,12 @@ export type LoginData = {
 export type RequestResetPasswordData = {
     email: string
 }
+
+export type Instance = {
+    id: string,
+    name: string
+}
+
+export type PublicInstanceData = {
+    name: string
+}
