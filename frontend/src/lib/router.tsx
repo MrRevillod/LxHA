@@ -10,12 +10,12 @@ export const SessionProtectedRoute = ({ children }: PropsWithChildren) => {
 
     const { user } = useUserStore()
     const { isAuthenticated, useValidateSession } = useAuthStore()
-    
+
     const [isLoading, setIsloading] = useState<boolean>(true)
 
     useEffect(() => {
 
-        (async function() {
+        (async function () {
 
             setIsloading(true)
 
@@ -47,7 +47,7 @@ export const RoleProtectedRoute = ({ children }: PropsWithChildren) => {
 
     useEffect(() => {
 
-        (async function() {
+        (async function () {
 
             setIsloading(true)
 

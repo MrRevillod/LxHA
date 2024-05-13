@@ -11,7 +11,7 @@ import { ResetPasswordPage } from "./pages/auth/ResetPassword"
 import { ForgotPasswordPage } from "./pages/auth/ForgotPassword"
 import { ClientDashboardPage } from "./pages/ClientDashboard"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import { SessionProtectedRoute } from "./lib/router"
+import { RoleProtectedRoute, SessionProtectedRoute } from "./lib/router"
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 
@@ -33,7 +33,9 @@ root.render(
                     <Route path="/dashboard" element={<ClientDashboardPage />} />
                 </Route>
 
-                <Route path="/admin/dashboard" element={<DashboardPage />} />
+                <Route element={<RoleProtectedRoute />}>
+                    <Route path="/admin/dashboard" element={<DashboardPage />} />
+                </Route>
 
             </Routes>
 

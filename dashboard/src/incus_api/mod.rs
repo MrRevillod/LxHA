@@ -7,12 +7,14 @@ pub mod put;
 pub mod delete;
 */
 
-use reqwest::{Client, Identity, Error};
 use std::fs;
+use reqwest::{Client, Identity, Error};
+use lxha_lib::app::constants::{CRT_KEY_PATH, CRT_PATH};
 
 pub fn get_client() -> Result<Client, Error> {
-    let cert = fs::read("/home/omellado/proyectos/LxHA/certs/lxha.crt").unwrap();
-    let key = fs::read("/home/omellado/proyectos/LxHA/certs/lxha.key").unwrap();
+
+    let cert = fs::read(CRT_PATH.as_str()).unwrap();
+    let key = fs::read(CRT_KEY_PATH.as_str()).unwrap();
 
     let id = Identity::from_pkcs8_pem(&cert, &key)?;
 

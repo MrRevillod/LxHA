@@ -20,7 +20,7 @@ interface AuthStore {
     useResetPassword: (id: string | undefined, token: string | undefined, body: any) => Promise<void>
 }
 
-export const useAuthStore = create<AuthStore>((set) => ({
+export const useAuthStore = create<AuthStore>((set, get) => ({
 
     isAuthenticated: false,
     isAdmin: false,
@@ -32,18 +32,20 @@ export const useAuthStore = create<AuthStore>((set) => ({
             const res = await api.post("/auth/login", data)
             set({ isAuthenticated: res.status === 200 })
 
+            await get().useValidatePermisions()
+
             useUserStore.setState({ user: res.data?.user })
             useHttpStore.setState({ status: res.status, message: res.data?.message })
 
-        } catch (error: any) { 
+        } catch (error: any) {
 
             set({ isAuthenticated: false })
             useUserStore.setState({ user: null })
 
-            useHttpStore.setState({ 
-                status: error.response.status, 
-                message: error.response.data?.message}
-            )
+            useHttpStore.setState({
+                status: error.response.status,
+                message: error.response.data?.message
+            })
         }
     },
 
@@ -56,14 +58,15 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
             useHttpStore.setState({ status: res.status, message: res.data?.message })
 
-        } catch (error: any) { 
+        } catch (error: any) {
 
             set({ isAuthenticated: false })
             useUserStore.setState({ user: null })
 
-            useHttpStore.setState({ 
-                status: error.response.status, 
-                message: error.response.data?.message}
+            useHttpStore.setState({
+                status: error.response.status,
+                message: error.response.data?.message
+            }
             )
         }
     },
@@ -74,23 +77,24 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
             const res = await api.post("/auth/validate-session")
             set({ isAuthenticated: res.status === 200 })
-            
+
             useHttpStore.setState({ status: res.status, message: res.data?.message })
 
-        } catch (error: any) { 
+        } catch (error: any) {
 
             set({ isAuthenticated: false })
             useUserStore.setState({ user: null })
 
-            useHttpStore.setState({ 
-                status: error.response.status, 
-                message: error.response.data?.message}
+            useHttpStore.setState({
+                status: error.response.status,
+                message: error.response.data?.message
+            }
             )
         }
     },
 
     useValidatePermisions: async () => {
-        
+
         try {
 
             const res = await api.post("/auth/validate-role")
@@ -102,11 +106,11 @@ export const useAuthStore = create<AuthStore>((set) => ({
         } catch (error: any) {
 
             useUserStore.setState({ isAdmin: false })
-            
-            useHttpStore.setState({ 
-                status: error.response.status, 
-                message: error.response.data?.message}
-            )
+
+            useHttpStore.setState({
+                status: error.response.status,
+                message: error.response.data?.message
+            })
         }
     },
 
@@ -117,59 +121,63 @@ export const useAuthStore = create<AuthStore>((set) => ({
             const res = await api.post(`/auth/validate/${id}/${token}`)
             useHttpStore.setState({ status: res.status, message: res.data?.message })
 
-        } catch (error: any) { 
-            
-            useHttpStore.setState({ 
-                status: error.response.status, 
-                message: error.response.data?.message}
+        } catch (error: any) {
+
+            useHttpStore.setState({
+                status: error.response.status,
+                message: error.response.data?.message
+            }
             )
         }
     },
 
     useRequestResetPassword: async (body: RequestResetPasswordData) => {
-        
+
         try {
 
-            const res =  await api.post("/auth/reset-password", body)
+            const res = await api.post("/auth/reset-password", body)
             useHttpStore.setState({ status: res.status, message: res.data?.message })
 
-        } catch (error: any) { 
-            
-            useHttpStore.setState({ 
-                status: error.response.status, 
-                message: error.response.data?.message}
+        } catch (error: any) {
+
+            useHttpStore.setState({
+                status: error.response.status,
+                message: error.response.data?.message
+            }
             )
         }
     },
 
     useValidateResetPasswordPage: async (id, token) => {
-        
+
         try {
 
             const res = await api.post(`/auth/reset-password/${id}/${token}`)
             useHttpStore.setState({ status: res.status, message: res.data?.message })
 
-        } catch (error: any) { 
-            
-            useHttpStore.setState({ 
-                status: error.response.status, 
-                message: error.response.data?.message}
+        } catch (error: any) {
+
+            useHttpStore.setState({
+                status: error.response.status,
+                message: error.response.data?.message
+            }
             )
         }
     },
 
     useResetPassword: async (id, token, body) => {
-        
+
         try {
 
             const res = await api.patch(`/auth/reset-password/${id}/${token}`, body)
             useHttpStore.setState({ status: res.status, message: res.data?.message })
 
-        } catch (error: any) { 
-            
-            useHttpStore.setState({ 
-                status: error.response.status, 
-                message: error.response.data?.message}
+        } catch (error: any) {
+
+            useHttpStore.setState({
+                status: error.response.status,
+                message: error.response.data?.message
+            }
             )
         }
     },

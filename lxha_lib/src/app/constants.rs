@@ -29,6 +29,9 @@ lazy_static!(
 
     pub static ref JWT_SECRET: String = env("JWT_SECRET");
     pub static ref INCUS_API: String = env("INCUS_API");
+    
+    pub static ref CRT_PATH: String = env("CRT_PATH");
+    pub static ref CRT_KEY_PATH: String = env("CRT_KEY_PATH");
 
     pub static ref SERVICES: HashMap<&'static str, String> = HashMap::from([
         ("AUTH", AUTH_SERVICE_URL.to_string()),

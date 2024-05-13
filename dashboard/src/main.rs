@@ -28,8 +28,7 @@ use routes::user::user_router;
 #[tokio::main]
 async fn main() {
 
-    let _ = dotenv::from_path(Path::new("/home/omellado/proyectos/LxHA/lxha_lib/.env"));
-    // let _ = dotenv::from_path(Path::new("../../lxha_lib/.env"));
+    let _ = dotenv::from_path(Path::new("../../.env"));
 
     // println!("{}", INCUS_API.deref());
 
@@ -68,7 +67,8 @@ async fn main() {
         .nest("/api/dashboard/user", user_router(Arc::clone(&ctx)))
         .layer(cookies)
         .layer(cors)
-        .with_state(ctx);
+        .with_state(ctx)
+    ;
 
     let listener = TcpListener::bind(DASHBOARD_SERVICE_ADDR.deref()).await.unwrap();
     
