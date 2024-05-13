@@ -9,6 +9,8 @@ pub struct InstancesSpecificMetadata {
     pub status: String,
     pub project: String,
     pub name: String,
+    pub config: HashMap<String, String>,
+    pub devices: HashMap<String, HashMap<String, String>>,
     pub location: String,
     pub r#type: String,
 }
@@ -40,6 +42,24 @@ pub struct ApiResponse<T> {
     pub metadata: Option<T>
 }
 
+#[allow(dead_code)]
+#[derive(Deserialize, Debug)]
+pub struct ApiResponseOps<T> {
+    pub r#type: String,
+    pub status: String,
+    pub status_code: u16,
+    pub metadata: Option<T>
+}
+
+#[allow(dead_code)]
+#[derive(Deserialize, Debug)]
+pub struct OpsMetadata {
+    pub id: String,
+    pub location: String,
+    pub description: String,
+    pub status: String,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct InstanceSpecs {
     pub cpu: f64,
@@ -56,6 +76,14 @@ pub struct Instance {
     pub r#type: String,
     pub ip_addresses: Vec<String>,
     pub specs: InstanceSpecs
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+pub struct InstanceCreated {
+    pub id: String,
+    pub created_at: String,
+    pub description: String,
+    pub status: String
 }
 
 impl ToJson for InstanceSpecs {}

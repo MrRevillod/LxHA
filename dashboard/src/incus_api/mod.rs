@@ -29,3 +29,10 @@ pub async fn get_wrap(client: Client, url: String) -> Result<reqwest::Response, 
         .await?)
 }
 
+pub async fn post_wrap(client: Client, body: String, url: String) -> Result<reqwest::Response, Error> {
+    Ok(client.post(url)
+        .body(body)
+        .send()
+        .await?)
+}
+
