@@ -1,4 +1,5 @@
 use serde::{Serialize, Deserialize};
+use lxha_lib::models::user::Role;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct InstanceConfig {
@@ -15,4 +16,11 @@ pub struct InstanceData {
     pub config: Option<InstanceConfig>,
 }
 
-
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RegisterData {
+    pub username: String,
+    pub email: String,
+    pub password: String,
+    pub confirm_password: String,
+    pub role: Role,
+}
