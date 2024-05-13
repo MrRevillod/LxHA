@@ -1,7 +1,8 @@
 use reqwest::Error;
 use std::ops::Deref;
 use crate::models::{
-    InstanceData
+    InstanceData,
+    InstanceConfig
 };
 
 use lxha_lib::app::constants::INCUS_API;
@@ -17,8 +18,16 @@ use super::{
         OpsMetadata,
     }
 };
-
-pub async fn new_instance(instance: InstanceData) -> Result<(u16, String), Error> {
+/*
+                                       \"devices\":{{\
+                                           \"root\":{{\
+                                               \"path\":\"/\",\
+                                               \"size\":\"{}GiB\",\
+                                               \"type\":\"disk\"\
+                                           }}\
+                                        }},\
+*/
+pub async fn new_instance(instance: InstanceData, config: InstanceConfig) -> Result<(u16, String), Error> {
 
     let client = get_client()?;
 
@@ -27,7 +36,17 @@ pub async fn new_instance(instance: InstanceData) -> Result<(u16, String), Error
     let template_instance = format!("{{\"architecture\":\"x86_64\",\
                                        \"ephemeral\":false,\
                                        \"config\":{{\
-                                            \"migration.stateful\":\"true\"\
+                                           \"migration.stateful\":\"true\",\
+                                           \"limits.cpu\":\"{}\",\
+                                           \"limits.memory\":\"{}MiB\"\
+                                        }},\
+                                       \"devices\":{{\
+                                           \"root\":{{\
+                                               \"path\":\"/\",\
+                                               \"pool\":\"ceph-pool\",\
+                                               \"type\":\"disk\",\
+                                               \"size\":\"{}GiB\"\
+                                           }}\
                                         }},\
                                        \"name\":\"{}\",\
                                        \"profiles\":[\"default\"],\
@@ -46,6 +65,7 @@ pub async fn new_instance(instance: InstanceData) -> Result<(u16, String), Error
                                        \"start\":true,\
                                        \"stateful\":true,\
                                        \"type\":\"{}\"}}",
+                                    config.cpu, config.memory, config.storage,
                                     instance.name, instance.r#type);
 
     let instance_status = post_wrap(client.clone(), template_instance, url)

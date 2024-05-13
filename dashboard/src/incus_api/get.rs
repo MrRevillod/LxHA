@@ -45,35 +45,42 @@ pub async fn get_all_instances(user: String) -> Result<Vec<Instance>, Error> {
             .json::<ApiResponse::<InstancesStateMetadata>>()
             .await?;
 
-        let instance_specs = match json_instance_state.metadata {
-            Some(ref meta) => InstanceSpecs {
-                cpu: meta.cpu["usage"] as f64,
-                memory: (meta.memory["usage"] as f64 / meta.memory["total"] as f64) * 100.0,
-                storage: meta.disk["root"]["usage"] as f64 / ((1 << 30) as f64)
+        let addresses = match json_instance_state.metadata {
+            Some(meta) => match meta.network {
+                Some(network) => network.into_iter()
+                    .filter(|x| x.0 != "lo")
+                    .flat_map(|x| x.1.addresses )
+                    .filter(|addr| addr["family"] != "inet6")
+                    .map(|x| format!("{}/{}", x["address"], x["netmask"]))
+                    .collect::<Vec::<String>>(),
+                None => Vec::<String>::new()
             },
-            None => InstanceSpecs { cpu: 0.0, memory: 0.0, storage: 0.0 }
+            None => Vec::<String>::new()
         };
+        
 
-
-    
         match json_instance_specific.metadata {
-            Some(meta) => instances.push(Instance {
-                name: meta.name,
-                cluster_node: meta.location,
-                owner: meta.project,
-                ip_addresses: match json_instance_state.metadata.clone().unwrap().network {
-                                Some(network) => network.into_iter()
-                                    .filter(|x| x.0 != "lo")
-                                    .flat_map(|x| x.1.addresses )
-                                    .map(|x| format!("{}/{}", x["address"], x["netmask"]))
-                                    .collect::<Vec::<String>>(),
-                                None => Vec::<String>::new()
-                            },
-                specs: instance_specs,
-                status: meta.status,
-                r#type: meta.r#type,
-            }),
-            None => continue
+            Some(meta) => {
+                    let mut memory = meta.config["limits.memory"].clone();
+                    let mut size = meta.devices["root"]["size"].clone();
+                    memory.truncate(memory.len() - 3);
+                    size.truncate(size.len() - 3);
+
+                    instances.push(Instance {
+                        name: meta.name,
+                        cluster_node: meta.location,
+                        owner: meta.project,
+                        ip_addresses: addresses,
+                        specs: InstanceSpecs {
+                            cpu: meta.config["limits.cpu"].parse().unwrap(),
+                            memory: memory.parse().unwrap(),
+                            storage: size.parse().unwrap(),
+                        },
+                        status: meta.status,
+                        r#type: meta.r#type,
+                    });
+                },
+            None => continue,
         };
     }
 
@@ -85,42 +92,49 @@ pub async fn get_all_instances(user: String) -> Result<Vec<Instance>, Error> {
 pub async fn get_instance(name: String) -> Result<Instance, Error> {
     let client = get_client()?;
 
-    let json_instance_specific = get_wrap(client.clone(), format!("{}/1.0/instances/{}", INCUS_API.deref(), name))
+    let mut json_instance_specific = get_wrap(client.clone(), format!("{}/1.0/instances/{}", INCUS_API.deref(), name))
         .await?
         .json::<ApiResponse::<InstancesSpecificMetadata>>()
         .await?;
 
-    let json_instance_state = get_wrap(client.clone(), format!("{}/1.0/instances/{}/state", INCUS_API.deref(), name))
+    let mut json_instance_state = get_wrap(client.clone(), format!("{}/1.0/instances/{}/state", INCUS_API.deref(), name))
         .await?
         .json::<ApiResponse::<InstancesStateMetadata>>()
         .await?;
 
-    let instance_specs = match json_instance_state.metadata {
-        Some(ref meta) => InstanceSpecs {
-            cpu: meta.cpu["usage"] as f64,
-            memory: (meta.memory["usage"] as f64 / meta.memory["total"] as f64) * 100.0,
-            storage: meta.disk["root"]["usage"] as f64 / ((1 << 30) as f64)
+    let addresses = match json_instance_state.metadata {
+        Some(meta) => match meta.network {
+            Some(network) => network.into_iter()
+                .filter(|x| x.0 != "lo")
+                .flat_map(|x| x.1.addresses )
+                .filter(|addr| addr["family"] != "inet6")
+                .map(|x| format!("{}/{}", x["address"], x["netmask"]))
+                .collect::<Vec::<String>>(),
+            None => Vec::<String>::new()
         },
-        None => InstanceSpecs::default()
+        None => Vec::<String>::new()
     };
 
     Ok(match json_instance_specific.metadata {
-        Some(meta) => Instance {
-                          name: meta.name,
-                          cluster_node: meta.location,
-                          owner: meta.project,
-                          ip_addresses: match json_instance_state.metadata.clone().unwrap().network {
-                                          Some(network) => network.into_iter()
-                                              .filter(|x| x.0 != "lo")
-                                              .flat_map(|x| x.1.addresses )
-                                              .map(|x| format!("{}/{}", x["address"], x["netmask"]))
-                                              .collect::<Vec::<String>>(),
-                                          None => Vec::<String>::new()
-                                      },
-                          specs: instance_specs,
-                          status: meta.status,
-                          r#type: meta.r#type,
-                      },
+        Some(meta) => {
+                let mut memory = meta.config["limits.memory"].clone();
+                let mut size = meta.devices["root"]["size"].clone();
+                memory.truncate(memory.len() - 3);
+                size.truncate(size.len() - 3);
+                Instance {
+                    name: meta.name,
+                    cluster_node: meta.location,
+                    owner: meta.project,
+                    ip_addresses: addresses,
+                    specs: InstanceSpecs {
+                        cpu: meta.config["limits.cpu"].parse().unwrap(),
+                        memory: memory.parse().unwrap(),
+                        storage: size.parse().unwrap(),
+                    },
+                    status: meta.status,
+                    r#type: meta.r#type,
+                }
+            },
         None => Instance::default(),
     })
 }

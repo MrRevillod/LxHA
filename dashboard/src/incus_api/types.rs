@@ -9,6 +9,8 @@ pub struct InstancesSpecificMetadata {
     pub status: String,
     pub project: String,
     pub name: String,
+    pub config: HashMap<String, String>,
+    pub devices: HashMap<String, HashMap<String, String>>,
     pub location: String,
     pub r#type: String,
 }
@@ -51,19 +53,11 @@ pub struct ApiResponseOps<T> {
 
 #[allow(dead_code)]
 #[derive(Deserialize, Debug)]
-pub struct OpsSubMetadata {
-    pub command: Vec<String>,
-    pub environment: HashMap<String, String>,
-}
-
-#[allow(dead_code)]
-#[derive(Deserialize, Debug)]
 pub struct OpsMetadata {
     pub id: String,
     pub location: String,
     pub description: String,
     pub status: String,
-    pub metadata: Option<OpsSubMetadata>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
