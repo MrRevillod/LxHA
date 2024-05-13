@@ -9,7 +9,7 @@ lazy_static!(
     // Database env variables
 
     pub static ref DB_NAME: String = env("DB_NAME");
-    pub static ref DB_URI: String = env("DB_URI");
+    pub static ref DB_URI: String = env("DB_PROD_URI");
 
     // Microservices env variables
 
@@ -28,6 +28,7 @@ lazy_static!(
     // Other env variables
 
     pub static ref JWT_SECRET: String = env("JWT_SECRET");
+    pub static ref INCUS_API: String = env("INCUS_API");
 
     pub static ref SERVICES: HashMap<&'static str, String> = HashMap::from([
         ("AUTH", AUTH_SERVICE_URL.to_string()),

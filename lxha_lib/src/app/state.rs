@@ -3,7 +3,9 @@ use std::sync::Arc;
 use super::{constants::{DB_NAME, DB_URI}, DatabaseReference};
 
 use crate::repository::{
-    token::TokenRepository, user::UserRespository
+    token::TokenRepository,
+    user::UserRespository,
+    instance::InstanceRepository,
 };
 
 use mongodb::{
@@ -17,7 +19,7 @@ pub struct AppContext {
     pub db: DatabaseReference,
     pub users: UserRespository,
     pub tokens: TokenRepository,
-    // pub instances: InstanceRepository
+    pub instances: InstanceRepository
 }
 
 impl AppContext {
@@ -28,6 +30,7 @@ impl AppContext {
 
         let app = AppContext {
             users: UserRespository::new(Arc::clone(&arc_db)),
+            instances: InstanceRepository::new(Arc::clone(&arc_db)),
             tokens: TokenRepository::new(Arc::clone(&arc_db)),
             db: Arc::clone(&arc_db),
         };
