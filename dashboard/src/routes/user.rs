@@ -10,7 +10,7 @@ pub fn user_router(state: Arc<AppContext>) -> Router<Arc<AppContext>> {
     Router::new()
 
         .route("/register-account", post(register_account))
-        .route("/update-account", patch(update_account))
+        // .route("/update-account", patch(update_account))
         .route("/delete-account", delete(delete_account))
 
         .with_state(state)
