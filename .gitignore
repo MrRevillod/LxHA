@@ -1,1 +1,2 @@
 .env
+/certscargo watch -x run -w src/
