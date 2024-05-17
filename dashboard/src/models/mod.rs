@@ -24,3 +24,21 @@ pub struct RegisterData {
     pub confirm_password: String,
     pub role: Role,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UpdateUserData {
+    pub username: String,
+    pub password: String,
+    pub confirm_password: String,
+    pub validated: bool,
+    pub role: Role,
+}
+
+impl UpdateUserData {
+    pub fn role_to_string(&self) -> String {
+        match self.role {
+            Role::USER => "USER".to_string(),
+            Role::ADMINISTRATOR => "ADMINISTRATOR".to_string(),
+        }
+    }
+}
