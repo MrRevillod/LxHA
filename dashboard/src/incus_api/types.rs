@@ -25,7 +25,7 @@ pub struct NetDevice {
 #[derive(Deserialize, Debug, Clone)]
 pub struct InstancesStateMetadata {
     pub memory: HashMap<String, u64>,
-    pub disk: HashMap<String, HashMap<String, u64>>,
+    // pub disk: Option<HashMap<String, HashMap<String, u64>>>,
     pub network: Option<HashMap<String, NetDevice>>,
     pub cpu: HashMap<String, u64>
 }
