@@ -1,17 +1,5 @@
 
-import { useEffect } from 'react'
-import { useAuthStore } from '../store/AuthStore'
-
 export const ClientDashboardPage = () => {
-
-    const { useValidateSession, useLogout } = useAuthStore()
-
-    useEffect(() => {
-        const validate = async () => await useValidateSession()
-        validate()
-    }, [])
-
-    const handleLogout = async () => await useLogout()
 
     return (
 

@@ -1,4 +1,5 @@
 
+pub mod reqwest;
 use std::str::FromStr;
 
 use axum_responses::{AxumResult, HttpResponse};

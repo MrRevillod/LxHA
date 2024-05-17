@@ -1,8 +1,9 @@
-
 mod routes;
 mod controllers;
+mod incus_api;
 mod models;
-mod utils;
+// mod middlewares;
+
 extern crate lxha_lib;
 
 use axum::{
@@ -17,16 +18,19 @@ use tower_cookies::CookieManagerLayer;
 use std::{ops::Deref, sync::Arc, path::Path};
 
 use lxha_lib::app::{
-    constants::{DASHBOARD_SERVICE_ADDR, CLIENT_SERVICE_ADDR}, 
+    constants::{DASHBOARD_SERVICE_ADDR, FRONTEND_SERVICE_URL}, 
     state::{database_connection, AppContext}
 };
 
+use routes::instances::instances_router;
 use routes::user::user_router;
 
 #[tokio::main]
 async fn main() {
 
     let _ = dotenv::from_path(Path::new("../../.env"));
+
+    // println!("{}", INCUS_API.deref());
 
     let http_headers = vec![ORIGIN, AUTHORIZATION, ACCEPT, CONTENT_TYPE];
 
@@ -39,7 +43,7 @@ async fn main() {
     ];
 
     let origins = vec![
-        CLIENT_SERVICE_ADDR.parse::<HeaderValue>().unwrap()
+        FRONTEND_SERVICE_URL.parse::<HeaderValue>().unwrap()
     ];
 
     let cors = CorsLayer::new()
@@ -59,7 +63,8 @@ async fn main() {
     let ctx = AppContext::new(database);
 
     let app = Router::new()
-        .nest("/user", user_router(Arc::clone(&ctx)))
+        .nest("/api/dashboard/instances", instances_router(Arc::clone(&ctx)))
+        .nest("/api/dashboard/user", user_router(Arc::clone(&ctx)))
         .layer(cookies)
         .layer(cors)
         .with_state(ctx)
@@ -67,7 +72,7 @@ async fn main() {
 
     let listener = TcpListener::bind(DASHBOARD_SERVICE_ADDR.deref()).await.unwrap();
     
-    println!("\n🦀 Server running on {}", *DASHBOARD_SERVICE_ADDR);
+    println!("\n🦀 Dashboard running on {}", *DASHBOARD_SERVICE_ADDR);
 
     axum::serve(listener, app).await.unwrap();
 }

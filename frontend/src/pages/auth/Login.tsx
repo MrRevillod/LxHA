@@ -1,6 +1,5 @@
 
-// import { useAuthStore } from "../store/AuthStore"
-
+import { Link } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { useAuthStore } from "../../store/AuthStore"
 
@@ -14,16 +13,22 @@ export const LoginPage = () => {
     return (
 
         <div className="bg-black flex flex-col items-center pt-8">
-            
+
             <h1 className="text-white">LOGIN PAGE</h1>
 
             <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col gap-4 p-20">
 
-              <input type="email" placeholder="email" className="h-8 rounded-lg" {...register("email")} />
-              <input type="password" placeholder="password" className="h-8 rounded-lg" {...register("password")} />
+                <input type="email" placeholder="email" className="h-8 rounded-lg" {...register("email")} />
+                <input type="password" placeholder="password" className="h-8 rounded-lg" {...register("password")} />
 
-              <button type="submit" className="bg-white h-8">Login</button>
+                <button type="submit" className="bg-white h-8">Login</button>
+
             </form>
+
+            <div className="pt-4">
+                <Link to="/auth/reset-password" className="text-white">Forgot your password?</Link>
+            </div>
+
         </div>
     )
 }

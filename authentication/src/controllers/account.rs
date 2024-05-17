@@ -2,34 +2,14 @@
 use crate::utils::session::*;
 
 use lxha_lib::{
-    utils::oid_from_str,
-    app::{Context, constants::*},
+    app::{constants::*, Context}, utils::{oid_from_str, reqwest::http_request}
 };
 
 use bcrypt::hash;
-use serde_json::Value;
-use mongodb::bson::{doc, oid::ObjectId};
+use serde_json::{json, Value};
+use mongodb::bson::doc;
 use axum_responses::{AxumResponse, HttpResponse};
-use axum::{Extension, Json, extract::{State, Path}};
-
-pub async fn validate_account(State(ctx): Context, 
-    Extension(oid): Extension<ObjectId>, Extension(token): Extension<String>) -> AxumResponse {
-
-    let user = match ctx.users.find_one_by_id(&oid).await? {
-        Some(user) => user,
-        None => return Err(HttpResponse::CUSTOM(404, "User doesn't exists"))
-    };
-
-    let key = format!("{}{}", *JWT_SECRET, user.validated);
-
-    if let Err(_) = decode_jwt(&token, &key) {
-        return Err(HttpResponse::CUSTOM(401, "Invalid request"))
-    }
-
-    ctx.users.update(&oid, doc! {"validated": true}).await?;
-
-    Ok(HttpResponse::CUSTOM(200, "Account validation success"))
-}
+use axum::{Json, extract::{State, Path}};
 
 pub async fn send_reset_password_email(State(ctx): Context, 
     Json(body): Json<Value>) -> AxumResponse {
@@ -49,12 +29,17 @@ pub async fn send_reset_password_email(State(ctx): Context,
     let token = new_token("ONETIME", &user, &key)?;
 
     let recovery_url = format!("{}/auth/reset-password/{}/{}", 
-        *CLIENT_SERVICE_ADDR, user.id.to_hex(), token
+        *FRONTEND_SERVICE_URL, user.id.to_hex(), token
     );
 
-    // send_recovery_email(&user.email, &recovery_url).await?; COMUNICACIÓN CON MAILER
+    let body = json!({ "email": &email, "url": recovery_url });
+    let response = http_request("MAILER", "/reset-password", "POST", body).await;
 
-    Ok(HttpResponse::CUSTOM(200, "Password recovery instructions sended to your email."))
+    match response.status().as_u16() {
+        200 => Ok(HttpResponse::OK),
+        401 => Err(HttpResponse::BAD_REQUEST),
+        _   => Err(HttpResponse::INTERNAL_SERVER_ERROR)
+    }
 }
 
 pub async fn reset_password_validation(State(ctx): Context,
@@ -64,7 +49,7 @@ pub async fn reset_password_validation(State(ctx): Context,
 
     let user = match ctx.users.find_one_by_id(&oid).await? {
         Some(user) => user,
-        None => return Err(HttpResponse::CUSTOM(404, "User doesn't exists"))
+        None => return Err(HttpResponse::CUSTOM(404, "Invalid or expired URL"))
     };
     
     let key = format!("{}{}", *JWT_SECRET, user.password);
@@ -103,8 +88,8 @@ pub async fn reset_password(State(ctx): Context,
     
     decode_jwt(&token, &format!("{}{}", *JWT_SECRET, user.password))?;
 
-    ctx.users.update(&oid, 
-        doc! {"password": hash(password, 8).unwrap()}).await?
+    ctx.users.update(&oid, doc! {
+        "$set": { "password": hash(password, 8).unwrap() }}).await?
     ;
 
     Ok(HttpResponse::CUSTOM(200, "Password recover success"))

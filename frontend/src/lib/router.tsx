@@ -1,23 +1,25 @@
 
-import { useUserStore } from '../store/UserStore'
-import { useAuthStore } from '../store/AuthStore'
-import { Outlet, useNavigate } from 'react-router-dom'
-import { useEffect, PropsWithChildren, useState } from 'react'
+import { useUserStore } from "../store/UserStore"
+import { useAuthStore } from "../store/AuthStore"
+import { Outlet, useNavigate } from "react-router-dom"
+import { useEffect, PropsWithChildren, useState } from "react"
 
 export const SessionProtectedRoute = ({ children }: PropsWithChildren) => {
 
     const navigate = useNavigate()
 
     const { user } = useUserStore()
-    const { isAuthenticated } = useAuthStore()
-    
+    const { isAuthenticated, useValidateSession } = useAuthStore()
+
     const [isLoading, setIsloading] = useState<boolean>(true)
 
     useEffect(() => {
 
-        (async function() {
+        (async function () {
 
             setIsloading(true)
+
+            await useValidateSession()
 
             if (!user || !isAuthenticated) {
                 return navigate("/auth/login")
@@ -39,15 +41,17 @@ export const RoleProtectedRoute = ({ children }: PropsWithChildren) => {
     const navigate = useNavigate()
 
     const { user } = useUserStore()
-    const { isAuthenticated, isAdmin } = useAuthStore()
+    const { isAuthenticated, isAdmin, useValidatePermisions } = useAuthStore()
 
     const [isLoading, setIsloading] = useState<boolean>(true)
 
     useEffect(() => {
 
-        (async function() {
+        (async function () {
 
             setIsloading(true)
+
+            await useValidatePermisions()
 
             if (!user || !isAuthenticated || !isAdmin) {
                 return navigate("/")

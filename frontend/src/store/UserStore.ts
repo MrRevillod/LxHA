@@ -1,6 +1,6 @@
 
-import { create } from 'zustand'
-import { User } from '../lib/types'
+import { create } from "zustand"
+import { User } from "../lib/types"
 
 interface UserStore {
     user: User | null
