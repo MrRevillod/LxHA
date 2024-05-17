@@ -20,7 +20,7 @@ export const useInstanceStore = create<InstanceStore>(() => ({
     },
 
     useGetInstances: async () => {
-        return new Promise(() => {})
+        return new Promise(() => { })
     },
 
     useCreateInstance: async (instance: PublicInstanceData) => {
