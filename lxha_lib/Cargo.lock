@@ -160,9 +160,9 @@ dependencies = [
 
 [[package]]
 name = "axum_responses"
-version = "0.1.4"
+version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6eefe136cd90818fda84c5d7e4b71cb51f2d05b43ee96015f1f69b607ca8485d"
+checksum = "8c45cb9be7133356ce141c8295c7c9a39e7875c392c1d4c56022eb5d9c8a79e1"
 dependencies = [
  "axum",
  "axum-test",

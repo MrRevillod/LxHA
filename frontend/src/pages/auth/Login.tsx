@@ -1,34 +1,29 @@
 
-import { Link } from "react-router-dom"
-import { useForm } from "react-hook-form"
-import { useAuthStore } from "../../store/AuthStore"
+import { Spinner } from "../../components/ui/Spinner"
+import { LoginForm } from "../../components/LoginForm"
+import { useHttpStore } from "../../store/HttpStore"
 
 export const LoginPage = () => {
 
-    const { useLogin } = useAuthStore()
-    const { register, handleSubmit } = useForm()
-
-    const onSubmit = async (formdata: any) => await useLogin(formdata)
+    const { isLoading } = useHttpStore()
 
     return (
 
-        <div className="bg-black flex flex-col items-center pt-8">
-            
-            <h1 className="text-white">LOGIN PAGE</h1>
+        <main className="h-screen w-screen bg-neutral-950 flex items-center justify-center gap-8">
 
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col gap-4 p-20">
+            {isLoading && (<Spinner classes={"z-10 fixed opacity-100"} />)}
 
-                <input type="email" placeholder="email" className="h-8 rounded-lg" {...register("email")} />
-                <input type="password" placeholder="password" className="h-8 rounded-lg" {...register("password")} />
+            <article className="w-1/2 h-full lg:flex items-center justify-center hidden auth-bg-img">
 
-                <button type="submit" className="bg-white h-8">Login</button>
-                
-            </form>
+                <h1 className="text-5xl font-bold text-neutral-100 text-center">
+                    Welcome to Lxd High Av.
+                </h1>
+            </article>
 
-            <div className="pt-4">
-                <Link to="/auth/reset-password" className="text-white">Forgot your password?</Link>
-            </div>
-            
-        </div>
+            <article className="lg:w-1/2 w-full h-full lg:px-0 md:px-0 px-4 flex items-center justify-center">
+                <LoginForm />
+            </article>
+
+        </main>
     )
 }

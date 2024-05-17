@@ -1,5 +1,5 @@
 
-use cookie::Cookie;
+use cookie::{Cookie, SameSite};
 use chrono::{Utc, Duration as ChronoDuration};
 use axum_responses::{AxumResult, HttpResponse};
 

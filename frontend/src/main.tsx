@@ -1,44 +1,47 @@
 
-import "./index.css"
 import ReactDOM from "react-dom/client"
 
-import { Navbar } from "./components/Navbar"
-import { Toaster } from "sonner"
-import { LoginPage } from "./pages/auth/Login"
-import { LandingPage } from "./pages/Index"
-import { DashboardPage } from "./pages/Dashboard"
-import { ResetPasswordPage } from "./pages/auth/ResetPassword"
-import { ForgotPasswordPage } from "./pages/auth/ForgotPassword"
-import { ClientDashboardPage } from "./pages/ClientDashboard"
-import { BrowserRouter, Route, Routes } from "react-router-dom"
-import { SessionProtectedRoute } from "./lib/router"
+import './index.css'
+
+import { Toast } from "./components/ui/Toast"
+import { MainLayout } from "./layouts/MainLayout"
+import { AuthProvider } from "./store/AuthContext"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+
+import {
+    LandingPage, LoginPage, ForgotPasswordPage, NotFoundPage,
+    ForgotPasswordRequestPage, DashboardPage
+} from "./pages"
+
+import { LoadingWrapper, ProtectedRoute } from "./router"
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 
 root.render(
 
     <>
-        <BrowserRouter>
+        <AuthProvider>
+            <BrowserRouter>
+                <Routes>
 
-            <Navbar />
+                    <Route path="/" element={<MainLayout><LandingPage /></MainLayout>} />
 
-            <Routes>
+                    <Route element={<LoadingWrapper />}>
+                        <Route path="/auth/login" element={<LoginPage />} />
+                        <Route path="/auth/reset-password" element={<MainLayout><ForgotPasswordRequestPage /></MainLayout>} />
+                        <Route path="/auth/reset-password/:id/:token" element={<MainLayout> <ForgotPasswordPage /></MainLayout>} />
+                    </Route>
 
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/auth/login" element={<LoginPage />} />
-                <Route path="/auth/reset-password/" element={<ForgotPasswordPage />} />
-                <Route path="/auth/reset-password/:id/:token" element={<ResetPasswordPage />} />
+                    <Route element={<ProtectedRoute protectedBy="session" />}>
+                        <Route path="/dashboard" element={<MainLayout><DashboardPage /></MainLayout>} />
+                    </Route>
 
-                <Route element={<SessionProtectedRoute />}>
-                    <Route path="/dashboard" element={<ClientDashboardPage />} />
-                </Route>
+                    <Route path="*" element={<MainLayout> <NotFoundPage /> </MainLayout>} />
 
-                <Route path="/admin/dashboard" element={<DashboardPage />} />
+                </Routes>
+            </BrowserRouter>
+        </AuthProvider>
 
-            </Routes>
-
-            <Toaster richColors />
-
-        </BrowserRouter>
+        <Toast />
     </>
 )

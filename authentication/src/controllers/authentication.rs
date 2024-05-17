@@ -74,6 +74,6 @@ pub async fn logout_controller(cookies: Cookies,
     Ok(HttpResponse::OK)
 }
 
-pub async fn authenticate() -> AxumResponse {
-    Ok(HttpResponse::OK)
+pub async fn authenticate(Extension(user): Extension<User>) -> AxumResponse {
+    Ok(HttpResponse::JSON(200, "Authenticated", "user", user.into_json_profile()))
 }
