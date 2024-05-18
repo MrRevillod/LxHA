@@ -1,3 +1,4 @@
+#!/bin/bash
 
 # Uncomment the service that you wanna run
 

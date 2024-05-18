@@ -21,6 +21,7 @@ use crate::incus_api::{
     get::get_all_instances,
     get::get_instance,
     post::new_instance,
+    delete::remove_instance,
     types,
 };
 
@@ -39,7 +40,7 @@ pub async fn list_instances_controller(Query(params): Query<HashMap<String, Stri
         None => String::from("")
     };
 
-    let instances_list = get_all_instances(user).await.unwrap();
+    let instances_list = get_all_instances(user).await?;
 
     let instances = Instances {
         instances: instances_list
@@ -50,7 +51,7 @@ pub async fn list_instances_controller(Query(params): Query<HashMap<String, Stri
 
 pub async fn instance_controller(Path(instance_name): Path<String>) -> AxumResponse {
 
-    let instance = get_instance(instance_name).await.unwrap();
+    let instance = get_instance(instance_name).await?;
 
     if instance.name == "" {
         return Err(HttpResponse::NOT_FOUND)
@@ -68,20 +69,20 @@ pub async fn create_instance_controller(State(ctx): Context, Json(body): Json<In
         }
     };
 
-    let (status, message) = new_instance(body.clone(), config.clone()).await.unwrap();
+    let (status, message) = new_instance(body.clone(), config.clone()).await?;
 
-    let mut created_instance = get_instance(body.name.clone()).await.unwrap();
+    let mut created_instance = get_instance(body.name.clone()).await?;
 
     if created_instance.name == "" {
+        println!("\n[Error] Fallo al crear instancia: {:?}", created_instance);
         return Err(HttpResponse::INTERNAL_SERVER_ERROR);
     }
 
     while created_instance.ip_addresses.is_empty() {
-        println!("{:#?}", created_instance);
         sleep_ms(500);
-        created_instance = get_instance(body.name.clone()).await.unwrap();
+        created_instance = get_instance(body.name.clone()).await?;
     }
-    println!("{:#?}", created_instance);
+    println!("\n[Log] Instancia creada: {:?}", created_instance);
 
     let instance = instance::Instance {
         id: ObjectId::new(),
@@ -97,5 +98,27 @@ pub async fn create_instance_controller(State(ctx): Context, Json(body): Json<In
 
     ctx.instances.create(&instance).await?;
 
+    // Ok(HttpResponse::CUSTOM(status, ))
     Ok(HttpResponse::OK)
 }
+
+
+pub async fn delete_instance_controller(State(ctx): Context, Path(instance_name): Path<String>) -> AxumResponse {
+
+    let response = remove_instance(instance_name.clone()).await?;
+
+    if response.0 != 200 {
+        return Err(HttpResponse::INTERNAL_SERVER_ERROR);
+    }
+
+    let filter = doc!{ "name": instance_name };
+
+    let instance = ctx.instances.find_one(filter).await?;
+
+    println!("\n[Log] Eliminando instancia de la base de datos.");
+
+    ctx.instances.delete(&instance.unwrap().id).await?;
+
+    Ok(HttpResponse::OK)
+}
+
