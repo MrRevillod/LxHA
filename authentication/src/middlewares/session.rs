@@ -48,12 +48,12 @@ pub async fn session_validation(cookies: Cookies,
 
     let id = oid_from_str(&user_id)?;
 
-    let user = match ctx.users.find_one_by_id(&id).await {
-        Ok(user) => user,
-        Err(_)   => return Err(HttpResponse::UNAUTHORIZED)
+    let user = match ctx.users.find_one_by_id(&id).await? {
+        Some(user) => user,
+        None   => return Err(HttpResponse::UNAUTHORIZED)
     };
 
-    req.extensions_mut().insert(user.unwrap());
+    req.extensions_mut().insert(user);
     req.extensions_mut().insert(token.unwrap());
 
     Ok(next.run(req).await)

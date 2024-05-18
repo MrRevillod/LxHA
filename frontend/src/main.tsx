@@ -29,8 +29,9 @@ root.render(
                     <Route element={<LoadingWrapper />}>
                         <Route path="/auth/login" element={<LoginPage />} />
                         <Route path="/auth/reset-password" element={<MainLayout><ForgotPasswordRequestPage /></MainLayout>} />
-                        <Route path="/auth/reset-password/:id/:token" element={<MainLayout> <ForgotPasswordPage /></MainLayout>} />
                     </Route>
+                    
+                    <Route path="/auth/reset-password/:id/:token" element={<MainLayout> <ForgotPasswordPage /></MainLayout>} />
 
                     <Route element={<ProtectedRoute protectedBy="session" />}>
                         <Route path="/dashboard" element={<MainLayout><DashboardPage /></MainLayout>} />

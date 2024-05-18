@@ -23,7 +23,7 @@ export const LoginForm = () => {
         resolver: zodResolver(formSchema)
     })
 
-    const { useLogin } = useAuth()
+    const { useLogin, useValidatePermissions } = useAuth()
 
     const onSubmit = async (formData: LoginData) => {
         await useLogin(formData)

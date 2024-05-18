@@ -66,6 +66,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
             setIsAuthenticated(res.status === 200)
             setResponse(res.status, res.data.message, res.data, false)
 
+            await useValidatePermissions()
+
         } catch (e: any) {
 
             setIsAuthenticated(false)
