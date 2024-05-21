@@ -17,5 +17,6 @@ module.exports = {
     'react-hooks/rules-of-hooks': 'off', // Disable the rule globally,
     'react-hooks/exhaustive-deps': 'off',
     '@typescript-eslint/no-explicit-any': "off",
+    'react-refresh/only-export-components': 'off',
   },
 }

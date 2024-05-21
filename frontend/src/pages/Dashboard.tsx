@@ -1,11 +1,12 @@
 
 import { Show } from "../components/ui/Show"
+import { ROLE } from "../lib/types"
 import { useAuth } from "../store/AuthContext"
 import { useUserStore } from "../store/UserStore"
 
 export const DashboardPage = () => {
 
-    const { isAdmin } = useAuth()
+    const { role } = useAuth()
 
     return (
 
@@ -13,11 +14,11 @@ export const DashboardPage = () => {
 
             <h1 className="text-5xl text-neutral-100 font-bold">Dashboard Page</h1>
 
-            <Show when={isAdmin}>
+            <Show when={role === ROLE.ADMINISTRATOR}>
                 <AdminPanel />
             </Show>
 
-            <Show when={!isAdmin}>
+            <Show when={role === ROLE.USER}>
                 <UserPanel />
             </Show>
 

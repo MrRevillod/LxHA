@@ -1,9 +1,10 @@
 
 import ReactDOM from "react-dom/client"
 
-import './index.css'
+import "./index.css"
+import "bootstrap-icons/font/bootstrap-icons.css"
 
-import { Toast } from "./components/ui/Toast"
+import { Toaster } from "sonner"
 import { MainLayout } from "./layouts/MainLayout"
 import { AuthProvider } from "./store/AuthContext"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
@@ -43,6 +44,6 @@ root.render(
             </BrowserRouter>
         </AuthProvider>
 
-        <Toast />
+        <Toaster />
     </>
 )

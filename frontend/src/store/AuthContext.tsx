@@ -1,20 +1,23 @@
 
+import Cookies from "js-cookie"
+
 import { api } from "../lib/axios"
+import { jwtDecode } from "jwt-decode"
 import { useUserStore } from "./UserStore"
 import { useHttpStore } from "./HttpStore"
-import { LoginData, RequestResetPasswordData } from "../lib/types"
 import { createContext, PropsWithChildren, useContext } from "react"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { JwtPayload, LoginData, RequestResetPasswordData, ROLE } from "../lib/types"
 
 interface AuthStoreType {
     isAuthenticated: boolean,
-    isAdmin: boolean,
+    role: ROLE | null,
     isCheckingSession: boolean,
     setIsAuthenticated: Dispatch<SetStateAction<boolean>>,
-    setIsAdmin: Dispatch<SetStateAction<boolean>>,
+    setRole: Dispatch<SetStateAction<ROLE | null>>,
     useLogin: (data: LoginData) => Promise<void>,
     useLogout: () => Promise<void>
-    useValidatePermissions: () => Promise<void>,
+    useValidateSession: () => Promise<void>,
     useRequestResetPassword: (body: RequestResetPasswordData) => Promise<void>,
     useValidateResetPasswordPage: (id: string | undefined, token: string | undefined) => Promise<void>
     useResetPassword: (id: string | undefined, token: string | undefined, body: any) => Promise<void>
@@ -22,13 +25,13 @@ interface AuthStoreType {
 
 const defaultAuthStore: AuthStoreType = {
     isAuthenticated: false,
-    isAdmin: false,
+    role: null,
     isCheckingSession: false,
     setIsAuthenticated: () => { },
-    setIsAdmin: () => { },
+    setRole: () => { },
     useLogin: async () => { },
     useLogout: async () => { },
-    useValidatePermissions: async () => { },
+    useValidateSession: async () => { },
     useRequestResetPassword: async () => { },
     useValidateResetPasswordPage: async () => { },
     useResetPassword: async () => { }
@@ -37,7 +40,6 @@ const defaultAuthStore: AuthStoreType = {
 export const AuthContext = createContext<AuthStoreType>(defaultAuthStore)
 
 export const useAuth = () => {
-
     const context = useContext(AuthContext)
 
     if (!context) throw new Error("useAuth debe estar dentro del proveedor AuthContext")
@@ -46,7 +48,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
 
-    const [isAdmin, setIsAdmin] = useState(false)
+    const [role, setRole] = useState<ROLE | null>(null)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [isCheckingSession, setIsCheckingSession] = useState(true)
 
@@ -55,20 +57,18 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
     const useLogin = async (formData: LoginData) => {
 
+        setIsLoading(true)
+
         try {
 
-            setIsLoading(true)
-
             const res = await api.post('/auth/login', formData)
-
             setUser(res.data.user)
             setIsAuthenticated(res.status === 200)
             setResponse(res.status, res.data.message, res.data, false)
 
-            await useValidatePermissions()
+            await useValidateSession()
 
         } catch (e: any) {
-
             setIsAuthenticated(false)
             setResponse(e.response.status, e.response.data.message, e.response.data, true)
 
@@ -77,18 +77,16 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
     const useLogout = async () => {
 
+        setIsLoading(true)
+
         try {
 
-            setIsLoading(true)
-
             const res = await api.post('/auth/logout')
-
             setIsAuthenticated(!(res.status === 200))
             setResponse(res.status, res.data.message, res.data, true)
 
         } catch (e: any) {
-
-            setIsAdmin(false)
+            setRole(null)
             setIsAuthenticated(false)
             setResponse(e.response.status, e.response.data.message, e.response.data, true)
 
@@ -97,12 +95,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
     const useRequestResetPassword = async (formData: RequestResetPasswordData) => {
 
+        setIsLoading(true)
+
         try {
 
-            setIsLoading(true)
-
             const res = await api.post('/auth/reset-password', formData)
-
             setResponse(res.status, res.data.message, res.data, true)
 
         } catch (e: any) {
@@ -113,12 +110,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
     const useResetPassword = async (id: string | undefined, token: string | undefined, formData: any) => {
 
+        setIsLoading(true)
+
         try {
 
-            setIsLoading(true)
-
             const res = await api.patch(`/auth/reset-password/${id}/${token}`, formData)
-
             setResponse(res.status, res.data.message, res.data, true)
 
         } catch (e: any) {
@@ -130,79 +126,59 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
     const useValidateResetPasswordPage = async (id: string | undefined, token: string | undefined) => {
 
+        setIsLoading(true)
+
         try {
 
-            setIsLoading(true)
             const res = await api.post(`/auth/reset-password/${id}/${token}`)
-
             setResponse(res.status, res.data.message, res.data, false)
 
         } catch (error: any) {
             setResponse(error.response.status, error.response.data.message, error.response.data, false)
 
         } finally { setIsLoading(false) }
-
     }
 
-    const checkSession = async () => {
+    const useValidateSession = async () => {
+
+        setIsLoading(true)
+        setIsCheckingSession(true)
 
         try {
 
-            setIsLoading(true)
-            setIsCheckingSession(true)
+            const sessionToken = Cookies.get("session")
 
-            const res = await api.post('/auth/validate-session')
+            if (!sessionToken) return setIsAuthenticated(false)
 
+            const res = await api.post("/auth/validate-session")
+            const payload = jwtDecode<JwtPayload>(sessionToken)
+
+            setRole(payload.role)
             setUser(res.data.user)
             setIsAuthenticated(res.status === 200)
 
-        } catch (error) {
-
-            setIsAuthenticated(false)
-            setIsAdmin(false)
-            setUser(null)
-
-        } finally {
-            setIsLoading(false)
-            setIsCheckingSession(false)
-        }
-    }
-
-    const useValidatePermissions = async () => {
-
-        try {
-
-            setIsLoading(true)
-            setIsCheckingSession(true)
-
-            const res = await api.post('/auth/validate-role')
-
-            setIsAdmin(res.status === 200)
-            setUser(res.data.user)
-
         } catch (e: any) {
-            setIsAdmin(false)
+            setRole(null)
+            setIsAuthenticated(false)
+            setResponse(e.response.status, e.response.data.message, e.response.data, true)
 
-        } finally {
-            setIsLoading(false)
-            setIsCheckingSession(false)
-        }
+        } finally { setIsCheckingSession(false); setIsLoading(false) }
     }
 
-    useEffect(() => { checkSession(); useValidatePermissions() }, [])
+    useEffect(() => { useValidateSession() }, [])
 
     const value: AuthStoreType = {
         isAuthenticated,
-        isAdmin,
+        role,
         isCheckingSession,
         setIsAuthenticated,
-        setIsAdmin,
+        setRole,
         useLogin,
         useLogout,
-        useValidatePermissions,
         useRequestResetPassword,
         useValidateResetPasswordPage,
-        useResetPassword
+        useResetPassword,
+        useValidateSession,
     }
 
     return (

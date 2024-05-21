@@ -47,10 +47,10 @@ pub fn parse_cookies(cookies: Cookies) -> Arc<Jar> {
 
     let cookie_jar = Jar::default();
 
-    let token_value = cookies.get("token").map_or(String::new(), |cookie| cookie.value().to_string());
+    let token_value = cookies.get("session").map_or(String::new(), |cookie| cookie.value().to_string());
     let refresh_value = cookies.get("refresh").map_or(String::new(), |cookie| cookie.value().to_string());
 
-    let token_cookie = format!("token={}", token_value);
+    let token_cookie = format!("session={}", token_value);
     let refresh_cookie = format!("refresh={}", refresh_value);
 
     let url = Url::parse(AUTH_SERVICE_URL.deref()).unwrap();

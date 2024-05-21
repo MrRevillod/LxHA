@@ -35,3 +35,11 @@ export type Instance = {
 export type PublicInstanceData = {
     name: string
 }
+
+export type JwtPayload = {
+    id: string,
+    username: string,
+    email: string,
+    role: ROLE,
+    exp: number
+}

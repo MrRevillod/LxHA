@@ -23,7 +23,7 @@ export const LoginForm = () => {
         resolver: zodResolver(formSchema)
     })
 
-    const { useLogin, useValidatePermissions } = useAuth()
+    const { useLogin } = useAuth()
 
     const onSubmit = async (formData: LoginData) => {
         await useLogin(formData)
@@ -45,25 +45,22 @@ export const LoginForm = () => {
 
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}>
 
-                <Input
-                    label="Correo electrónico"
+                <Input label="Email"
                     type="email"
                     {...register('email')}
                     placeholder="john@domain.com"
                     error={errors.email ? (errors.email.message?.toString()) : ""}
                 />
 
-                <Input
-                    label="Contraseña"
+                <Input label="Password"
                     type="password"
                     {...register('password')}
                     placeholder="●●●●●●●●●●"
                     error={errors.password ? (errors.password.message?.toString()) : ""}
-                    islogin={"true"}
+                    islogin="true"
                 />
 
-                <button
-                    type="submit"
+                <button type="submit"
                     className="bg-neutral-100 text-neutral-950 rounded-lg p-2 font-bold mt-4"
                 >
                     Ingresar

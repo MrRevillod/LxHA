@@ -1,4 +1,5 @@
 
+import { ROLE } from "./lib/types"
 import { Loading } from "./pages/Loading"
 import { useAuth } from "./store/AuthContext"
 import { useHttpStore } from "./store/HttpStore"
@@ -14,14 +15,14 @@ export const ProtectedRoute = ({ protectedBy, redirectTo = "/auth/login" }: Prot
 
     const { user } = useUserStore()
     const { isLoading } = useHttpStore()
-    const { isAuthenticated, isCheckingSession, isAdmin } = useAuth()
+    const { isAuthenticated, isCheckingSession, role } = useAuth()
 
     if (isCheckingSession || isLoading) {
         return <Loading />
     }
 
     const conditions: { [key: string]: boolean } = {
-        "role": !isAuthenticated || !isAdmin || !user,
+        "role": !isAuthenticated || role !== ROLE.ADMINISTRATOR || !user,
         "session": !isAuthenticated || !user
     }
 
@@ -35,14 +36,14 @@ export const ProtectedRoute = ({ protectedBy, redirectTo = "/auth/login" }: Prot
 export const LoadingWrapper = () => {
 
     const { isLoading } = useHttpStore()
-    const { isAuthenticated } = useAuth()
+    // const { isAuthenticated } = useAuth()
+
+    // if (isAuthenticated) {
+    //     return <Navigate to="/dashboard" replace />
+    // }
 
     if (isLoading) {
         return <Loading />
-    }
-
-    if (isAuthenticated) {
-        return <Navigate to="/dashboard" replace />
     }
 
     return <Outlet />

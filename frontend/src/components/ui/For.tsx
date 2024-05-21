@@ -1,11 +1,16 @@
 
-import { Children } from "react"
+import React, { Children } from "react"
 
-interface Props {
-    render: (item: React.ReactNode, index: number) => React.ReactNode,
-    of: any[],
+interface ForProps<T> {
+    render: (item: T, index: number) => React.ReactNode,
+    of: T[]
 }
 
-export const For = ({ render, of }: Props) => {
-    Children.toArray(of.map((item, index) => render(item, index)))
+export const For = <T,>({ render, of }: ForProps<T>): React.ReactElement => {
+
+    return (
+        <>
+            {Children.toArray(of.map((item, index) => render(item, index)))}
+        </>
+    )
 }

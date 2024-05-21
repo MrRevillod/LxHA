@@ -19,7 +19,7 @@ use axum::{
 pub async fn session_validation(cookies: Cookies, 
     State(ctx): Context, mut req: Request, next: Next) -> Result<MwResponse, HttpResponse> {
 
-    let mut token = cookies.get("token").map(|cookie| cookie.value().to_string());
+    let mut token = cookies.get("session").map(|cookie| cookie.value().to_string());
 
     let user_id = match &token {
         
