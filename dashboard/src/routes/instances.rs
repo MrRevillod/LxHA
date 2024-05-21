@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use axum::routing::{get, post, delete, Router};
+use axum::routing::{get, post, Router};
 use lxha_lib::app::state::AppContext;
 
 use crate::{
@@ -13,6 +13,5 @@ pub fn instances_router(state: Arc<AppContext>) -> Router<Arc<AppContext>> {
         .route("/", get(list_instances_controller))
         .route("/", post(create_instance_controller))
         .route("/:instance_name", get(instance_controller))
-        .route("/:instance_name", delete(delete_instance_controller))
         .with_state(state)
 }

@@ -47,7 +47,5 @@ pub async fn database_connection() -> Result<Database, MongoError> {
 
     let client = Client::with_options(opts)?;
 
-    println!("[*] Conectado con mongo");
-
     Ok(client.database(&DB_NAME))
 }

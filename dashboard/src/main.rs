@@ -1,8 +1,9 @@
+
 mod routes;
 mod controllers;
 mod incus_api;
 mod models;
-// mod middlewares;
+mod middlewares;
 
 extern crate lxha_lib;
 
@@ -29,8 +30,6 @@ use routes::user::user_router;
 async fn main() {
 
     let _ = dotenv::from_path(Path::new("../../.env"));
-
-    // println!("{}", INCUS_API.deref());
 
     let http_headers = vec![ORIGIN, AUTHORIZATION, ACCEPT, CONTENT_TYPE];
 

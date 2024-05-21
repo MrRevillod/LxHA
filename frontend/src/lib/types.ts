@@ -3,7 +3,19 @@ export type User = {
     id: string,
     username: string,
     email: string,
-    validated: boolean
+}
+
+export enum ROLE {
+    ADMINISTRATOR = "ADMINISTRATOR",
+    USER = "USER"
+}
+
+export type RegisterData = {
+    username: string,
+    email: string,
+    password: string,
+    confirmPassword: string,
+    role: ROLE
 }
 
 export type LoginData = {
