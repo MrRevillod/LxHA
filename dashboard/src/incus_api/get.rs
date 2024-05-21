@@ -1,7 +1,6 @@
 use std::ops::Deref;
 use reqwest::Error;
 
-use axum_responses::{AxumResult, HttpResponse};
 use lxha_lib::app::constants::INCUS_API;
 use super::{
     get_client,
@@ -16,7 +15,7 @@ use super::{
 };
 
 
-pub async fn get_all_instances(user: String) -> AxumResult<Vec<Instance>> {
+pub async fn get_all_instances(user: String) -> Result<Vec<Instance>, Error> {
 
     let client = get_client()?;
     
@@ -29,8 +28,7 @@ pub async fn get_all_instances(user: String) -> AxumResult<Vec<Instance>> {
     let json_instances = get_wrap(client.clone(), url)
         .await?
         .json::<ApiResponse::<Vec::<String>>>()
-        .await
-        .unwrap();
+        .await?;
 
     let uri_instances = &json_instances.metadata.unwrap();
 
@@ -40,14 +38,12 @@ pub async fn get_all_instances(user: String) -> AxumResult<Vec<Instance>> {
         let json_instance_specific = get_wrap(client.clone(), format!("{}{}", INCUS_API.deref(), uri))
             .await?
             .json::<ApiResponse::<InstancesSpecificMetadata>>()
-            .await
-            .unwrap();
+            .await?;
 
         let json_instance_state = get_wrap(client.clone(), format!("{}{}/state", INCUS_API.deref(), uri))
             .await?
             .json::<ApiResponse::<InstancesStateMetadata>>()
-            .await
-            .unwrap();
+            .await?;
 
         let addresses = match json_instance_state.metadata {
             Some(meta) => match meta.network {
@@ -93,21 +89,18 @@ pub async fn get_all_instances(user: String) -> AxumResult<Vec<Instance>> {
 
 
 
-pub async fn get_instance(name: String) -> AxumResult<Instance> {
+pub async fn get_instance(name: String) -> Result<Instance, Error> {
     let client = get_client()?;
 
-    let json_instance_specific = get_wrap(client.clone(), format!("{}/1.0/instances/{}", INCUS_API.deref(), name))
+    let mut json_instance_specific = get_wrap(client.clone(), format!("{}/1.0/instances/{}", INCUS_API.deref(), name))
         .await?
         .json::<ApiResponse::<InstancesSpecificMetadata>>()
-        .await
-        .unwrap();
+        .await?;
 
-    let json_instance_state = get_wrap(client.clone(), format!("{}/1.0/instances/{}/state", INCUS_API.deref(), name))
+    let mut json_instance_state = get_wrap(client.clone(), format!("{}/1.0/instances/{}/state", INCUS_API.deref(), name))
         .await?
         .json::<ApiResponse::<InstancesStateMetadata>>()
-        .await
-        .unwrap();
-
+        .await?;
 
     let addresses = match json_instance_state.metadata {
         Some(meta) => match meta.network {

@@ -5,7 +5,8 @@ import { MainLayout } from "../layouts/MainLayout"
 import { LandingPage } from "./Landing"
 import { NotFoundPage } from "./404"
 import { DashboardPage } from "./Dashboard"
-import { ForgotPasswordPage, ForgotPasswordRequestPage } from "./auth/ResetPassword"
+import { ForgotPasswordPage } from "./auth/ResetPassword"
+import { ForgotPasswordRequestPage } from "./auth/RequestResetPassword"
 
 export {
     Loading,

@@ -1,11 +1,10 @@
 
 import { api } from "../lib/axios"
 import { useUserStore } from "./UserStore"
+import { useHttpStore } from "./HttpStore"
+import { LoginData, RequestResetPasswordData } from "../lib/types"
 import { createContext, PropsWithChildren, useContext } from "react"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { LoginData, RequestResetPasswordData } from "../lib/types"
-import { AxiosResponse } from "axios"
-import { useHttpStore } from "./HttpStore"
 
 interface AuthStoreType {
     isAuthenticated: boolean,
@@ -17,7 +16,7 @@ interface AuthStoreType {
     useLogout: () => Promise<void>
     useValidatePermissions: () => Promise<void>,
     useRequestResetPassword: (body: RequestResetPasswordData) => Promise<void>,
-    useValidateResetPasswordPage: (id: string | undefined, token: string | undefined) => Promise<void> | Promise<AxiosResponse<any, any>>,
+    useValidateResetPasswordPage: (id: string | undefined, token: string | undefined) => Promise<void>
     useResetPassword: (id: string | undefined, token: string | undefined, body: any) => Promise<void>
 }
 
@@ -134,10 +133,12 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         try {
 
             setIsLoading(true)
-            return await api.post(`/auth/reset-password/${id}/${token}`)
+            const res = await api.post(`/auth/reset-password/${id}/${token}`)
+
+            setResponse(res.status, res.data.message, res.data, false)
 
         } catch (error: any) {
-            return error.response
+            setResponse(error.response.status, error.response.data.message, error.response.data, false)
 
         } finally { setIsLoading(false) }
 

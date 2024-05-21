@@ -25,10 +25,6 @@ pub async fn login_controller(cookies: Cookies,
     if !verify(&body.password, &user.password).unwrap() {
         return Err(HttpResponse::CUSTOM(401, "Invalid credentials"))
     }
-
-    if !user.validated {
-        return Err(HttpResponse::CUSTOM(401, "Account not validated"))
-    }
     
     let token = new_token("SESSION", &user, &JWT_SECRET)?;
     let refresh = new_token("REFRESH", &user, &JWT_SECRET)?;

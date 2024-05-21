@@ -1,11 +1,10 @@
 
 use axum::middleware::Next;
-use axum_responses::HttpResponse;
-
 use axum::extract::Request;
-use axum::response::Response as MwResponse;
-
+use axum_responses::HttpResponse;
+use mongodb::bson::oid::ObjectId;
 use lxha_lib::models::user::{Role, User};
+use axum::response::Response as MwResponse;
 
 pub async fn protected_role_validation(
     req: Request, next: Next) -> Result<MwResponse, HttpResponse> {
@@ -18,3 +17,15 @@ pub async fn protected_role_validation(
     }
 }
 
+pub async fn owner_validation(req: Request, 
+    next: Next) -> Result<MwResponse, HttpResponse> {
+    
+    let oid = req.extensions().get::<ObjectId>().unwrap().clone();
+    let user = req.extensions().get::<User>().unwrap().clone();
+
+    if user.id != oid || user.role != Role::ADMINISTRATOR {
+        return Err(HttpResponse::UNAUTHORIZED)
+    }
+
+    Ok(next.run(req).await)
+}

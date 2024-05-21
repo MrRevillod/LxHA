@@ -1,49 +1,21 @@
 
 use std::sync::Arc;
-
-use axum::routing::{get, Router};
+use axum::routing::Router;
 use axum::routing::{post, patch};
+use lxha_lib::app::state::AppContext;
 use axum::middleware::{from_fn, from_fn_with_state};
 
-use bcrypt::hash;
-use lxha_lib::app::state::AppContext;
-
-use axum::extract::State;
-use axum_responses::{AxumResponse, HttpResponse};
-use lxha_lib::app::Context;
-use lxha_lib::models::user::{Role, User};
-use mongodb::bson::oid::ObjectId;
-
 use crate::{
+    middlewares::role::*,
     controllers::account::*,
     controllers::authentication::*,
     middlewares::session::session_validation,
-    middlewares::role::protected_role_validation,
-    middlewares::validations::owner_validation,
 };
-
-pub async fn test_controller(State(ctx): Context) -> AxumResponse {
-
-    let user = User {
-        id: ObjectId::new(),
-        username: "Luciano".into(),
-        email: "mail@mail.com".into(),
-        role: Role::ADMINISTRATOR,
-        password: hash("aaa", 7).unwrap(),
-        validated: true,
-        instances: vec![]
-    };
-
-    ctx.users.create(&user).await?;
-    Ok(HttpResponse::OK)
-}
 
 pub fn auth_router(state: Arc<AppContext>) -> Router<Arc<AppContext>> {
 
     Router::new()
 
-        .route("/register-test", get(test_controller))
-        
         .route("/login", post(login_controller))
 
         .route("/logout", post(logout_controller)
@@ -55,6 +27,7 @@ pub fn auth_router(state: Arc<AppContext>) -> Router<Arc<AppContext>> {
         )
         
         .route("/validate-role", post(authenticate)
+            // .route_layer(from_fn(only_local_network))
             .route_layer(from_fn(protected_role_validation))
             .route_layer(from_fn_with_state(Arc::clone(&state), session_validation))
         )

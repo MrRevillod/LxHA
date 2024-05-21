@@ -30,7 +30,7 @@ root.render(
                         <Route path="/auth/login" element={<LoginPage />} />
                         <Route path="/auth/reset-password" element={<MainLayout><ForgotPasswordRequestPage /></MainLayout>} />
                     </Route>
-                    
+
                     <Route path="/auth/reset-password/:id/:token" element={<MainLayout> <ForgotPasswordPage /></MainLayout>} />
 
                     <Route element={<ProtectedRoute protectedBy="session" />}>

@@ -1,3 +1,4 @@
+use reqwest::Error;
 use std::ops::Deref;
 use crate::models::{
     InstanceData,
@@ -5,7 +6,6 @@ use crate::models::{
 };
 
 use lxha_lib::app::constants::INCUS_API;
-use axum_responses::{AxumResult, HttpResponse};
 
 use super::{
     get_client,
@@ -18,8 +18,16 @@ use super::{
         OpsMetadata,
     }
 };
-
-pub async fn new_instance(instance: InstanceData, config: InstanceConfig) -> AxumResult<(u16, String)> {
+/*
+                                       \"devices\":{{\
+                                           \"root\":{{\
+                                               \"path\":\"/\",\
+                                               \"size\":\"{}GiB\",\
+                                               \"type\":\"disk\"\
+                                           }}\
+                                        }},\
+*/
+pub async fn new_instance(instance: InstanceData, config: InstanceConfig) -> Result<(u16, String), Error> {
 
     let client = get_client()?;
 
@@ -35,7 +43,7 @@ pub async fn new_instance(instance: InstanceData, config: InstanceConfig) -> Axu
                                        \"devices\":{{\
                                            \"root\":{{\
                                                \"path\":\"/\",\
-                                               \"pool\":\"incus-ceph-pool\",\
+                                               \"pool\":\"ceph-pool\",\
                                                \"type\":\"disk\",\
                                                \"size\":\"{}GiB\"\
                                            }}\
@@ -59,17 +67,15 @@ pub async fn new_instance(instance: InstanceData, config: InstanceConfig) -> Axu
                                        \"type\":\"{}\"}}",
                                     config.cpu, config.memory, config.storage,
                                     instance.name, instance.r#type);
-    // println!("{}", template_instance);
 
     let instance_status = post_wrap(client.clone(), template_instance, url)
         .await?
         .json::<ApiResponse::<InstanceCreated>>()
-        .await
-        .unwrap();
+        .await?;
 
-    println!("\nCreando instancia: {:?}", instance_status);
+    println!("{:#?}", instance_status);
 
-    url = format!("{}/1.0/operations/{}", INCUS_API.deref(),
+    url = format!("{}/1.0/operations/{}/wait", INCUS_API.deref(),
         match instance_status.metadata {
             Some(meta) => meta.id,
             None => "".to_string()
@@ -79,10 +85,9 @@ pub async fn new_instance(instance: InstanceData, config: InstanceConfig) -> Axu
     let response = get_wrap(client.clone(), url)
         .await?
         .json::<ApiResponseOps::<OpsMetadata>>()
-        .await
-        .unwrap();
+        .await?;
 
-    println!("Instancia creada: {:?}", response);
+    println!("{:#?}", response);
 
     Ok((response.status_code, match response.metadata {
         Some(meta) => meta.description,

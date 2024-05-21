@@ -37,12 +37,12 @@ export const LoadingWrapper = () => {
     const { isLoading } = useHttpStore()
     const { isAuthenticated } = useAuth()
 
-    if (isAuthenticated) {
-        return <Navigate to="/dashboard" replace />
-    }
-
     if (isLoading) {
         return <Loading />
+    }
+
+    if (isAuthenticated) {
+        return <Navigate to="/dashboard" replace />
     }
 
     return <Outlet />
