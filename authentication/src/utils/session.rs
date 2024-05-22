@@ -1,5 +1,5 @@
 
-use cookie::{Cookie, SameSite};
+use cookie::Cookie ;
 use chrono::{Utc, Duration as ChronoDuration};
 use axum_responses::{AxumResult, HttpResponse};
 
@@ -30,7 +30,8 @@ pub fn decode_jwt(token: &String, secret: &String) -> AxumResult<JwtPayload> {
         &Validation::default()
     );
 
-    if let Err(_) = payload {
+    if let Err(e) = payload {
+        dbg!(&e);
         return Err(HttpResponse::UNAUTHORIZED)
     }
 
@@ -55,7 +56,8 @@ pub fn new_token_from_refresh(refresh_token: &String) -> AxumResult<(String, Str
 
     let new_payload = JwtPayload { 
         id: payload.id.clone(), 
-        email: payload.email, 
+        email: payload.email,
+        role: payload.role,
         exp
     };
 
@@ -75,18 +77,19 @@ pub fn new_token(kind: &str, user: &User, key: &String) -> AxumResult<String> {
     let payload = JwtPayload { 
         id: user.id.to_hex(), 
         email: user.email.clone(),
+        role: user.role.clone(),
         exp: exp.timestamp() as usize
     };
 
-    Ok(sign_jwt(payload, key))?
+    Ok(sign_jwt(payload, key)?)
 }
 
 pub fn new_cookie(kind: &str, name: &str, value: Option<&String>) -> Cookie<'static> {
 
     let exp = match kind {
-        "SESSION" => time::Duration::minutes(60),
+        "SESSION" => time::Duration::minutes(120),
         "REFRESH" => time::Duration::days(7),
-        _ => panic!("Invalid type of cookie")
+        _         => panic!("Invalid type of cookie")
     };
 
     let value = match value {
@@ -96,10 +99,19 @@ pub fn new_cookie(kind: &str, name: &str, value: Option<&String>) -> Cookie<'sta
 
     let mut cookie = Cookie::new(name, value);
 
-    cookie.set_http_only(true);
-    cookie.set_secure(true);
+    match kind {
+        
+        "SESSION" => {
+            cookie.set_http_only(false);
+        },
+        
+        "REFRESH" => {
+            cookie.set_http_only(true);
+        },
+        _         => panic!("Invalid type of cookie")
+    }
+    
     cookie.set_path("/");
     cookie.set_max_age(exp);
-
     cookie.into_owned()
 }

@@ -1,5 +1,4 @@
-
-# Uncomment the service that you wanna run
+#!/bin/bash
 
 alacritty -e fish -c 'cd frontend/ && pnpm run dev; exec fish' &
 alacritty -e fish -c 'cd mailer/ && pnpm run dev; exec fish' &

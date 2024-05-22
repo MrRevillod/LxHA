@@ -19,7 +19,6 @@ pub struct User {
     pub username: String,
     pub email: String,
     pub password: String,
-    pub validated: bool,
     pub role: Role,
     pub instances: Vec<ObjectId>,
 }
@@ -30,7 +29,6 @@ pub struct Profile {
     pub id: ObjectId,
     pub username: String,
     pub email: String,
-    pub validated: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -39,7 +37,6 @@ pub struct ProfileWithInstance {
     pub id: ObjectId,
     pub username: String,
     pub email: String,
-    pub validated: bool,
     pub instances: Vec<Instance>,
 }
 
@@ -51,7 +48,6 @@ impl User {
             id: self.id,
             username: self.username.clone(),
             email: self.email.clone(),
-            validated: self.validated.clone()
         }
     }
     
@@ -61,7 +57,6 @@ impl User {
             id: self.id,
             username: self.username.clone(),
             email: self.email.clone(),
-            validated: self.validated.clone()
         };
 
         profile.to_json()

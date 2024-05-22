@@ -19,7 +19,12 @@ use axum::{
 pub async fn session_validation(cookies: Cookies, 
     State(ctx): Context, mut req: Request, next: Next) -> Result<MwResponse, HttpResponse> {
 
-    let mut token = cookies.get("token").map(|cookie| cookie.value().to_string());
+    let mut token = cookies.get("session").map(|cookie| cookie.value().to_string());
+    let refresh = cookies.get("refresh").map(|cookie| cookie.value().to_string());
+
+    if refresh.is_none() {
+        return Err(HttpResponse::UNAUTHORIZED)
+    }
 
     let user_id = match &token {
         
@@ -33,7 +38,7 @@ pub async fn session_validation(cookies: Cookies,
             };
 
             let (new_token, user_id) = new_token_from_refresh(&refresh_token)?;
-            let session_cookie = new_cookie("SESSION", "token", Some(&new_token));
+            let session_cookie = new_cookie("SESSION", "session", Some(&new_token));
 
             cookies.add(session_cookie);
 
@@ -48,12 +53,13 @@ pub async fn session_validation(cookies: Cookies,
 
     let id = oid_from_str(&user_id)?;
 
-    let user = match ctx.users.find_one_by_id(&id).await {
-        Ok(user) => user,
-        Err(_)   => return Err(HttpResponse::UNAUTHORIZED)
+    let user = match ctx.users.find_one_by_id(&id).await? {
+        Some(user) => user,
+        None   => return Err(HttpResponse::UNAUTHORIZED)
     };
 
-    req.extensions_mut().insert(user.unwrap());
+    req.extensions_mut().insert(id);
+    req.extensions_mut().insert(user);
     req.extensions_mut().insert(token.unwrap());
 
     Ok(next.run(req).await)

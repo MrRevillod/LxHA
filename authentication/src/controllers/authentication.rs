@@ -25,15 +25,11 @@ pub async fn login_controller(cookies: Cookies,
     if !verify(&body.password, &user.password).unwrap() {
         return Err(HttpResponse::CUSTOM(401, "Invalid credentials"))
     }
-
-    if !user.validated {
-        return Err(HttpResponse::CUSTOM(401, "Account not validated"))
-    }
     
     let token = new_token("SESSION", &user, &JWT_SECRET)?;
     let refresh = new_token("REFRESH", &user, &JWT_SECRET)?;
 
-    let session_cookie = new_cookie("SESSION", "token", Some(&token));
+    let session_cookie = new_cookie("SESSION", "session", Some(&token));
     let refresh_cookie = new_cookie("REFRESH", "refresh", Some(&refresh));
 
     cookies.add(session_cookie);
@@ -54,7 +50,7 @@ pub async fn logout_controller(cookies: Cookies,
 
     let refresh_token = match refresh_cookie {
         Some(refresh_token) => refresh_token,
-        None => return Err(HttpResponse::UNAUTHORIZED)
+        None => String::new()
     };
 
     let mut token_struct = Token {
@@ -65,7 +61,7 @@ pub async fn logout_controller(cookies: Cookies,
     token_struct.token = refresh_token;
     ctx.tokens.save(&token_struct).await?;
 
-    let session_cookie = new_cookie("SESSION", "token", None);
+    let session_cookie = new_cookie("SESSION", "session", None);
     let refresh_cookie = new_cookie("REFRESH", "refresh", None);
 
     cookies.remove(session_cookie);

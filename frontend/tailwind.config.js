@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-import daisyui from 'daisyui'
 export default {
   content: [
     "./index.html",
@@ -7,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        'primary': '#3873F2',
+      },
+
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
@@ -20,7 +23,5 @@ export default {
       },
     },
   },
-  plugins: [
-    daisyui
-  ],
+  plugins: [],
 }

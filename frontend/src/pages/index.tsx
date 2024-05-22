@@ -5,7 +5,11 @@ import { MainLayout } from "../layouts/MainLayout"
 import { LandingPage } from "./Landing"
 import { NotFoundPage } from "./404"
 import { DashboardPage } from "./Dashboard"
-import { ForgotPasswordPage, ForgotPasswordRequestPage } from "./auth/ResetPassword"
+import { ForgotPasswordPage } from "./auth/ResetPassword"
+import { ForgotPasswordRequestPage } from "./auth/RequestResetPassword"
+import { AnalitycsPage } from "./Analitycs"
+import { UsersPage } from "./Users"
+import { InstancesPage } from "./Instances"
 
 export {
     Loading,
@@ -16,4 +20,7 @@ export {
     ForgotPasswordPage,
     ForgotPasswordRequestPage,
     MainLayout,
+    AnalitycsPage,
+    UsersPage,
+    InstancesPage
 }

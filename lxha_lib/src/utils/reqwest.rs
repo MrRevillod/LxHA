@@ -1,42 +1,69 @@
 
-use serde_json::{Value, to_vec};
+use serde_json::Value;
+use tower_cookies::Cookies;
+use std::{ops::Deref, sync::Arc};
 
 use reqwest::{
-    Body, Client, Response,
-    header::{HeaderMap, HeaderValue}, 
+    Body, Client, Response, Url,
+    cookie::Jar, header::CONTENT_TYPE, 
 };
 
-use crate::app::constants::SERVICES;
-
-/// Sends an HTTP request to the the *url* with the *method* and *body* provided
-/// Used by comunication between microservices
+use crate::app::constants::{AUTH_SERVICE_URL, SERVICES};
 
 pub async fn http_request(service: &'static str, 
-    endpoint: &'static str, method: &str, body: Value) -> Response {
+    endpoint: &'static str, method: &str, cookies: Option<Arc<Jar>>, body: Value) -> Response {
 
-    let app_json = HeaderValue::from_static("application/json");
-    let mut headers: HeaderMap = HeaderMap::new();
+    let mut client_builder = Client::builder();
 
-    headers.insert("Content-Type", app_json);
+    if let Some(cookies) = cookies {
+        client_builder = client_builder
+        .cookie_store(true)
+            .cookie_provider(Arc::clone(&cookies))
+        ;
+    }
 
+    let client = client_builder.build().unwrap();
+    let body = Body::from(serde_json::to_vec(&body).unwrap());
     let url = format!("{}{}", SERVICES.get(&service).unwrap(), endpoint);
-
-    let client = Client::new();
-    let body = Body::from(to_vec(&body).unwrap());
 
     match method {
 
         "GET" => client
-            .get(url)
-            .headers(headers)
+            .get(&url)
+            .header(CONTENT_TYPE, "application/json")
             .send().await.unwrap(),
 
         "POST" => client
-            .post(url)
-            .headers(headers)
+            .post(&url)
+            .header(CONTENT_TYPE, "application/json")
             .body(body)
             .send().await.unwrap(),
 
         _ => panic!("Method not allowed")
     }
+}
+
+pub fn parse_cookies(cookies: Cookies) -> Arc<Jar> {
+
+    let cookie_jar = Jar::default();
+
+    let token_value = cookies.get("session").map(|cookie| cookie.value().to_string());
+    let refresh_value = cookies.get("refresh").map(|cookie| cookie.value().to_string());
+
+    dbg!(token_value.as_ref());
+    dbg!(refresh_value.as_ref());
+
+    let url = Url::parse(AUTH_SERVICE_URL.deref()).unwrap();
+
+    if token_value.is_some() {
+        let token_cookie = format!("session={}", token_value.unwrap());
+        cookie_jar.add_cookie_str(&token_cookie, &url);
+    }
+
+    if refresh_value.is_some() {
+        let refresh_cookie = format!("refresh={}", refresh_value.unwrap());
+        cookie_jar.add_cookie_str(&refresh_cookie, &url);
+    }
+
+    Arc::new(cookie_jar)
 }

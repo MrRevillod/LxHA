@@ -1,84 +1,66 @@
 
+import { For } from "./ui/For"
+import { Link } from "react-router-dom"
+import { ROLE } from "../lib/types"
 import { useAuth } from "../store/AuthContext"
-import { Link, useLocation } from "react-router-dom"
+import { useAppStore } from "../store/AppStore"
 
-import "../index.css"
+const NavbarLinks = [
+    { title: "Analitycs", to: "/analitycs", icon: "bi bi-bar-chart-fill", protected: false },
+    { title: "Instances", to: "/instances", icon: "bi bi-boxes", protected: true },
+    { title: "Dashboard", to: "/dashboard", icon: "bi bi-kanban", protected: false },
+    { title: "Users", to: "/users", icon: "bi bi-people-fill", protected: true },
+]
+
+interface NavbarLinkProps {
+    to: string,
+    title: string,
+    icon: string,
+    hidden: boolean
+}
+
+const NavbarLink = ({ to, title, icon, hidden }: NavbarLinkProps) => {
+
+    const { role } = useAuth()
+    const { pageTitle, setPageTitle } = useAppStore()
+
+    const classes = `${pageTitle === title ? "bg-neutral-300 bg-opacity-50" : "hover:bg-primary"}
+        px-4 py-3 rounded-md text-white text-2xl ${hidden && role === ROLE.USER ? "hidden" : "flex"}
+    `
+
+    return (
+        <Link to={to} title={title} className={classes} onClick={() => setPageTitle(title)}>
+            <i className={icon}></i>
+        </Link>
+    )
+}
 
 export const Navbar = () => {
 
-    const location = useLocation()
-    const isDashboardOrHome = location.pathname === "/" || location.pathname === "/dashboard"
-
-    const { isAuthenticated, useLogout } = useAuth()
+    const { useLogout } = useAuth()
+    const handleLogout = async () => await useLogout()
 
     return (
 
-        <div className="navbar bg-neutral-950 py-8 px-6 md:px-12 lg:px-28 fixed top-0 w-full z-50 h-28">
-            <div className="flex-1">
+        <nav className="h-full w-28 px-4 py-12 flex flex-col items-center justify-between bg-primary">
 
-                {isDashboardOrHome && (
-
-                    <div className="flex flex-row gap-4">
-                        <Link
-                            to="/"
-                            className="
-                            text-neutral-300 font-bold text-2xl hover:text-neutral-400 transition duration-200
-                        "
-                        >
-                            Lxd High Av
-
-                        </Link>
-
-                        <Link
-                            to="/auth/login"
-                            className="
-                            text-neutral-300 font-bold text-2xl hover:text-neutral-400 transition duration-200
-                        ">
-                            Go to login
-                        </Link>
-                    </div>
-                )}
-
-                {!isDashboardOrHome && (
-
-                    <Link
-                        to="/dashboard"
-                        className="
-                            text-neutral-300 flex items-center justify-center font-semibold 
-                            text-xl hover:text-neutral-400 transition duration-200 back
-                        "
-                    >
-
-                        volver
-
-                    </Link>
-                )}
-
+            <div>
+                <i className="bi bi-box text-white text-4xl"></i>
             </div>
-            <div className="flex-none">
 
-                {isAuthenticated && (
-                    <>
-                        <button onClick={useLogout}
-                            className="bg-neutral-100 rounded-lg px-8 py-2 text-neutral-950 font-bold text-md">
-                            Cerrar sesión
-                        </button>
-                    </>
-                )}
-
-                {!isAuthenticated && (
-
-                    <Link
-                        to="/auth/login"
-                        className="bg-neutral-100 rounded-lg px-8 py-2 text-neutral-950 font-bold text-md"
-                    >
-                        Iniciar sesión
-
-                    </Link>
-                )}
-
+            <div className="flex flex-col gap-8">
+                <For of={NavbarLinks} render={(link, index) => (
+                    <NavbarLink key={index} to={link.to} title={link.title} icon={link.icon} hidden={link.protected} />
+                )} />
             </div>
-        </div >
+
+            <div>
+                <button type="button" onClick={() => handleLogout()}>
+                    <i className="bi bi-box-arrow-left text-white text-2xl"></i>
+                </button>
+            </div>
+
+        </nav>
     )
 }
 

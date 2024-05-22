@@ -1,14 +1,14 @@
 
 import { api } from "../lib/axios"
-import { User } from "../lib/types"
 import { create } from "zustand"
+import { ROLE, RegisterData, User } from "../lib/types"
 
 interface UserStore {
 
     user: User | null,
     setUser: (user: User | null) => void,
-    createUser: (user: User) => Promise<void>,
-    updateUser: (id: string, updateFields: User) => Promise<void>,
+    createUser: () => Promise<void>,
+    updateUser: () => Promise<void>,
     deleteUser: (id: string) => Promise<void>,
 }
 
@@ -18,23 +18,38 @@ export const useUserStore = create<UserStore>((set) => ({
 
     setUser: (user: User | null) => set({ user }),
 
-    createUser: async (user: User) => {
+    createUser: async () => {
+
+        const userData: RegisterData = {
+            email: "mail_test@mail.com",
+            username: "test_user",
+            role: ROLE.ADMINISTRATOR,
+            password: "aaa",
+            confirmPassword: "aaa"
+        }
+
+        console.log("userData: ", userData)
 
         try {
 
-            await api.post("/users/register-account", user)
+            await api.post("/dashboard/user/register-account", userData)
 
         } catch (error: any) {
-
             console.error(error)
         }
     },
 
-    updateUser: async (id: string, updateFields: any) => {
+    updateUser: async () => {
+
+        const id = "664ba271d0c2f9a2d17bbea0" // replace with your user id
+        const updateFields = {
+            password: "abc",
+            confirmPassword: "abc"
+        }
 
         try {
 
-            await api.put(`/users/update-account/${id}`, updateFields)
+            await api.patch(`/dashboard/user/update-account/${id}`, updateFields)
 
         } catch (error: any) {
 
@@ -46,7 +61,7 @@ export const useUserStore = create<UserStore>((set) => ({
 
         try {
 
-            await api.delete(`/users/delete-account/${id}`)
+            await api.delete(`/dashboard/user/delete-account/${id}`)
 
         } catch (error: any) {
 

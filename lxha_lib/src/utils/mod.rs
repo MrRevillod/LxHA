@@ -1,5 +1,8 @@
 
+pub mod dbg;
 pub mod reqwest;
+pub mod cookies;
+
 use std::str::FromStr;
 
 use axum_responses::{AxumResult, HttpResponse};

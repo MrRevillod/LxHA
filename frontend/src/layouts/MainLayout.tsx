@@ -1,4 +1,5 @@
 
+import { Header } from "../components/Header"
 import { Navbar } from "../components/Navbar"
 import { PropsWithChildren } from "react"
 
@@ -6,13 +7,13 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
 
     return (
 
-        <div className="h-screen w-screen bg-neutral-950 flex flex-col justify-start items-center">
+        <div className="h-screen w-screen bg-neutral-100 flex flex-row">
 
             <Navbar />
 
-            <main className="
-                w-full flex-grow items-center justify-center pt-28 pb-12 px-6 md:px-12 lg:px-28 
-            ">
+            <main className="h-full w-full flex flex-col px-6 md:px-12 lg:px-28 py-8">
+
+                <Header />
 
                 <div className="w-full h-full">
 
