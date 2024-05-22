@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
             setIsAuthenticated(res.status === 200)
             setResponse(res.status, res.data.message, res.data, false)
 
-            await useValidateSession()
+            validateRoles()
 
         } catch (e: any) {
             setIsAuthenticated(false)
@@ -139,6 +139,22 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         } finally { setIsLoading(false) }
     }
 
+    const validateRoles = () => {
+
+        try {
+
+            const sessionToken = Cookies.get("session") || ""
+            const payload = jwtDecode<JwtPayload>(sessionToken)
+
+            setRole(payload.role)
+
+        } catch (error: any) {
+            setRole(null)
+            setIsAuthenticated(false)
+            setResponse(error.response.status, error.response.data.message, error.response.data, false)
+        }
+    }
+
     const useValidateSession = async () => {
 
         setIsLoading(true)
@@ -146,26 +162,26 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
         try {
 
-            const sessionToken = Cookies.get("session")
-
-            if (!sessionToken) return setIsAuthenticated(false)
-
             const res = await api.post("/auth/validate-session")
-            const payload = jwtDecode<JwtPayload>(sessionToken)
 
-            setRole(payload.role)
+            validateRoles()
+
             setUser(res.data.user)
             setIsAuthenticated(res.status === 200)
 
-        } catch (e: any) {
+        } catch (error: any) {
             setRole(null)
             setIsAuthenticated(false)
-            setResponse(e.response.status, e.response.data.message, e.response.data, true)
+            setResponse(error.response.status, error.response.data.message, error.response.data, false)
 
         } finally { setIsCheckingSession(false); setIsLoading(false) }
     }
 
-    useEffect(() => { useValidateSession() }, [])
+    useEffect(() => {
+
+        useValidateSession()
+
+    }, [])
 
     const value: AuthStoreType = {
         isAuthenticated,

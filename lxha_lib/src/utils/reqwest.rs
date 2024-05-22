@@ -47,16 +47,23 @@ pub fn parse_cookies(cookies: Cookies) -> Arc<Jar> {
 
     let cookie_jar = Jar::default();
 
-    let token_value = cookies.get("session").map_or(String::new(), |cookie| cookie.value().to_string());
-    let refresh_value = cookies.get("refresh").map_or(String::new(), |cookie| cookie.value().to_string());
+    let token_value = cookies.get("session").map(|cookie| cookie.value().to_string());
+    let refresh_value = cookies.get("refresh").map(|cookie| cookie.value().to_string());
 
-    let token_cookie = format!("session={}", token_value);
-    let refresh_cookie = format!("refresh={}", refresh_value);
+    dbg!(token_value.as_ref());
+    dbg!(refresh_value.as_ref());
 
     let url = Url::parse(AUTH_SERVICE_URL.deref()).unwrap();
 
-    cookie_jar.add_cookie_str(&token_cookie, &url);
-    cookie_jar.add_cookie_str(&refresh_cookie, &url);
+    if token_value.is_some() {
+        let token_cookie = format!("session={}", token_value.unwrap());
+        cookie_jar.add_cookie_str(&token_cookie, &url);
+    }
+
+    if refresh_value.is_some() {
+        let refresh_cookie = format!("refresh={}", refresh_value.unwrap());
+        cookie_jar.add_cookie_str(&refresh_cookie, &url);
+    }
 
     Arc::new(cookie_jar)
 }

@@ -50,7 +50,7 @@ pub async fn logout_controller(cookies: Cookies,
 
     let refresh_token = match refresh_cookie {
         Some(refresh_token) => refresh_token,
-        None => return Err(HttpResponse::UNAUTHORIZED)
+        None => String::new()
     };
 
     let mut token_struct = Token {

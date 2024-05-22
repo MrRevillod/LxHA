@@ -28,12 +28,12 @@ export const ForgotPasswordRequestPage = () => {
 
     return (
 
-        <div className="w-full h-full flex flex-col justify-start items-center">
+        <div className="w-full h-full flex flex-col justify-center items-center">
 
             {isLoading && (<Spinner classes={"z-10 fixed opacity-100"} />)}
 
-            <div className="w-5/6 md:w-2/3 lg:w-1/3 h-full flex flex-col justify-center items-center -mt-8">
-                <h1 className="text-3xl font-bold text-neutral-100 text-center mt-4">
+            <div className="w-5/6 md:w-2/3 lg:w-1/3 h-1/2 rounded-md flex flex-col justify-center items-center -mt-8 shadow-lg">
+                <h1 className="text-3xl font-bold text-neutral-950 text-center mt-4">
                     Restablecer contraseña
                 </h1>
                 <form className="flex flex-col gap-4 p-8 w-full" onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}>
@@ -47,7 +47,7 @@ export const ForgotPasswordRequestPage = () => {
 
                     <button
                         type="submit"
-                        className="bg-neutral-100 text-neutral-950 rounded-lg p-2 font-bold mt-4"
+                        className="bg-primary text-neutral-100 rounded-lg p-2 font-bold mt-4"
                     >
                         Enviar
                     </button>

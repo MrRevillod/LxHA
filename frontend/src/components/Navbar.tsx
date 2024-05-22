@@ -1,10 +1,9 @@
 
-import { Link } from "react-router-dom"
-import { useAuth } from "../store/AuthContext"
-
-import "../index.css"
 import { For } from "./ui/For"
+import { Link } from "react-router-dom"
 import { ROLE } from "../lib/types"
+import { useAuth } from "../store/AuthContext"
+import { useAppStore } from "../store/AppStore"
 
 const NavbarLinks = [
     { title: "Analitycs", to: "/analitycs", icon: "bi bi-bar-chart-fill", protected: false },
@@ -23,14 +22,14 @@ interface NavbarLinkProps {
 const NavbarLink = ({ to, title, icon, hidden }: NavbarLinkProps) => {
 
     const { role } = useAuth()
+    const { pageTitle, setPageTitle } = useAppStore()
 
-    const classes = `
-        text-white text-2xl
-        ${hidden && role === ROLE.USER ? "hidden" : "flex"}
+    const classes = `${pageTitle === title ? "bg-neutral-300 bg-opacity-50" : "hover:bg-primary"}
+        px-4 py-3 rounded-md text-white text-2xl ${hidden && role === ROLE.USER ? "hidden" : "flex"}
     `
 
     return (
-        <Link to={to} title={title} className={classes}>
+        <Link to={to} title={title} className={classes} onClick={() => setPageTitle(title)}>
             <i className={icon}></i>
         </Link>
     )
@@ -39,12 +38,11 @@ const NavbarLink = ({ to, title, icon, hidden }: NavbarLinkProps) => {
 export const Navbar = () => {
 
     const { useLogout } = useAuth()
-
     const handleLogout = async () => await useLogout()
 
     return (
 
-        <nav className="h-full w-28 px-4 py-8 flex flex-col items-center justify-between bg-primary ">
+        <nav className="h-full w-28 px-4 py-12 flex flex-col items-center justify-between bg-primary">
 
             <div>
                 <i className="bi bi-box text-white text-4xl"></i>

@@ -36,14 +36,14 @@ export const ProtectedRoute = ({ protectedBy, redirectTo = "/auth/login" }: Prot
 export const LoadingWrapper = () => {
 
     const { isLoading } = useHttpStore()
-    // const { isAuthenticated } = useAuth()
-
-    // if (isAuthenticated) {
-    //     return <Navigate to="/dashboard" replace />
-    // }
+    const { isAuthenticated } = useAuth()
 
     if (isLoading) {
         return <Loading />
+    }
+
+    if (isAuthenticated) {
+        return <Navigate to="/dashboard" replace />
     }
 
     return <Outlet />

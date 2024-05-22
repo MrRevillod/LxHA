@@ -11,10 +11,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 
 import {
     LandingPage, LoginPage, ForgotPasswordPage, NotFoundPage,
-    ForgotPasswordRequestPage, DashboardPage
+    ForgotPasswordRequestPage, DashboardPage,
+    AnalitycsPage,
+    UsersPage,
+    InstancesPage
 } from "./pages"
 
 import { LoadingWrapper, ProtectedRoute } from "./router"
+import { SimpleLayout } from "./layouts/SimpleLayout"
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 
@@ -22,26 +26,42 @@ root.render(
 
     <>
         <AuthProvider>
+
             <BrowserRouter>
+
                 <Routes>
 
-                    <Route path="/" element={<MainLayout><LandingPage /></MainLayout>} />
+                    <Route path="/" element={<LandingPage />} />
 
                     <Route element={<LoadingWrapper />}>
-                        <Route path="/auth/login" element={<LoginPage />} />
-                        <Route path="/auth/reset-password" element={<MainLayout><ForgotPasswordRequestPage /></MainLayout>} />
+                        <Route path="/auth/login"
+                            element={<SimpleLayout><LoginPage /></SimpleLayout>}
+                        />
+                        <Route path="/auth/reset-password"
+                            element={<SimpleLayout><ForgotPasswordRequestPage /></SimpleLayout>}
+                        />
                     </Route>
 
-                    <Route path="/auth/reset-password/:id/:token" element={<MainLayout> <ForgotPasswordPage /></MainLayout>} />
+                    <Route path="/auth/reset-password/:id/:token"
+                        element={<SimpleLayout> <ForgotPasswordPage /></SimpleLayout>}
+                    />
 
                     <Route element={<ProtectedRoute protectedBy="session" />}>
                         <Route path="/dashboard" element={<MainLayout><DashboardPage /></MainLayout>} />
+                        <Route path="/analitycs" element={<MainLayout><AnalitycsPage /></MainLayout>} />
                     </Route>
 
-                    <Route path="*" element={<MainLayout> <NotFoundPage /> </MainLayout>} />
+                    <Route element={<ProtectedRoute protectedBy="role" />}>
+                        <Route path="/users" element={<MainLayout><UsersPage /></MainLayout>} />
+                        <Route path="/instances" element={<MainLayout><InstancesPage /></MainLayout>} />
+                    </Route>
+
+                    <Route path="*" element={<SimpleLayout> <NotFoundPage /> </SimpleLayout>} />
 
                 </Routes>
+
             </BrowserRouter>
+
         </AuthProvider>
 
         <Toaster />

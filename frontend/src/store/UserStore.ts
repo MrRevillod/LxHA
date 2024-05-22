@@ -35,7 +35,6 @@ export const useUserStore = create<UserStore>((set) => ({
             await api.post("/dashboard/user/register-account", userData)
 
         } catch (error: any) {
-
             console.error(error)
         }
     },

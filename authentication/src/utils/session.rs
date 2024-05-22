@@ -30,7 +30,8 @@ pub fn decode_jwt(token: &String, secret: &String) -> AxumResult<JwtPayload> {
         &Validation::default()
     );
 
-    if let Err(_) = payload {
+    if let Err(e) = payload {
+        dbg!(&e);
         return Err(HttpResponse::UNAUTHORIZED)
     }
 
@@ -86,7 +87,7 @@ pub fn new_token(kind: &str, user: &User, key: &String) -> AxumResult<String> {
 pub fn new_cookie(kind: &str, name: &str, value: Option<&String>) -> Cookie<'static> {
 
     let exp = match kind {
-        "SESSION" => time::Duration::minutes(60),
+        "SESSION" => time::Duration::minutes(120),
         "REFRESH" => time::Duration::days(7),
         _         => panic!("Invalid type of cookie")
     };
@@ -102,18 +103,15 @@ pub fn new_cookie(kind: &str, name: &str, value: Option<&String>) -> Cookie<'sta
         
         "SESSION" => {
             cookie.set_http_only(false);
-            cookie.set_secure(false);
         },
         
         "REFRESH" => {
             cookie.set_http_only(true);
-            cookie.set_secure(true);
         },
         _         => panic!("Invalid type of cookie")
     }
-
+    
     cookie.set_path("/");
     cookie.set_max_age(exp);
-
     cookie.into_owned()
 }
