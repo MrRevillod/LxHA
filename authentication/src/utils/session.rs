@@ -30,8 +30,7 @@ pub fn decode_jwt(token: &String, secret: &String) -> AxumResult<JwtPayload> {
         &Validation::default()
     );
 
-    if let Err(e) = payload {
-        dbg!(&e);
+    if let Err(_) = payload {
         return Err(HttpResponse::UNAUTHORIZED)
     }
 

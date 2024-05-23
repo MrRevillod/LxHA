@@ -1,28 +1,17 @@
 
-import { z } from "zod"
+import { Input } from "../ui/Input"
+import { useAuth } from "../../store/AuthContext"
+import { LoginData } from "../../lib/types"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { loginFormSchema } from "../../lib/schemas"
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
 
-import { Input } from "./ui/Input"
-import { useAuth } from "../store/AuthContext"
-import { LoginData } from "../lib/types"
-
-import "../index.css"
-
-const formSchema = z.object({
-
-    email: z.string()
-        .min(1, { message: "The email adress is required" })
-        .email({ message: "Invalid email adress" }),
-
-    password: z.string()
-        .min(1, { message: "The password is required" })
-})
+import "../../index.css"
 
 export const LoginForm = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm({
-        resolver: zodResolver(formSchema)
+        resolver: zodResolver(loginFormSchema)
     })
 
     const { useLogin } = useAuth()
@@ -33,14 +22,14 @@ export const LoginForm = () => {
 
     return (
 
-        <div className="flex flex-col w-2/6 h-3/4 items-center justify-center gap-8 px-16 border-1 border-neutral-300">
+        <div className="-mt-8 w-2/6 h-3/4 form">
 
             <div className="flex flex-col items-center gap-2">
-                <h2 className="text-3xl font-bold text-neutral-950 text-center">
+                <h2 className="text-4xl font-bold text-primary text-center">
                     Login
                 </h2>
 
-                <p className="text-center font-light text-neutral-900 text-sm">
+                <p className="text-center font-normal text-neutral-900 text-sm">
                     Enjoy the full experience of Lx High Availability.
                 </p>
             </div>
@@ -63,13 +52,14 @@ export const LoginForm = () => {
                 />
 
                 <button type="submit"
-                    className="bg-primary text-neutral-100 rounded-lg p-2 h-12 font-bold mt-4"
+                    className="bg-primary text-neutral-100 rounded-lg p-2 h-11 font-bold mt-4"
                 >
                     Login
 
                 </button>
 
             </form>
+
         </div>
     )
 }

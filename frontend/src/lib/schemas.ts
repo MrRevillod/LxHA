@@ -19,7 +19,7 @@ export const registerSchema = z.object({
         .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
         .max(30, { message: "La contraseña debe tener menos de 30 caracteres" })
         .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,30}$/, { message: "La contraseña debe tener al menos un número, una letra mayúscula, una minúscula y un carácter especial" }),
-    
+
     confirmPassword: z.string()
         .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
         .max(30, { message: "La contraseña debe tener menos de 30 caracteres" })
@@ -27,43 +27,43 @@ export const registerSchema = z.object({
 
 })
 
-.refine((data) => data.password === data.confirmPassword, {
-    message: "Las contraseñas no coinciden",
-    path: ["confirmPassword"],
-})
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Las contraseñas no coinciden",
+        path: ["confirmPassword"],
+    })
 
 export const profileSchema = z.object({
-    
-    name: 
+
+    name:
         z.optional(z.string()).or(
             z.string()
                 .min(5, { message: "El nombre debe tener al menos 5 caracteres" })
                 .max(30, { message: "El nombre debe tener menos de 30 caracteres" })
         ),
 
-    username: 
+    username:
         z.optional(z.string()).or(
             z.string()
                 .min(5, { message: "El apodo debe tener al menos 5 caracteres" })
                 .max(20, { message: "El apodo debe tener menos de 30 caracteres" })
         ),
 
-    email: 
+    email:
         z.optional(z.string()).or(
             z.string()
                 .email({ message: "El email no es válido" })
                 .max(50, { message: "El email debe tener menos de 50 caracteres" })
         ),
 
-    password: 
+    password:
         z.optional(z.string()).or(
             z.string()
                 .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
                 .max(30, { message: "La contraseña debe tener menos de 30 caracteres" })
                 .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,30}$/, { message: "La contraseña debe tener al menos un número, una letra mayúscula, una minúscula y un carácter especial" })
         ),
-    
-    confirmPassword: 
+
+    confirmPassword:
         z.optional(z.string()).or(
             z.string()
                 .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
@@ -72,7 +72,40 @@ export const profileSchema = z.object({
         )
 })
 
-.refine((data) => !data.password || (data.password === data.confirmPassword), {
-    message: "Las contraseñas no coinciden",
-    path: ["confirmPassword"],
+    .refine((data) => !data.password || (data.password === data.confirmPassword), {
+        message: "Las contraseñas no coinciden",
+        path: ["confirmPassword"],
+    })
+
+export const emailSchema = z.object({
+    email: z.string()
+        .min(1, { message: "El correo electrónico es requerido" })
+        .email({ message: "El correo electrónico no es válido" }),
+})
+
+export const passwordSchema = z.object({
+    password: z.string()
+        .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
+        .max(30, { message: "La contraseña debe tener menos de 30 caracteres" })
+        .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,30}$/, { message: "La contraseña debe tener al menos un número, una letra mayúscula, una minúscula y un carácter especial" }),
+
+    confirmPassword: z.string()
+        .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
+        .max(30, { message: "La contraseña debe tener menos de 30 caracteres" })
+        .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,30}$/, { message: "La contraseña debe tener al menos un número, una letra mayúscula, una minúscula y un carácter especial" })
+})
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Las contraseñas no coinciden",
+        path: ["confirmPassword"],
+    })
+
+
+export const loginFormSchema = z.object({
+
+    email: z.string()
+        .min(1, { message: "The email adress is required" })
+        .email({ message: "Invalid email adress" }),
+
+    password: z.string()
+        .min(1, { message: "The password is required" })
 })

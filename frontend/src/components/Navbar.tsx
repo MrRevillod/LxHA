@@ -7,7 +7,7 @@ import { useAppStore } from "../store/AppStore"
 
 const NavbarLinks = [
     { title: "Analitycs", to: "/analitycs", icon: "bi bi-bar-chart-fill", protected: false },
-    { title: "Instances", to: "/instances", icon: "bi bi-boxes", protected: true },
+    { title: "Instances", to: "/instances", icon: "bi bi-pc-display-horizontal", protected: true },
     { title: "Dashboard", to: "/dashboard", icon: "bi bi-kanban", protected: false },
     { title: "Users", to: "/users", icon: "bi bi-people-fill", protected: true },
 ]
@@ -24,7 +24,7 @@ const NavbarLink = ({ to, title, icon, hidden }: NavbarLinkProps) => {
     const { role } = useAuth()
     const { pageTitle, setPageTitle } = useAppStore()
 
-    const classes = `${pageTitle === title ? "bg-neutral-300 bg-opacity-50" : "hover:bg-primary"}
+    const classes = `${pageTitle === title ? "bg-neutral-300 bg-opacity-30" : "hover:bg-primary"}
         px-4 py-3 rounded-md text-white text-2xl ${hidden && role === ROLE.USER ? "hidden" : "flex"}
     `
 
@@ -45,7 +45,7 @@ export const Navbar = () => {
         <nav className="h-full w-28 px-4 py-12 flex flex-col items-center justify-between bg-primary">
 
             <div>
-                <i className="bi bi-box text-white text-4xl"></i>
+                <Link to="/"><i className="bi bi-box text-white text-4xl"></i></Link>
             </div>
 
             <div className="flex flex-col gap-8">

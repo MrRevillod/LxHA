@@ -37,7 +37,7 @@ pub async fn authenticate_by_role(cookies: Cookies,
                 .await.map_err(|e| handle_error(e))?
             ;
 
-            let user = body.get("profile").unwrap().clone();
+            let user = body.get("user").unwrap().clone();
             req.extensions_mut().insert(user);
             Ok(next.run(req).await)
         },
