@@ -1,4 +1,5 @@
 
+import { MainLayout } from "../layouts/MainLayout"
 import { useUserStore } from "../store/UserStore"
 
 export const UsersPage = () => {
@@ -8,16 +9,20 @@ export const UsersPage = () => {
 
     return (
 
-        <div className="w-full h-full flex flex-col gap-4 items-center justify-center text-neutral-950">
+        <MainLayout>
 
-            <h1 className="text-5xl font-bold">Users Page</h1>
+            <div className="w-full h-full flex flex-col gap-4 items-center justify-center text-neutral-950">
 
-            <h2 className="text-neutral-800">This only appears if you're a administrator</h2>
+                <h1 className="text-5xl font-bold">Users Page</h1>
 
-            <button onClick={() => handleCreateUser()} className="w-42 h-12 px-4 mt-4 bg-primary text-white font-bold rounded-md border-none">
-                Create User Tester
-            </button>
+                <h2 className="text-neutral-800">This only appears if you're a administrator</h2>
 
-        </div>
+                <button onClick={() => handleCreateUser()} className="w-42 h-12 px-4 mt-4 bg-primary text-white font-bold rounded-md border-none">
+                    Create User Tester
+                </button>
+
+            </div>
+
+        </MainLayout>
     )
 }

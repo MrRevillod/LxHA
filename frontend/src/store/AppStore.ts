@@ -1,6 +1,7 @@
 
 import { create } from "zustand"
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { toUpperAndLower } from "../lib/string"
 
 interface AppStore {
     pageTitle: string,
@@ -14,7 +15,7 @@ const getInitialPageTitle = () => {
     const pages = ["users", "analytics", "instances", "dashboard"]
 
     if (pages.includes(path)) {
-        return path.charAt(0).toUpperCase() + path.slice(1)
+        return toUpperAndLower(path)
     }
 
     return ""

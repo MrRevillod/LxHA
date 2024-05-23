@@ -50,9 +50,6 @@ pub fn parse_cookies(cookies: Cookies) -> Arc<Jar> {
     let token_value = cookies.get("session").map(|cookie| cookie.value().to_string());
     let refresh_value = cookies.get("refresh").map(|cookie| cookie.value().to_string());
 
-    dbg!(token_value.as_ref());
-    dbg!(refresh_value.as_ref());
-
     let url = Url::parse(AUTH_SERVICE_URL.deref()).unwrap();
 
     if token_value.is_some() {

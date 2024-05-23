@@ -20,7 +20,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
     const { label, type, placeholder, error, name, islogin = false } = props
 
-    const classes = `bg-neutral-100 border-1 border-neutral-500 rounded-lg 
+    const classes = `border-1 border-neutral-500 rounded-lg 
         p-2 focus:outline-none focus:ring-2 focus:ring-neutral-500
         h-12 w-full pl-4 placeholder-neutral-400 text-neutral-950
     `

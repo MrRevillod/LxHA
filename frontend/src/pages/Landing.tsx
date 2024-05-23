@@ -1,15 +1,12 @@
 
 import "../index.css"
-
-import { LandingHeader } from "../components/Header"
+import { MainLayout } from "../layouts/MainLayout"
 
 export const LandingPage = () => {
 
     return (
 
-        <main className="h-screen w-screen flex flex-col px-6 md:px-12 lg:px-28 py-8">
-
-            <LandingHeader />
+        <MainLayout>
 
             <article className="h-full w-full flex flex-row gap-4 items-center">
 
@@ -45,6 +42,6 @@ export const LandingPage = () => {
 
             </article>
 
-        </main>
+        </MainLayout>
     )
 }

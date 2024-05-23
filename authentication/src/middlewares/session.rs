@@ -28,7 +28,28 @@ pub async fn session_validation(cookies: Cookies,
 
     let user_id = match &token {
         
-        Some(token) => decode_jwt(&token, &JWT_SECRET)?.id,
+        Some(session) => {
+            match decode_jwt(&session, &JWT_SECRET) {
+
+                Ok(payload) => payload.id,
+
+                Err(_) => {
+
+                    let refresh_token = match cookies.get("refresh") {
+                        Some(refresh_token) => refresh_token.value().to_string(),
+                        None => return Err(HttpResponse::UNAUTHORIZED)
+                    };
+
+                    let (new_token, user_id) = new_token_from_refresh(&refresh_token)?;
+                    let session_cookie = new_cookie("SESSION", "session", Some(&new_token));
+
+                    cookies.add(session_cookie);
+
+                    token = Some(new_token);
+                    user_id
+                }
+            }
+        },
 
         None => {
 
