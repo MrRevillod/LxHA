@@ -4,8 +4,12 @@ import { Header } from "../components/Header"
 import { Navbar } from "../components/Navbar"
 import { useAuth } from "../store/AuthContext"
 import { PropsWithChildren } from "react"
+import { useLocation } from "react-router-dom"
 
 export const MainLayout = ({ children }: PropsWithChildren) => {
+
+    const location = useLocation()
+    const isRootPage = location.pathname === "/"
 
     const { isAuthenticated } = useAuth()
 
@@ -13,7 +17,7 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
 
         <div className="h-screen w-screen flex flex-row">
 
-            <Show when={isAuthenticated}><Navbar /></Show>
+            <Show when={isAuthenticated && !isRootPage}><Navbar /></Show>
 
             <main className="h-full w-full flex flex-col px-6 md:px-12 lg:px-28 py-8">
 

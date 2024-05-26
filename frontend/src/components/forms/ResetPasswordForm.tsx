@@ -27,7 +27,7 @@ export const ResetPasswordForm = () => {
 
         <div className="w-full h-full flex flex-col items-center justify-center">
 
-            <div className="w-2/6 h-3/4 form">
+            <div className="w-4/6 lg:w-3/6 2xl:w-2/6 h-3/4 form">
 
                 <div className="flex flex-col items-center gap-2">
                     <h2 className="text-4xl font-bold text-primary text-center">
@@ -39,7 +39,8 @@ export const ResetPasswordForm = () => {
                     </p>
                 </div>
 
-                <form className="flex flex-col gap-4 p-8 w-full" onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}>
+                <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}>
+
                     <Input
                         label="Passoword"
                         type="password"
@@ -66,6 +67,5 @@ export const ResetPasswordForm = () => {
 
             </div>
         </div>
-
     )
 }

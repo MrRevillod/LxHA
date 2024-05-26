@@ -1,5 +1,7 @@
 
 import "../index.css"
+
+import { Helmet } from "react-helmet"
 import { MainLayout } from "../layouts/MainLayout"
 
 export const LandingPage = () => {
@@ -7,6 +9,10 @@ export const LandingPage = () => {
     return (
 
         <MainLayout>
+
+            <Helmet>
+                <title>Lx High Availability</title>
+            </Helmet>
 
             <article className="h-full w-full flex flex-row gap-4 items-center">
 

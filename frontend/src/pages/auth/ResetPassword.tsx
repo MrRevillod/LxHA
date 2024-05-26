@@ -1,5 +1,6 @@
 
 import { Show } from "../../components/ui/Show"
+import { Helmet } from "react-helmet"
 import { useAuth } from "../../store/AuthContext"
 import { Loading } from "../Loading"
 import { useParams } from "react-router-dom"
@@ -34,6 +35,10 @@ export const ForgotPasswordPage = () => {
     return (
 
         <MainLayout>
+
+            <Helmet>
+                <title>Lx High Availability - Password Reset</title>
+            </Helmet>
 
             <Show when={status === 200}>
                 <ResetPasswordForm />

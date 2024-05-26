@@ -1,27 +1,49 @@
 
+import { For } from "../components/ui/For"
+import { Table } from "../components/Table"
+import { Helmet } from "react-helmet"
+import { useEffect } from "react"
 import { MainLayout } from "../layouts/MainLayout"
 import { useUserStore } from "../store/UserStore"
 
 export const UsersPage = () => {
 
-    const { createUser } = useUserStore()
-    const handleCreateUser = async () => await createUser()
+    const userStore = useUserStore()
+
+    useEffect(() => { userStore.getUsers() }, [])
 
     return (
 
         <MainLayout>
 
-            <div className="w-full h-full flex flex-col gap-4 items-center justify-center text-neutral-950">
+            <Helmet>
+                <title>Lx High Availability - Users</title>
+            </Helmet>
 
-                <h1 className="text-5xl font-bold">Users Page</h1>
+            <Table dataStore={userStore} variant="users">
 
-                <h2 className="text-neutral-800">This only appears if you're a administrator</h2>
+                <For of={userStore.dataSplice} render={(user, index) => (
 
-                <button onClick={() => handleCreateUser()} className="w-42 h-12 px-4 mt-4 bg-primary text-white font-bold rounded-md border-none">
-                    Create User Tester
-                </button>
+                    <div key={index} className={`w-full grid grid-cols-${userStore?.nColumns} gap-4 pb-4`}>
 
-            </div>
+                        <p className="w-full">{user.id}</p>
+                        <p className="w-full">{user.name}</p>
+                        <p className="w-full">{user.username}</p>
+                        <p className="w-full">{user.role}</p>
+                        <p className="w-full">{user.instances}</p>
+
+                        <div className="w-full flex flex-row gap-2 md:gap-4 lg:gap-8 xl:gap-12">
+                            <i className="text-2xl bi bi-info-circle-fill text-primary" title="Details"></i>
+                            <i className="text-2xl bi bi-person-x-fill text-red-600" title="Delete account"></i>
+                            <i className="text-2xl bi bi-pencil-square text-green-600" title="Edit account"></i>
+                            <i className="text-2xl bi bi-envelope-fill text-neutral-500" title="Send email" ></i>
+                        </div>
+
+                    </div>
+
+                )} />
+
+            </Table>
 
         </MainLayout>
     )

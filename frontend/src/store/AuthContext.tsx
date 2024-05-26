@@ -3,19 +3,21 @@ import Cookies from "js-cookie"
 
 import { api } from "../lib/axios"
 import { jwtDecode } from "jwt-decode"
-import { useUserStore } from "./UserStore"
+import { useAppStore } from "./AppStore"
 import { useHttpStore } from "./HttpStore"
 import { createContext, PropsWithChildren, useContext } from "react"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { JwtPayload, LoginData, RequestResetPasswordData, ROLE } from "../lib/types"
+import { JwtPayload, LoginData, RequestResetPasswordData, ROLE, User } from "../lib/types"
 
 interface AuthStoreType {
+    user: User | null,
     isAuthenticated: boolean,
     role: ROLE | null,
     isCheckingSession: boolean,
     setIsAuthenticated: Dispatch<SetStateAction<boolean>>,
     setRole: Dispatch<SetStateAction<ROLE | null>>,
     useLogin: (data: LoginData) => Promise<void>,
+    setUser: Dispatch<SetStateAction<User | null>>,
     useLogout: () => Promise<void>
     useValidateSession: () => Promise<void>,
     useRequestResetPassword: (body: RequestResetPasswordData) => Promise<void>,
@@ -24,9 +26,11 @@ interface AuthStoreType {
 }
 
 const defaultAuthStore: AuthStoreType = {
+    user: null,
     isAuthenticated: false,
     role: null,
     isCheckingSession: false,
+    setUser: () => { },
     setIsAuthenticated: () => { },
     setRole: () => { },
     useLogin: async () => { },
@@ -48,11 +52,12 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
 
+    const [user, setUser] = useState<User | null>(null)
     const [role, setRole] = useState<ROLE | null>(null)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [isCheckingSession, setIsCheckingSession] = useState(true)
 
-    const { setUser } = useUserStore()
+    const { reset } = useAppStore()
     const { setResponse, setIsLoading } = useHttpStore()
 
     const useLogin = async (formData: LoginData) => {
@@ -69,10 +74,13 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
             validateRoles()
 
         } catch (e: any) {
+
+            console.log(e)
+
             setIsAuthenticated(false)
             setResponse(e.response.status, e.response.data.message, e.response.data, true)
 
-        } finally { setIsLoading(false) }
+        } finally { setIsLoading(false); reset() }
     }
 
     const useLogout = async () => {
@@ -90,7 +98,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
             setIsAuthenticated(false)
             setResponse(e.response.status, e.response.data.message, e.response.data, true)
 
-        } finally { setUser(null); setIsLoading(false) }
+        } finally { setUser(null); setIsLoading(false); reset() }
     }
 
     const useRequestResetPassword = async (formData: RequestResetPasswordData) => {
@@ -170,11 +178,14 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
             setIsAuthenticated(res.status === 200)
 
         } catch (error: any) {
+
+            console.log(error)
+
             setRole(null)
             setIsAuthenticated(false)
             setResponse(error.response.status, error.response.data.message, error.response.data, false)
 
-        } finally { setIsCheckingSession(false); setIsLoading(false) }
+        } finally { setIsCheckingSession(false); setIsLoading(false); reset() }
     }
 
     useEffect(() => {
@@ -184,11 +195,13 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     }, [])
 
     const value: AuthStoreType = {
+        user,
         isAuthenticated,
         role,
         isCheckingSession,
         setIsAuthenticated,
         setRole,
+        setUser,
         useLogin,
         useLogout,
         useRequestResetPassword,

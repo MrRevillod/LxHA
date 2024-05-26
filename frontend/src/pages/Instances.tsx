@@ -1,4 +1,5 @@
 
+import { Helmet } from "react-helmet"
 import { MainLayout } from "../layouts/MainLayout"
 
 export const InstancesPage = () => {
@@ -6,6 +7,10 @@ export const InstancesPage = () => {
     return (
 
         <MainLayout>
+
+            <Helmet>
+                <title>Lx High Availability - Instances</title>
+            </Helmet>
 
             <div className="w-full h-full flex flex-col gap-4 items-center justify-center text-neutral-950">
 

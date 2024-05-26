@@ -1,8 +1,12 @@
 
 export type User = {
     id: string,
+    name: string,
     username: string,
     email: string,
+    role: ROLE,
+    instances: string[],
+    nInstances: number
 }
 
 export enum ROLE {

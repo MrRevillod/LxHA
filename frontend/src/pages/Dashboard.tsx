@@ -1,4 +1,5 @@
 
+import { Helmet } from "react-helmet"
 import { MainLayout } from "../layouts/MainLayout"
 
 export const DashboardPage = () => {
@@ -6,6 +7,10 @@ export const DashboardPage = () => {
     return (
 
         <MainLayout>
+
+            <Helmet>
+                <title>Lx High Availability - Dashboard</title>
+            </Helmet>
 
             <div className="w-full h-full flex flex-col gap-4 items-center justify-center text-neutral-950">
 

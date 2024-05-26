@@ -3,6 +3,7 @@ import { Spinner } from "../../components/ui/Spinner"
 import { MainLayout } from "../../layouts/MainLayout"
 import { useHttpStore } from "../../store/HttpStore"
 import { ReqResetPassword } from "../../components/forms/ReqResetPaswordForm"
+import { Helmet } from "react-helmet"
 
 export const ForgotPasswordRequestPage = () => {
 
@@ -11,6 +12,10 @@ export const ForgotPasswordRequestPage = () => {
     return (
 
         <MainLayout>
+
+            <Helmet>
+                <title>Lx High Availability - Request Password Reset</title>
+            </Helmet>
 
             <div className="w-full h-full flex flex-col justify-center items-center">
 

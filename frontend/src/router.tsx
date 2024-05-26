@@ -3,7 +3,6 @@ import { ROLE } from "./lib/types"
 import { Loading } from "./pages/Loading"
 import { useAuth } from "./store/AuthContext"
 import { useHttpStore } from "./store/HttpStore"
-import { useUserStore } from "./store/UserStore"
 import { Navigate, Outlet } from "react-router-dom"
 
 interface ProtectedRouteProps {
@@ -13,9 +12,8 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ protectedBy, redirectTo = "/auth/login" }: ProtectedRouteProps) => {
 
-    const { user } = useUserStore()
     const { isLoading } = useHttpStore()
-    const { isAuthenticated, isCheckingSession, role } = useAuth()
+    const { user, isAuthenticated, isCheckingSession, role } = useAuth()
 
     if (isCheckingSession || isLoading) {
         return <Loading />

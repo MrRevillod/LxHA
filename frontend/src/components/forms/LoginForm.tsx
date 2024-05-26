@@ -22,7 +22,7 @@ export const LoginForm = () => {
 
     return (
 
-        <div className="-mt-8 w-2/6 h-3/4 form">
+        <div className="-mt-8 w-4/6 lg:w-3/6 2xl:w-2/6 h-3/4 form">
 
             <div className="flex flex-col items-center gap-2">
                 <h2 className="text-4xl font-bold text-primary text-center">

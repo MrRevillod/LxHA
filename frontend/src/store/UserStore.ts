@@ -1,72 +1,97 @@
 
-import { api } from "../lib/axios"
+import { User } from "../lib/types"
+import { users } from "../lib/data"
 import { create } from "zustand"
-import { ROLE, RegisterData, User } from "../lib/types"
 
-interface UserStore {
-
-    user: User | null,
-    setUser: (user: User | null) => void,
-    createUser: () => Promise<void>,
-    updateUser: () => Promise<void>,
-    deleteUser: (id: string) => Promise<void>,
+export interface UserStore {
+    getUsers: () => Promise<void>
 }
 
-export const useUserStore = create<UserStore>((set) => ({
+export interface UserTableStore {
+    data: User[]
+    tableColumns: string[]
+    nColumns: number
+    currentPage: number
+    itemsPerPage: number
+    totalPages: number
+    startIndex: number
+    endIndex: number
+    dataSplice: User[]
+    searchTerm: string
+    setSearchTerm: (term: string) => void
+    setCurrentPage: (page: number) => void
+    setItemsPerPage: (items: number) => void
+    filterData: () => void
+}
 
-    user: null,
+export const useUserStore = create<UserStore & UserTableStore>((set, get) => ({
 
-    setUser: (user: User | null) => set({ user }),
+    data: [],
+    tableColumns: ["ID", "Name", "Username", "Role", "Instances", "Actions"],
+    nColumns: 0,
+    currentPage: 1,
+    itemsPerPage: 10,
+    totalPages: 0,
+    startIndex: 0,
+    endIndex: 0,
+    dataSplice: [],
+    searchTerm: "",
 
-    createUser: async () => {
-
-        const userData: RegisterData = {
-            email: "mail_test@mail.com",
-            username: "test_user",
-            role: ROLE.ADMINISTRATOR,
-            password: "aaa",
-            confirmPassword: "aaa"
-        }
-
-        console.log("userData: ", userData)
+    getUsers: async () => {
 
         try {
 
-            await api.post("/dashboard/user/register-account", userData)
+            console.log("Fetching users...")
+
+            const totalPages = Math.ceil(users.length / get().itemsPerPage)
+            set({ data: users, totalPages, dataSplice: users.slice(0, get().itemsPerPage) })
+            set({ nColumns: get().tableColumns.length })
 
         } catch (error: any) {
             console.error(error)
         }
     },
 
-    updateUser: async () => {
+    setCurrentPage: (page: number) => {
 
-        const id = "664ba271d0c2f9a2d17bbea0" // replace with your user id
-        const updateFields = {
-            password: "abc",
-            confirmPassword: "abc"
-        }
+        set({ currentPage: page })
+        set({ totalPages: Math.ceil(get().data.length / get().itemsPerPage) })
 
-        try {
+        set({ startIndex: (page - 1) * get().itemsPerPage })
+        set({ endIndex: get().startIndex + get().itemsPerPage })
 
-            await api.patch(`/dashboard/user/update-account/${id}`, updateFields)
-
-        } catch (error: any) {
-
-            console.error(error)
-        }
+        get().filterData()
     },
 
-    deleteUser: async (id: string) => {
+    setItemsPerPage: (items: number) => {
 
-        try {
+        set({ itemsPerPage: items })
+        set({ totalPages: Math.ceil(get().data.length / items) })
 
-            await api.delete(`/dashboard/user/delete-account/${id}`)
+        set({ startIndex: (get().currentPage - 1) * items })
+        set({ endIndex: get().startIndex + items })
 
-        } catch (error: any) {
+        get().filterData()
+    },
 
-            console.error(error)
-        }
+    setSearchTerm: (term: string) => {
+        set({ searchTerm: term, currentPage: 1 })
+        get().filterData()
+    },
+
+    filterData: () => {
+
+        const filteredData = get().data.filter(user =>
+            user.name.toLowerCase().includes(get().searchTerm.toLowerCase()) ||
+            user.username.toLowerCase().includes(get().searchTerm.toLowerCase()) ||
+            user.role.toLowerCase().includes(get().searchTerm.toLowerCase())
+        )
+
+        const totalPages = Math.ceil(filteredData.length / get().itemsPerPage)
+        const startIndex = (get().currentPage - 1) * get().itemsPerPage
+        const endIndex = startIndex + get().itemsPerPage
+        const dataSplice = filteredData.slice(startIndex, endIndex)
+
+        set({ totalPages, dataSplice })
     }
-
 }))

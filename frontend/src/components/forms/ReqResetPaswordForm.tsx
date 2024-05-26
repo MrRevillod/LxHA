@@ -5,6 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { emailSchema } from "../../lib/schemas"
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
 
+import "../../index.css"
+
 export const ReqResetPassword = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -19,7 +21,7 @@ export const ReqResetPassword = () => {
 
     return (
 
-        <div className="-mt-8 form w-2/6 h-3/4">
+        <div className="-mt-8 form w-4/6 lg:w-3/6 2xl:w-2/6 h-3/4">
 
             <div className="flex flex-col items-center gap-2">
                 <h2 className="text-4xl font-bold text-primary text-center">

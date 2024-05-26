@@ -1,5 +1,10 @@
 
-use cookie::Cookie ;
+use cookie::Cookie;
+use tower_cookies::Cookies;
+
+pub fn get_cookie_from_req(cookies: &Cookies, name: &str) -> Option<String> {
+    cookies.get(name).map(|cookie| cookie.value().to_string())
+}
 
 pub fn new_cookie(kind: &str, name: &str, value: Option<&String>) -> Cookie<'static> {
 

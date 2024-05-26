@@ -1,29 +1,28 @@
 
-mod utils;
-mod routes;
-mod models;
+mod router;
 mod controllers;
 mod middlewares;
 
 extern crate lxha_lib;
 
 use axum::{
-    routing::Router,
-    http::{Method, HeaderValue},
-    http::header::{ACCEPT, AUTHORIZATION, ORIGIN, CONTENT_TYPE},
+    routing::Router, 
+    http::{HeaderValue, Method},
+    http::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE, ORIGIN}, 
 };
 
 use tokio::net::TcpListener;
 use tower_http::cors::CorsLayer;
 use tower_cookies::CookieManagerLayer;
-use std::{ops::Deref, sync::Arc, path::Path};
+use axum_client_ip::SecureClientIpSource;
+use std::{net::SocketAddr, ops::Deref, path::Path, sync::Arc};
 
 use lxha_lib::app::{
     state::{database_connection, AppContext},
     constants::{AUTH_SERVICE_ADDR, DASHBOARD_SERVICE_URL, FRONTEND_SERVICE_URL}, 
 };
 
-use routes::auth_router;
+use router::auth_router;
 
 #[tokio::main]
 async fn main() {
@@ -65,6 +64,7 @@ async fn main() {
         .nest("/api/auth", auth_router(Arc::clone(&ctx)))
         .layer(cookies)
         .layer(cors)
+        .layer(SecureClientIpSource::ConnectInfo.into_extension())
         .with_state(ctx)
     ;
 
@@ -72,6 +72,6 @@ async fn main() {
     
     println!("\n🦀 Authentication server running on {}", *AUTH_SERVICE_ADDR);
 
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()).await.unwrap();
 }
 

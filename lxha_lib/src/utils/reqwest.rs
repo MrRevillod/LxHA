@@ -10,6 +10,8 @@ use reqwest::{
 
 use crate::app::constants::{AUTH_SERVICE_URL, SERVICES};
 
+use super::cookies::get_cookie_from_req;
+
 pub async fn http_request(service: &'static str, 
     endpoint: &'static str, method: &str, cookies: Option<Arc<Jar>>, body: Value) -> Response {
 
@@ -47,8 +49,8 @@ pub fn parse_cookies(cookies: Cookies) -> Arc<Jar> {
 
     let cookie_jar = Jar::default();
 
-    let token_value = cookies.get("session").map(|cookie| cookie.value().to_string());
-    let refresh_value = cookies.get("refresh").map(|cookie| cookie.value().to_string());
+    let token_value =  get_cookie_from_req(&cookies, "session");
+    let refresh_value = get_cookie_from_req(&cookies, "refresh");
 
     let url = Url::parse(AUTH_SERVICE_URL.deref()).unwrap();
 
