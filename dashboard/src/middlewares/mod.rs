@@ -1,8 +1,7 @@
 
 use serde_json::Value;
 use tower_cookies::Cookies;
-use axum_responses::HttpResponse;
-
+use axum_responses::{AxumResponse, HttpResponse};
 use lxha_lib::{
     models::user::Profile, 
     utils::{dbg::handle_error, 
@@ -10,8 +9,7 @@ use lxha_lib::{
 };
 
 use axum::{
-    middleware::Next, extract::Request,
-    response::Response as MwResponse
+    extract::Request, middleware::Next, response::Response as MwResponse, Json
 };
 
 pub async fn authenticate_by_role(cookies: Cookies, 

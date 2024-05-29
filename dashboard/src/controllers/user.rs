@@ -1,12 +1,14 @@
 
 use bcrypt::hash;
+use serde_json::{from_value, json, Value};
 use std::collections::HashMap;
 use mongodb::bson::{doc, oid::ObjectId};
 use axum::{extract::{Path, State}, Json};
 use axum_responses::{AxumResponse, HttpResponse, extra::ToJson};
 
-use lxha_lib::{app::Context, models::user::User};
-use crate::models::{RegisterData, UpdateUserData};
+use lxha_lib::{app::{constants::FRONTEND_SERVICE_URL, Context}, models::user::User, utils::{oid_from_str, reqwest::http_request}};
+use crate::{incus_api::{delete::remove_instance, get::get_all_instances}, models::RegisterData};
+
 
 pub async fn register_account(State(ctx): Context, Json(body): Json<RegisterData>) -> AxumResponse {
 
@@ -42,50 +44,51 @@ pub async fn register_account(State(ctx): Context, Json(body): Json<RegisterData
 }
 
 pub async fn delete_account(State(ctx): Context,
-    Path(oid): Path<ObjectId>) -> AxumResponse {
+    Path(oid): Path<String>) -> AxumResponse {
 
-    // TODO! y si el usuario tiene instancias creadas?
-    // TODO! y si el usuario no existe?
-    // TODO! y si la id no es un ObjectId?
+    let oid = oid_from_str(&oid)?;
+
+    let user = match ctx.users.find_one_by_id(&oid).await? {
+        Some(user) => user,
+        None => return Err(HttpResponse::CUSTOM(500, "User doesnt exists, cant delete the account"))
+    };
+    
+    let instances = get_all_instances(user.username).await?;
+
+    if !instances.is_empty() {
+        for instance in instances {
+            remove_instance(instance.name).await?;
+        }
+    }
 
     ctx.users.delete(&oid).await?;
 
     Ok(HttpResponse::CUSTOM(200, "Account deleted successfully"))
 }
 
-pub async fn update_account(State(ctx): Context, Path(oid): Path<ObjectId>, 
-    Json(body): Json<UpdateUserData>) -> AxumResponse {
-
-    // TODO! update_account debería ser dinamico, o sea recibir un 
-    // json con los campos a actualizar, solo esos
-
-    // En ese caso recomiendo hacer un middleware que valide los campos
-    // y así se evita mezclar la lógica del controllador con la validación de datos
+pub async fn update_account(State(ctx): Context, Path(oid): Path<String>, 
+    Json(body): Json<Value>) -> AxumResponse {
 
     dbg!(&body);
-    
-    // TODO! y si el usuario no existe?
 
-    if body.password != body.confirmPassword {
-        return Err(HttpResponse::UNAUTHORIZED);
-    }    
-    
+    let oid = oid_from_str(&oid)?;
+
+    let user = match ctx.users.find_one_by_id(&oid).await? {
+        Some(user) => user,
+        None => return Err(HttpResponse::CUSTOM(500, "User (oid) doesnt exists, cant update it"))
+    };
+
     let mut doc = doc! {};
-    let valid_fields = vec!["username", "password", "confirmPassword", "role"];
-
-    // TODO! en rust la enum role no requiere un to_string, ya que de por si es un string
-
-    let mut body_map = HashMap::from([
-        ("username".to_string(), body.username.to_string()),
-        ("password".to_string(), body.password.to_string()),
-        ("confirmPassword".to_string(), body.confirmPassword.to_string()),
-        ("role".to_string(), body.role_to_string()),
-    ]); 
-
+    let valid_fields = vec!["username", "password", "email", "confirmPassword", "role"];
+    let mut body_map: HashMap<String, String> = from_value(body).map_err(|_| HttpResponse::INTERNAL_SERVER_ERROR)?;
     let mut conflicts_hash = HashMap::new();
 
     if ctx.users.find_one(doc! {"username": body_map.get("username")}).await?.is_some() {
         conflicts_hash.insert("username", "User with this username already exists");
+    }
+
+    if ctx.users.find_one(doc! {"email": body_map.get("email")}).await?.is_some() {
+        conflicts_hash.insert("email", "User with this email already exists");
     }
 
     if !conflicts_hash.is_empty() {
@@ -110,14 +113,102 @@ pub async fn update_account(State(ctx): Context, Path(oid): Path<ObjectId>,
         doc.insert(key, value);
     }
 
-    // TODO! y si viene un email en el body?
-    // TODO! comunicarse con mailer
+    let update = doc! {"$set": doc};
+    ctx.users.update(&oid, update).await?;
+    
+    let mut email_updated = false;
+    let mut response_message = "User updated succesfully";
+
+    // if let Some(email) = body_map.get("email") {
+
+    //     let update_email_url = format!("{}/dashboard/update-account-email", *FRONTEND_SERVICE_URL);
+    //     let body = json!({ "email": &email, "url": update_email_url});
+    //     let response = http_request("MAILER", "/email-change", "POST", None, body).await;
+        
+    //     let http_response = match response.status().as_u16() {
+    //         200 => Ok(HttpResponse::OK),
+    //         401 => Err(HttpResponse::BAD_REQUEST),
+    //         _   => Err(HttpResponse::INTERNAL_SERVER_ERROR)
+    //     };
+
+    //     if let Ok(_) = http_response {
+    //         // EL micro mailer se comunica con el endpoint /update_account_email y actualiza el email
+    //         println!("http_response from the request between dashboard and mailer is => OK");
+    //         email_updated = true;
+    //     }
+
+    // }
+
+    if email_updated {
+        println!("User email updated!");
+        response_message = "User updated succesfully, Check your email and confirm the changes";
+        // Cuando el usuario confirme, el mailer usara el endpoint /update-account-email
+    }
+
+    let updated = ctx.users.find_one_by_id(&oid).await?.unwrap();
+    let profile = updated.into_json_user_data();
+
+    Ok(HttpResponse::JSON(200, response_message, "user", profile))
+}
+
+pub async fn update_account_email(State(ctx): Context, Path(oid): Path<String>, 
+    Json(body): Json<Value>) -> AxumResponse {
+    
+    let oid = oid_from_str(&oid)?;
+
+    let user = match ctx.users.find_one_by_id(&oid).await? {
+        Some(user) => user,
+        None => return Err(HttpResponse::CUSTOM(500, "User doesnt exists, cant get it"))
+    };
+
+    let body_map: HashMap<String, String> = from_value(body).map_err(|_| HttpResponse::INTERNAL_SERVER_ERROR)?;
+
+    let mut conflicts_hash = HashMap::new();
+
+    if ctx.users.find_one(doc! {"email": body_map.get("email")}).await?.is_some() {
+        conflicts_hash.insert("email", "User with this email already exists");
+    }
+
+    if !conflicts_hash.is_empty() {
+        return Err(HttpResponse::JSON(409, "conflict", "conflicts", conflicts_hash.to_json()));
+    }
+
+    let mut doc = doc! {};
+
+    for (key, value) in &body_map {
+
+        if key != "email" {
+            return Err(HttpResponse::BAD_REQUEST); 
+        }
+        
+        doc.insert(key, value);
+    }
+
 
     let update = doc! {"$set": doc};
     ctx.users.update(&oid, update).await?;
 
     let updated = ctx.users.find_one_by_id(&oid).await?.unwrap();
-    let profile = updated.into_json_profile();
+    let profile = updated.into_json_user_data();
+    
+    Ok(HttpResponse::JSON(200, "User email updated succesfully", "user", profile)) 
+}
 
-    Ok(HttpResponse::JSON(200, "User updated succesfully", "user", profile))
+pub async fn get_user(State(ctx): Context, Path(oid): Path<String>) -> AxumResponse {
+    
+    let oid = oid_from_str(&oid)?;
+
+    let user = match ctx.users.find_one_by_id(&oid).await? {
+        Some(user) => user,
+        None => return Err(HttpResponse::CUSTOM(500, "User doesnt exists, cant get it"))
+    };
+
+    Ok(HttpResponse::JSON(200, "User obtained succesfully", "user", user.into_json_user_data())) 
+}
+
+pub async fn get_users(State(ctx): Context) -> AxumResponse {
+    
+    let users = ctx.users.find().await?;
+
+    Ok(HttpResponse::JSON(200, "Users obtained succesfully", "users", Value::from(users))) 
 }

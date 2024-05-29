@@ -60,59 +60,6 @@ impl UserRespository {
         Ok(user)
     }
 
-    pub async fn find_one_with_instances(&self, id: &ObjectId) -> AxumResult<Option<ProfileWithInstance>> {
-
-        let pipeline = vec![
-            doc! {
-                "$match": {
-                    "_id": id,
-                }
-            },
-            doc! {
-                "$lookup": {
-                    "from": "instances",
-                    "localField": "instances",
-                    "foreignField": "_id",
-                    "as": "instances",
-                }
-            },
-            doc! {
-                "$unwind": {
-                    "path": "$instances",
-                }
-            },
-            doc! {
-                "$replaceRoot": {
-                    "newRoot": {
-                        "$mergeObjects": ["$instances", "$$ROOT"],
-                    }
-                }
-            },
-            doc! {
-                "$project": {
-                    "_id": 1,
-                    "username": 1,
-                    "email": 1,
-                    "password": 1,
-                    "validated": 1,
-                    "role": 1,
-                    "instances": 1,
-                }
-            },
-        ];
-
-        let mut cursor = self.collection.aggregate(pipeline, None).await
-            .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)?
-        ;
-
-        let user_with_instances = cursor.try_next().await
-            .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)?
-            .map(|doc| bson::from_document::<ProfileWithInstance>(doc).unwrap())
-        ;
-
-        Ok(user_with_instances)
-    }
-
     pub async fn find(&self) -> AxumResult<Vec<Value>> {
 
         let mut profiles: Vec<Value> = vec![];
@@ -123,7 +70,7 @@ impl UserRespository {
         while let Some(result) = cursor.try_next().await
             .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)? {
 
-            profiles.push(result.into_profile().to_json())
+            profiles.push(result.into_user_data().to_json())
         }
 
         Ok(profiles)

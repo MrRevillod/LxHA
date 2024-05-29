@@ -40,6 +40,15 @@ pub struct ProfileWithInstance {
     pub instances: Vec<Instance>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UserData {
+    #[serde(rename = "_id")]
+    pub id: ObjectId,
+    pub username: String,
+    pub email: String,
+    pub role: Role,
+}
+
 impl User {
 
     pub fn into_profile(&self) -> Profile {
@@ -61,8 +70,31 @@ impl User {
 
         profile.to_json()
     }
+
+    pub fn into_user_data(&self) -> UserData {
+
+        UserData {
+            id: self.id,
+            username: self.username.clone(),
+            email: self.email.clone(),
+            role: self.role.clone(),
+        }
+    }
+
+    pub fn into_json_user_data(&self) -> Value {
+
+        let user_data = UserData {
+            id: self.id,
+            username: self.username.clone(),
+            email: self.email.clone(),
+            role: self.role.clone(),
+        };
+
+        user_data.to_json()
+    }
 }
 
 impl ToJson for User {}
 impl ToJson for Profile {}
 impl ToJson for ProfileWithInstance {}
+impl ToJson for UserData {}
