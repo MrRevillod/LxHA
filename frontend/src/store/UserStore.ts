@@ -7,29 +7,28 @@ interface UserStore {
 
     user: User | null,
     setUser: (user: User | null) => void,
-    createUser: () => Promise<void>,
+    createUser: (userData:RegisterData) => Promise<void>,
     updateUser: () => Promise<void>,
     deleteUser: (id: string) => Promise<void>,
 }
 
-export const useUserStore = create<UserStore>((set) => ({
+export const  useUserStore = create<UserStore>((set) => ({
 
     user: null,
 
     setUser: (user: User | null) => set({ user }),
 
-    createUser: async () => {
+    createUser: async (userData : RegisterData) => {
 
-        const userData: RegisterData = {
-            email: "mail_test@mail.com",
-            username: "test_user",
-            role: ROLE.ADMINISTRATOR,
-            password: "aaa",
-            confirmPassword: "aaa"
-        }
+        // const userData: RegisterData = {
+        //     email: "mail_test@mail.com",
+        //     username: "test_user",
+        //     role: ROLE.ADMINISTRATOR,
+        //     password: "aaa",
+        //     confirmPassword: "aaa"
+        // }
 
         console.log("userData: ", userData)
-
         try {
 
             await api.post("/dashboard/user/register-account", userData)

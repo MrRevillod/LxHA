@@ -37,21 +37,23 @@ export const RegisterUserForm = ({onClose}:RegisterUserFormProps) => {
                 </p>
             </div>
 
-            <form className="flex flex-col gap-4 px-8 w-full" onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}>            
-                <Input
-                    label="Name"
-                    type="text"
-                    {...register("name")}
-                    placeholder="John Doe"
-                    error={errors.name ? (errors.name.message?.toString()) : ""}
-                />
-                <Input
-                    label="Username"
-                    type="text"
-                    {...register("username")}
-                    placeholder="John Doe"
-                    error={errors.username ? (errors.username.message?.toString()) : ""}
-                />
+            <form className="flex flex-col gap-4 px-8 w-full" onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}>    
+                <div className="flex gap-4">
+                    <Input
+                        label="Name"
+                        type="text"
+                        {...register("name")}
+                        placeholder="John Doe"
+                        error={errors.name ? (errors.name.message?.toString()) : ""}
+                    />
+                    <Input
+                        label="Username"
+                        type="text"
+                        {...register("username")}
+                        placeholder="John Doe"
+                        error={errors.username ? (errors.username.message?.toString()) : ""}
+                    />
+                </div>    
                 <Input
                     label="Email"
                     type="email"

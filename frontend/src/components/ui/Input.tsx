@@ -5,15 +5,16 @@ import { EyeIcon } from "./Icons"
 import { FieldError } from "react-hook-form"
 import { useState, forwardRef } from "react"
 
-type InputType = "text" | "password" | "email"
+type InputType = "text" | "password" | "email" | "number"
 
 interface InputProps {
     label: string,
     type: InputType,
-    placeholder?: string,
+    placeholder?: string  ,
     error?: string | FieldError,
     name: string,
     islogin?: string | boolean,
+    value?: string | number
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
@@ -21,8 +22,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     const { label, type, placeholder, error, name, islogin = false } = props
 
     const classes = `border-1 border-neutral-500 rounded-lg 
-        p-2 focus:outline-none focus:ring-2 focus:ring-neutral-500
-        h-12 w-full pl-4 placeholder-neutral-400 text-neutral-950
+        p-2 focus:outline-none  focus:ring-blue-500 focus:border-blue-500 w-full pl-4 placeholder-neutral-400 text-neutral-950
     `
 
     const [inputType, setInputType] = useState<InputType>(type)
@@ -50,7 +50,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
             </Show>
 
             <Show when={label !== "Password" || type !== "password" || !islogin}>
-                <label className="font-semibold text-neutral-950" htmlFor={name}>{label}</label>
+                <label  >{label}</label>
             </Show>
 
             <div className="relative flex flex-row justify-center">
