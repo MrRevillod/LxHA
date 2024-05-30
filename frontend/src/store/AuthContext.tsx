@@ -179,8 +179,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
         } catch (error: any) {
 
-            console.log(error)
-
             setRole(null)
             setIsAuthenticated(false)
             setResponse(error.response.status, error.response.data.message, error.response.data, false)

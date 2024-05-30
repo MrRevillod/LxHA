@@ -3,9 +3,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { LoadingWrapper, ProtectedRoute } from "./router"
 
 import {
+
     ForgotPasswordRequestPage, DashboardPage,
-    AnalitycsPage, UsersPage, InstancesPage,
-    LandingPage, LoginPage, ForgotPasswordPage, NotFoundPage,
+    AnalitycsPage, UsersPage, LandingPage,
+    LoginPage, ForgotPasswordPage, NotFoundPage, MessagesPage
+
 } from "./pages"
 
 export const App = () => {
@@ -32,7 +34,7 @@ export const App = () => {
 
                 <Route element={<ProtectedRoute protectedBy="role" />}>
                     <Route path="/users" element={<UsersPage />} />
-                    <Route path="/instances" element={<InstancesPage />} />
+                    <Route path="/messages" element={<MessagesPage />} />
                 </Route>
 
                 <Route path="*" element={<NotFoundPage />} />
@@ -41,5 +43,4 @@ export const App = () => {
 
         </BrowserRouter>
     )
-
 }

@@ -9,7 +9,7 @@ import { ForgotPasswordPage } from "./auth/ResetPassword"
 import { ForgotPasswordRequestPage } from "./auth/RequestResetPassword"
 import { AnalitycsPage } from "./Analitycs"
 import { UsersPage } from "./Users"
-import { InstancesPage } from "./Instances"
+import { MessagesPage } from "./Messages"
 
 export {
     Loading,
@@ -22,5 +22,5 @@ export {
     MainLayout,
     AnalitycsPage,
     UsersPage,
-    InstancesPage
+    MessagesPage,
 }

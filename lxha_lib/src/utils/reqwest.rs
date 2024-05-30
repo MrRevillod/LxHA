@@ -8,12 +8,12 @@ use reqwest::{
     cookie::Jar, header::CONTENT_TYPE, 
 };
 
+use super::cookies::get_cookie_from_req;
 use crate::app::constants::{AUTH_SERVICE_URL, SERVICES};
 
-use super::cookies::get_cookie_from_req;
-
 pub async fn http_request(service: &'static str, 
-    endpoint: &'static str, method: &str, cookies: Option<Arc<Jar>>, body: Value) -> Response {
+    endpoint: &'static str, method: &str, client_ip: Option<String>,
+    cookies: Option<Arc<Jar>>, body: Value) -> Response {
 
     let mut client_builder = Client::builder();
 
@@ -33,11 +33,13 @@ pub async fn http_request(service: &'static str,
         "GET" => client
             .get(&url)
             .header(CONTENT_TYPE, "application/json")
+            .header("x-forwarded-by", client_ip.unwrap_or(String::new()).as_str())
             .send().await.unwrap(),
 
         "POST" => client
             .post(&url)
             .header(CONTENT_TYPE, "application/json")
+            .header("x-forwarded-by", client_ip.unwrap_or(String::new()).as_str())
             .body(body)
             .send().await.unwrap(),
 

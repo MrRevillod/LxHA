@@ -1,16 +1,28 @@
 
 import { For } from "../components/ui/For"
-import { Table } from "../components/Table"
+import { api } from "../lib/axios"
+import { User } from "../lib/types"
 import { Helmet } from "react-helmet"
 import { useEffect } from "react"
+import { SearchBar } from "../components/SearchBar"
+import { Pagination } from "../components/Pagination"
 import { MainLayout } from "../layouts/MainLayout"
+import { ActionIcon } from "../components/Actions"
 import { useUserStore } from "../store/UserStore"
+import { Table, TableField } from "../components/Table"
 
 export const UsersPage = () => {
 
     const userStore = useUserStore()
 
     useEffect(() => { userStore.getUsers() }, [])
+
+    const handleContact = async (user: User) => {
+
+        console.log("Sending email...")
+        console.log("user", user)
+        await api.post("/mailer/contact-test")
+    }
 
     return (
 
@@ -20,30 +32,51 @@ export const UsersPage = () => {
                 <title>Lx High Availability - Users</title>
             </Helmet>
 
-            <Table dataStore={userStore} variant="users">
+            <div className="w-full flex flex-col justify-between mt-20 gap-8 text-neutral-950 relative">
 
-                <For of={userStore.dataSplice} render={(user, index) => (
+                <div className="w-full flex flex-row justify-between items-center">
 
-                    <div key={index} className={`w-full grid grid-cols-${userStore?.nColumns} gap-4 pb-4`}>
+                    <SearchBar dataStore={userStore} variant="users" />
 
-                        <p className="w-full">{user.id}</p>
-                        <p className="w-full">{user.name}</p>
-                        <p className="w-full">{user.username}</p>
-                        <p className="w-full">{user.role}</p>
-                        <p className="w-full">{user.instances}</p>
+                    <button className="flex items-center justify-center text-lg w-44 h-12 px-4 rounded-md bg-primary text-white font-semibold">
+                        Create User
+                    </button>
 
-                        <div className="w-full flex flex-row gap-2 md:gap-4 lg:gap-8 xl:gap-12">
-                            <i className="text-2xl bi bi-info-circle-fill text-primary" title="Details"></i>
-                            <i className="text-2xl bi bi-person-x-fill text-red-600" title="Delete account"></i>
-                            <i className="text-2xl bi bi-pencil-square text-green-600" title="Edit account"></i>
-                            <i className="text-2xl bi bi-envelope-fill text-neutral-500" title="Send email" ></i>
+                </div>
+
+                <Table dataStore={userStore}>
+
+                    <For of={userStore.dataSplice} render={(user, index) => (
+
+                        <div key={index} className={`w-full grid grid-cols-${userStore?.nColumns} gap-4 pb-4`}>
+
+                            <TableField value={user.id} />
+                            <TableField value={user.name} />
+                            <TableField value={user.username} />
+                            <TableField value={user.email} />
+                            <TableField value={user.role} />
+                            <TableField value={user.n_instances} />
+
+                            <div className="w-full xl:flex flex-row justify-between hidden">
+                                <ActionIcon variant="info" onClick={() => { }} />
+                                <ActionIcon variant="delete" onClick={() => { }} />
+                                <ActionIcon variant="edit" onClick={() => { }} />
+                                <ActionIcon variant="email" onClick={() => handleContact(user)} />
+                            </div>
+
+                            <div className="w-full flex justify-end xl:hidden">
+                                <i className="text-black text-2xl bi bi-three-dots-vertical"></i>
+                            </div>
+
                         </div>
 
-                    </div>
+                    )} />
 
-                )} />
+                </Table>
 
-            </Table>
+                <Pagination dataStore={userStore} />
+
+            </div>
 
         </MainLayout>
     )

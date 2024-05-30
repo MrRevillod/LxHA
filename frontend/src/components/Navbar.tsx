@@ -7,9 +7,9 @@ import { useAppStore } from "../store/AppStore"
 
 const NavbarLinks = [
     { title: "Analitycs", to: "/analitycs", icon: "bi bi-bar-chart-fill", protected: false },
-    { title: "Instances", to: "/instances", icon: "bi bi-pc-display-horizontal", protected: true },
-    { title: "Dashboard", to: "/dashboard", icon: "bi bi-kanban", protected: false },
+    { title: "Dashboard", to: "/dashboard", icon: "bi bi-pc-display-horizontal", protected: false },
     { title: "Users", to: "/users", icon: "bi bi-people-fill", protected: true },
+    { title: "Messages", to: "/messages", icon: "bi bi-chat-square-text-fill", protected: false },
 ]
 
 interface NavbarLinkProps {
@@ -56,7 +56,7 @@ export const Navbar = () => {
 
             <div>
                 <button type="button" onClick={() => handleLogout()}>
-                    <i className="bi bi-box-arrow-left text-white text-2xl"></i>
+                    <i className="bi bi-box-arrow-left text-white text-2xl hover:cursor-pointer"></i>
                 </button>
             </div>
 

@@ -73,3 +73,16 @@ export const EditProfileButton = ({ clicked, onClick }: EditProfileButtonProps) 
         </button>
     )
 }
+
+export const InstanceStatusIcon = ({ status }: { status: string }) => {
+
+    const values: { [key: string]: string } = {
+        Running: "text-2xl bi bi-circle-fill text-green-500",
+        Stopped: "text-2xl bi bi-circle-fill text-red-500",
+        Rebooting: "text-2xl bi bi-circle-fill text-yellow-500"
+    }
+
+    return (
+        <i className={values[status]}></i>
+    )
+}

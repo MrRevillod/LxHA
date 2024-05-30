@@ -42,7 +42,7 @@ pub async fn session_validation(cookies: Cookies,
     let user_id = match &token_clone {
 
         Some(session) => {
-            
+
             match decode_jwt::<AuthJwtPayload>(&session, &JWT_SECRET) {
                 Ok(payload) => payload.id,
                 Err(_) => session_from_refresh(&refresh.unwrap())?
@@ -51,6 +51,8 @@ pub async fn session_validation(cookies: Cookies,
 
         None => session_from_refresh(&refresh.unwrap())?
     };
+
+    println!("User ID: {}", &user_id);
 
     if ctx.tokens.find_one(doc! { "token": &token }).await?.is_some() {
         return Err(HttpResponse::UNAUTHORIZED)
@@ -62,10 +64,12 @@ pub async fn session_validation(cookies: Cookies,
         Some(user) => user,
         None   => return Err(HttpResponse::UNAUTHORIZED)
     };
-
+    
+    println!("User: {:?}", &user);
     req.extensions_mut().insert(id);
     req.extensions_mut().insert(user);
     req.extensions_mut().insert(token.unwrap());
+
 
     Ok(next.run(req).await)
 }

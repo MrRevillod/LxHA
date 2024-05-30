@@ -1,7 +1,6 @@
 
 import { create } from "zustand"
 import { toUpperAndLower } from "../lib/string"
-// import { persist, createJSONStorage } from 'zustand/middleware'
 
 interface AppStore {
     pageTitle: string,
@@ -13,7 +12,7 @@ const getInitialPageTitle = () => {
 
     const path = window.location.pathname.split("/")[1]
 
-    const pages = ["users", "analytics", "instances", "dashboard"]
+    const pages = ["users", "analytics", "messages", "dashboard"]
 
     if (pages.includes(path)) {
         return toUpperAndLower(path)
@@ -27,19 +26,3 @@ export const useAppStore = create<AppStore>((set) => ({
     setPageTitle: (pageTitle: string) => set({ pageTitle }),
     reset: () => set({ pageTitle: getInitialPageTitle() }),
 }))
-
-
-// export const useAppStore = create(
-
-//     persist<AppStore>((set) => ({
-
-//         pageTitle: getInitialPageTitle(),
-//         setPageTitle: (pageTitle: string) => set({ pageTitle }),
-//     }),
-
-//         {
-//             name: 'app-store',
-//             storage: createJSONStorage(() => localStorage)
-//         },
-//     ),
-// )

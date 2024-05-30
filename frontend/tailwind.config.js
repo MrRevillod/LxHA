@@ -8,6 +8,10 @@ export default {
     extend: {
       colors: {
         'primary': '#3873F2',
+        'action-b': '#1e88e5',
+        'action-g': '#43a047',
+        'action-r': '#e53935',
+        'action-gr': '#757575',
       },
 
       backgroundImage: {
@@ -24,4 +28,14 @@ export default {
     },
   },
   plugins: [],
+  safelist: [
+    'grid-cols-1',
+    'grid-cols-2',
+    'grid-cols-3',
+    'grid-cols-4',
+    'grid-cols-5',
+    'grid-cols-6',
+    'grid-cols-7',
+    'grid-cols-8',
+  ]
 }

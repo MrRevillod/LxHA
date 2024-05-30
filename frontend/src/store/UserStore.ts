@@ -4,94 +4,56 @@ import { users } from "../lib/data"
 import { create } from "zustand"
 
 export interface UserStore {
-    getUsers: () => Promise<void>
+    data: User[],
+    dataSplice: User[],
+    filteredData: User[],
+    itemsPerPage: number,
+    nColumns: number,
+    columns: string[],
+    setSplicedData: (page: number) => void,
+    filterBySearch: (search: string) => void
 }
 
-export interface UserTableStore {
-    data: User[]
-    tableColumns: string[]
-    nColumns: number
-    currentPage: number
-    itemsPerPage: number
-    totalPages: number
-    startIndex: number
-    endIndex: number
-    dataSplice: User[]
-    searchTerm: string
-    setSearchTerm: (term: string) => void
-    setCurrentPage: (page: number) => void
-    setItemsPerPage: (items: number) => void
-    filterData: () => void
+export interface UserActions {
+    getUsers: () => void
 }
 
-export const useUserStore = create<UserStore & UserTableStore>((set, get) => ({
+export const useUserStore = create<UserStore & UserActions>((set, get) => ({
 
     data: [],
-    tableColumns: ["ID", "Name", "Username", "Role", "Instances", "Actions"],
-    nColumns: 0,
-    currentPage: 1,
-    itemsPerPage: 10,
-    totalPages: 0,
-    startIndex: 0,
-    endIndex: 0,
     dataSplice: [],
-    searchTerm: "",
+    filteredData: [],
+    itemsPerPage: 10,
+
+    nColumns: 7,
+    columns: ["ID", "NAME", "USERNAME", "EMAIL", "ROLE", "INSTANCES", "ACTIONS"],
+
+    setSplicedData: (pageNumber: number) => {
+
+        const startIndex = (pageNumber - 1) * get().itemsPerPage
+        const endIndex = Math.min(startIndex + get().itemsPerPage, get().filteredData.length)
+
+        set({ dataSplice: get().filteredData.slice(startIndex, endIndex) })
+    },
 
     getUsers: async () => {
 
-        try {
+        const fetchedMessages = users
+        const dataSplice = fetchedMessages.slice(0, get().itemsPerPage);
 
-            console.log("Fetching users...")
-
-            const totalPages = Math.ceil(users.length / get().itemsPerPage)
-            set({ data: users, totalPages, dataSplice: users.slice(0, get().itemsPerPage) })
-            set({ nColumns: get().tableColumns.length })
-
-        } catch (error: any) {
-            console.error(error)
-        }
+        set({ data: fetchedMessages, filteredData: fetchedMessages, dataSplice });
     },
 
-    setCurrentPage: (page: number) => {
+    filterBySearch: (search: string) => {
 
-        set({ currentPage: page })
-        set({ totalPages: Math.ceil(get().data.length / get().itemsPerPage) })
-
-        set({ startIndex: (page - 1) * get().itemsPerPage })
-        set({ endIndex: get().startIndex + get().itemsPerPage })
-
-        get().filterData()
-    },
-
-    setItemsPerPage: (items: number) => {
-
-        set({ itemsPerPage: items })
-        set({ totalPages: Math.ceil(get().data.length / items) })
-
-        set({ startIndex: (get().currentPage - 1) * items })
-        set({ endIndex: get().startIndex + items })
-
-        get().filterData()
-    },
-
-    setSearchTerm: (term: string) => {
-        set({ searchTerm: term, currentPage: 1 })
-        get().filterData()
-    },
-
-    filterData: () => {
-
-        const filteredData = get().data.filter(user =>
-            user.name.toLowerCase().includes(get().searchTerm.toLowerCase()) ||
-            user.username.toLowerCase().includes(get().searchTerm.toLowerCase()) ||
-            user.role.toLowerCase().includes(get().searchTerm.toLowerCase())
+        const filteredData = get().data.filter((user: User) =>
+            user.name.toLowerCase().includes(search.toLowerCase()) ||
+            user.username.toLowerCase().includes(search.toLowerCase()) ||
+            user.role.toLowerCase().includes(search.toLowerCase()) ||
+            user.email.toLowerCase().includes(search.toLowerCase())
         )
 
-        const totalPages = Math.ceil(filteredData.length / get().itemsPerPage)
-        const startIndex = (get().currentPage - 1) * get().itemsPerPage
-        const endIndex = startIndex + get().itemsPerPage
-        const dataSplice = filteredData.slice(startIndex, endIndex)
-
-        set({ totalPages, dataSplice })
+        set({ filteredData, dataSplice: filteredData.slice(0, get().itemsPerPage) })
     }
+
 }))

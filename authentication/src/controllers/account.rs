@@ -36,7 +36,7 @@ pub async fn send_reset_password_email(State(ctx): Context,
     );
 
     let body = json!({ "email": &email, "url": recovery_url });
-    let response = http_request("MAILER", "/reset-password", "POST", None, body).await;
+    let response = http_request("MAILER", "/reset-password", "POST", None, None, body).await;
 
     match response.status().as_u16() {
         200 => Ok(HttpResponse::CUSTOM(200, "Email sent")),

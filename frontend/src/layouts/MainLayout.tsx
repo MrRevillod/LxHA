@@ -3,8 +3,8 @@ import { Show } from "../components/ui/Show"
 import { Header } from "../components/Header"
 import { Navbar } from "../components/Navbar"
 import { useAuth } from "../store/AuthContext"
-import { PropsWithChildren } from "react"
 import { useLocation } from "react-router-dom"
+import { PropsWithChildren } from "react"
 
 export const MainLayout = ({ children }: PropsWithChildren) => {
 
@@ -19,7 +19,7 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
 
             <Show when={isAuthenticated && !isRootPage}><Navbar /></Show>
 
-            <main className="h-full w-full flex flex-col px-6 md:px-12 lg:px-28 py-8">
+            <main className="h-full w-full flex flex-col px-12 lg:px-10 xl:16 2xl:px-28 py-8">
 
                 <Header />
 

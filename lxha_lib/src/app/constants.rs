@@ -33,6 +33,9 @@ lazy_static!(
     pub static ref CRT_PATH: String = env("CRT_PATH");
     pub static ref CRT_KEY_PATH: String = env("CRT_KEY_PATH");
 
+    pub static ref LOCAL_NET_ADDR: String = env("LOCAL_NET_ADDR");
+    pub static ref LOCAL_NET_MASK: String = env("LOCAL_NET_MASK");
+
     pub static ref SERVICES: HashMap<&'static str, String> = HashMap::from([
         ("AUTH", AUTH_SERVICE_URL.to_string()),
         ("DASHBOARD", DASHBOARD_SERVICE_URL.to_string()),

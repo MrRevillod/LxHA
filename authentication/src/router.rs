@@ -24,11 +24,11 @@ pub fn auth_router(state: Arc<AppContext>) -> Router<Arc<AppContext>> {
         )
 
         .route("/validate-session", post(authenticate)
-            .route_layer(from_fn(local_network_validation))
             .route_layer(from_fn_with_state(Arc::clone(&state), session_validation))
         )
         
         .route("/validate-role", post(authenticate)
+            .route_layer(from_fn(local_network_validation))
             .route_layer(from_fn(protected_role_validation))
             .route_layer(from_fn_with_state(Arc::clone(&state), session_validation))
         )

@@ -1,24 +1,76 @@
 
+import { For } from "../components/ui/For"
 import { Helmet } from "react-helmet"
+import { useEffect } from "react"
+import { ActionIcon } from "../components/Actions"
 import { MainLayout } from "../layouts/MainLayout"
+import { useInstanceStore } from "../store/InstanceStore"
+import { Table, TableField } from "../components/Table"
+import { InstanceStatusIcon } from "../components/ui/Icons"
+
+import { SearchBar } from "../components/SearchBar"
+import { Pagination } from "../components/Pagination"
 
 export const DashboardPage = () => {
+
+    const instanceStore = useInstanceStore()
+
+    useEffect(() => { instanceStore.getInstances() }, [])
 
     return (
 
         <MainLayout>
 
             <Helmet>
-                <title>Lx High Availability - Dashboard</title>
+                <title>Lx High Availability - Instances</title>
             </Helmet>
 
-            <div className="w-full h-full flex flex-col gap-4 items-center justify-center text-neutral-950">
+            <div className="w-full flex flex-col justify-between mt-20 gap-8 text-neutral-950 relative">
 
-                <h1 className="text-5xl font-bold">Dashboard Page</h1>
+                <div className="w-full flex flex-row justify-between items-center">
+
+                    <SearchBar dataStore={instanceStore} variant="users" />
+
+                    <button className="flex items-center justify-center text-lg w-44 h-12 px-4 rounded-md bg-primary text-white font-semibold">
+                        Create User
+                    </button>
+
+                </div>
+
+                <Table dataStore={instanceStore}>
+
+                    <For of={instanceStore.dataSplice} render={(instance, index) => (
+
+                        <div key={index} className={`w-full grid grid-cols-${instanceStore?.nColumns} gap-4 pb-4`}>
+
+                            <InstanceStatusIcon status={instance.status} />
+                            <TableField value={instance.name} />
+                            <TableField value={instance.specs.cpu} />
+                            <TableField value={instance.specs.ram} />
+                            <TableField value={instance.type} />
+                            <TableField value={instance.ip_addresses[0]} />
+
+                            <div className="w-full xl:flex flex-row justify-between hidden">
+                                <ActionIcon variant="play" onClick={() => { }} />
+                                <ActionIcon variant="stop" onClick={() => { }} />
+                                <ActionIcon variant="reboot" onClick={() => { }} />
+                                <ActionIcon variant="settings" onClick={() => { }} />
+                            </div>
+
+                            <div className="w-full flex justify-end xl:hidden">
+                                <i className="text-black text-2xl bi bi-three-dots-vertical"></i>
+                            </div>
+
+                        </div>
+
+                    )} />
+
+                </Table>
+
+                <Pagination dataStore={instanceStore} />
 
             </div>
 
         </MainLayout>
     )
 }
-
