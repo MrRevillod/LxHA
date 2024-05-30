@@ -52,8 +52,6 @@ pub async fn session_validation(cookies: Cookies,
         None => session_from_refresh(&refresh.unwrap())?
     };
 
-    println!("User ID: {}", &user_id);
-
     if ctx.tokens.find_one(doc! { "token": &token }).await?.is_some() {
         return Err(HttpResponse::UNAUTHORIZED)
     }
@@ -62,14 +60,12 @@ pub async fn session_validation(cookies: Cookies,
 
     let user = match ctx.users.find_one_by_id(&id).await? {
         Some(user) => user,
-        None   => return Err(HttpResponse::UNAUTHORIZED)
+        None => return Err(HttpResponse::UNAUTHORIZED)
     };
     
-    println!("User: {:?}", &user);
     req.extensions_mut().insert(id);
     req.extensions_mut().insert(user);
     req.extensions_mut().insert(token.unwrap());
-
 
     Ok(next.run(req).await)
 }

@@ -1,31 +1,47 @@
 
 import { Input } from "../../components/ui/Input"
-import { useUserStore } from "../../store/UserStore"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useUserStore } from "../../store/UserStore"
+import { useHttpStore } from "../../store/HttpStore"
 import { registerSchema } from "../../lib/schemas"
-import { ROLE } from "../../lib/types"
+import { RegisterData, ROLE } from "../../lib/types"
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
 
-interface RegisterUserFormProps{
-    onClose:() => void
-}
+export const RegisterUserForm = () => {
 
-export const RegisterUserForm = ({onClose}:RegisterUserFormProps) => {
-
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, setError, formState: { errors }, reset } = useForm({
         resolver: zodResolver(registerSchema)
     })
 
     const { createUser } = useUserStore()
+    const { status, data } = useHttpStore()
 
-    const onSubmit = async (formData: any) => {
+    const onSubmit = async (formData: RegisterData) => {
+
         await createUser(formData)
-        onClose()
+
+        if (status === 409) {
+
+            if (data.conflicts) {
+
+                Object.entries(data.conflicts).forEach(([key, value]) => {
+
+                    setError(key, {
+                        type: "manual",
+                        message: value?.toString()
+                    })
+                })
+            }
+
+            return
+        }
+
+        reset()
     }
 
     return (
 
-        <div className="w-[30vw] form ">
+        <div className="w-[50vw] form">
 
             <div className="flex flex-col items-center gap-2">
                 <h2 className="text-4xl font-bold text-primary text-center">
@@ -37,8 +53,11 @@ export const RegisterUserForm = ({onClose}:RegisterUserFormProps) => {
                 </p>
             </div>
 
-            <form className="flex flex-col gap-4 px-8 w-full" onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}>    
+            <form className="flex flex-col gap-4 px-8 w-full"
+                onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}
+            >
                 <div className="flex gap-4">
+
                     <Input
                         label="Name"
                         type="text"
@@ -53,7 +72,9 @@ export const RegisterUserForm = ({onClose}:RegisterUserFormProps) => {
                         placeholder="John Doe"
                         error={errors.username ? (errors.username.message?.toString()) : ""}
                     />
-                </div>    
+
+                </div>
+
                 <Input
                     label="Email"
                     type="email"
@@ -61,23 +82,13 @@ export const RegisterUserForm = ({onClose}:RegisterUserFormProps) => {
                     placeholder="john@domain.com"
                     error={errors.email ? (errors.email.message?.toString()) : ""}
                 />
-                <Input label="Password"
-                    type="password"
-                    {...register('password')}
-                    placeholder="●●●●●●●●●●"
-                    error={errors.password ? (errors.password.message?.toString()) : ""}
-                />
-                <Input label="Confirm Password"
-                    type="password"
-                    {...register('confirmPassword')}
-                    placeholder="●●●●●●●●●●"
-                    error={errors.confirmPassword ? (errors.confirmPassword.message?.toString()) : ""}
-                />
+
                 <select
+                    defaultValue={ROLE.USER}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     {...register("role")}>
                     <option value={ROLE.ADMINISTRATOR}>Administrator</option>
-                    <option value={ROLE.USER} selected={true} >User</option>
+                    <option value={ROLE.USER}>User</option>
                 </select>
 
                 <button type="submit" className="bg-primary text-neutral-100 rounded-lg p-2 h-11 font-bold mt-4">

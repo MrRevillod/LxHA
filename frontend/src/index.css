@@ -52,6 +52,12 @@
     padding: 1rem;
 }
 
+.message-container {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 @layer base {
     h1 {
         @apply text-3xl font-bold;

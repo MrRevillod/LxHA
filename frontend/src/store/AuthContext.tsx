@@ -14,8 +14,10 @@ interface AuthStoreType {
     isAuthenticated: boolean,
     role: ROLE | null,
     isCheckingSession: boolean,
+    isLoading: boolean,
     setIsAuthenticated: Dispatch<SetStateAction<boolean>>,
     setRole: Dispatch<SetStateAction<ROLE | null>>,
+    setIsLoading: Dispatch<SetStateAction<boolean>>,
     useLogin: (data: LoginData) => Promise<void>,
     setUser: Dispatch<SetStateAction<User | null>>,
     useLogout: () => Promise<void>
@@ -30,7 +32,9 @@ const defaultAuthStore: AuthStoreType = {
     isAuthenticated: false,
     role: null,
     isCheckingSession: false,
+    isLoading: false,
     setUser: () => { },
+    setIsLoading: () => { },
     setIsAuthenticated: () => { },
     setRole: () => { },
     useLogin: async () => { },
@@ -56,9 +60,10 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     const [role, setRole] = useState<ROLE | null>(null)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [isCheckingSession, setIsCheckingSession] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
 
     const { reset } = useAppStore()
-    const { setResponse, setIsLoading } = useHttpStore()
+    const { setResponse } = useHttpStore()
 
     const useLogin = async (formData: LoginData) => {
 
@@ -193,6 +198,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     }, [])
 
     const value: AuthStoreType = {
+        isLoading,
+        setIsLoading,
         user,
         isAuthenticated,
         role,

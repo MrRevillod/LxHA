@@ -1,9 +1,11 @@
 
-import { User } from "../lib/types"
+import { api } from "../lib/axios"
 import { users } from "../lib/data"
 import { create } from "zustand"
+import { useHttpStore } from "./HttpStore"
+import { RegisterData, User } from "../lib/types"
+import { toast } from "sonner"
 
-<<<<<<< HEAD
 export interface UserStore {
     data: User[],
     dataSplice: User[],
@@ -16,20 +18,13 @@ export interface UserStore {
 }
 
 export interface UserActions {
-    getUsers: () => void
-}
-=======
-interface UserStore {
-
-    user: User | null,
-    setUser: (user: User | null) => void,
-    createUser: (userData:RegisterData) => Promise<void>,
-    updateUser: () => Promise<void>,
+    getUsers: () => Promise<void>,
+    createUser: (user: RegisterData) => Promise<void>,
     deleteUser: (id: string) => Promise<void>,
+    updateUser: (id: string, fields: any) => Promise<void>
 }
 
-export const  useUserStore = create<UserStore>((set) => ({
->>>>>>> dev-auth
+const { setIsLoading, setResponse } = useHttpStore.getState()
 
 export const useUserStore = create<UserStore & UserActions>((set, get) => ({
 
@@ -38,7 +33,6 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
     filteredData: [],
     itemsPerPage: 10,
 
-<<<<<<< HEAD
     nColumns: 7,
     columns: ["ID", "NAME", "USERNAME", "EMAIL", "ROLE", "INSTANCES", "ACTIONS"],
 
@@ -48,26 +42,6 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
         const endIndex = Math.min(startIndex + get().itemsPerPage, get().filteredData.length)
 
         set({ dataSplice: get().filteredData.slice(startIndex, endIndex) })
-=======
-    createUser: async (userData : RegisterData) => {
-
-        // const userData: RegisterData = {
-        //     email: "mail_test@mail.com",
-        //     username: "test_user",
-        //     role: ROLE.ADMINISTRATOR,
-        //     password: "aaa",
-        //     confirmPassword: "aaa"
-        // }
-
-        console.log("userData: ", userData)
-        try {
-
-            await api.post("/dashboard/user/register-account", userData)
-
-        } catch (error: any) {
-            console.error(error)
-        }
->>>>>>> dev-auth
     },
 
     getUsers: async () => {
@@ -76,6 +50,57 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
         const dataSplice = fetchedMessages.slice(0, get().itemsPerPage);
 
         set({ data: fetchedMessages, filteredData: fetchedMessages, dataSplice });
+    },
+
+    createUser: async (user: RegisterData) => {
+
+        try {
+
+            setIsLoading(true)
+            const res = await api.post("/dashboard/users", user)
+            setResponse(res.status, res.data.message, res.data, true)
+
+        } catch (error: any) {
+
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+            console.log(error)
+
+        } finally {
+            setIsLoading(false)
+        }
+    },
+
+    deleteUser: async (id: string) => {
+
+        const { setResponse, setIsLoading } = useHttpStore()
+
+        try {
+
+            setIsLoading(true)
+            const res = await api.delete(`/dashboard/users/${id}`)
+            setResponse(res.status, res.data.message, res.data, true)
+
+        } catch (error: any) {
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+        } finally {
+            setIsLoading(false)
+        }
+    },
+
+    updateUser: async (id: string, fields: any) => {
+
+        try {
+
+            setIsLoading(true)
+            const res = await api.patch(`/dashboard/users/${id}`, fields)
+            setResponse(res.status, res.data.message, res.data, true)
+
+        } catch (error: any) {
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+
+        } finally {
+            setIsLoading(false)
+        }
     },
 
     filterBySearch: (search: string) => {

@@ -2,6 +2,7 @@
 export type Message = {
     id: string
     from: string
+    subject: string
     message: string
     date: string
 }
@@ -18,7 +19,6 @@ export type User = {
     email: string,
     role: ROLE,
     n_instances: number,
-    created_at: string
 }
 
 export enum ROLE {
@@ -34,8 +34,6 @@ export enum INSTANCETYPE {
 export type RegisterData = {
     username: string,
     email: string,
-    password: string,
-    confirmPassword: string,
     role: ROLE
 }
 
@@ -48,14 +46,6 @@ export type RequestResetPasswordData = {
     email: string
 }
 
-<<<<<<< HEAD
-=======
-
-export type Instance = {
-    id: string,
-    name: string
-}
-
 export type CreateInstance = {
     name: string,
     owner: string,
@@ -65,11 +55,6 @@ export type CreateInstance = {
     storage: number,
 }
 
-export type PublicInstanceData = {
-    name: string
-}
-
->>>>>>> dev-auth
 export type JwtPayload = {
     id: string,
     username: string,

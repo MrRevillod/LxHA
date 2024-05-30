@@ -1,26 +1,24 @@
 
 import { Input } from "../../components/ui/Input"
-import { useUserStore } from "../../store/UserStore"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { instanceSchema } from "../../lib/schemas"
+import { useUserStore } from "../../store/UserStore"
 import { INSTANCETYPE } from "../../lib/types"
-import { FieldValues, SubmitHandler, useForm,} from "react-hook-form"
+import { instanceSchema } from "../../lib/schemas"
+import { FieldValues, SubmitHandler, useForm, } from "react-hook-form"
 
-
-interface CreateInstanceFormProps{
-    onClose:() => void
+interface CreateInstanceFormProps {
+    onClose: () => void
 }
 
-export const CreateInstanceForm = ({onClose}:CreateInstanceFormProps) => {
+export const CreateInstanceForm = ({ onClose }: CreateInstanceFormProps) => {
 
-    const { register, handleSubmit, formState: { errors } ,setValue} = useForm({
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: zodResolver(instanceSchema)
     })
 
     const { createUser } = useUserStore()
 
-
-    setValue("owner","carlos")
+    setValue("owner", "carlos")
     const onSubmit = async (formData: any) => {
         // await createUser(formData)
         onClose()
@@ -40,7 +38,7 @@ export const CreateInstanceForm = ({onClose}:CreateInstanceFormProps) => {
                 </p>
             </div>
 
-            <form className="flex flex-col gap-4 px-8 w-full" onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}>            
+            <form className="flex flex-col gap-4 px-8 w-full" onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}>
                 <div className="flex gap-4">
                     <Input
                         label="Name"
@@ -52,17 +50,17 @@ export const CreateInstanceForm = ({onClose}:CreateInstanceFormProps) => {
                     <div className="gap-3 flex flex-col w-2/4">
                         <label >Type</label>
                         <select
-                            
+                            defaultValue={INSTANCETYPE.container}
                             className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
                                         focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
                                         h-min  `}
                             {...register("type")}>
                             <option value={INSTANCETYPE.container}>Container</option>
-                            <option value={INSTANCETYPE.vm} selected={true} >Virtual Machine</option>
-                        </select>    
+                            <option value={INSTANCETYPE.vm}>Virtual Machine</option>
+                        </select>
                     </div>
                 </div>
-                
+
                 <div className="flex gap-4">
                     <Input
                         label="CPU's"
@@ -72,7 +70,7 @@ export const CreateInstanceForm = ({onClose}:CreateInstanceFormProps) => {
                         value={0}
                     />
 
-                    
+
                     <Input
                         label="Memory"
                         type="number"

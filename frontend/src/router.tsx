@@ -12,8 +12,7 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ protectedBy, redirectTo = "/auth/login" }: ProtectedRouteProps) => {
 
-    const { isLoading } = useHttpStore()
-    const { user, isAuthenticated, isCheckingSession, role } = useAuth()
+    const { user, isAuthenticated, isCheckingSession, role, isLoading } = useAuth()
 
     if (isCheckingSession || isLoading) {
         return <Loading />
@@ -33,8 +32,7 @@ export const ProtectedRoute = ({ protectedBy, redirectTo = "/auth/login" }: Prot
 
 export const LoadingWrapper = () => {
 
-    const { isLoading } = useHttpStore()
-    const { isAuthenticated } = useAuth()
+    const { isAuthenticated, isLoading } = useAuth()
 
     if (isLoading) {
         return <Loading />

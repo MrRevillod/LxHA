@@ -4,8 +4,8 @@ use tower_cookies::Cookies;
 use axum_responses::HttpResponse;
 
 use lxha_lib::utils::{
-    dbg::handle_error, 
     cookies::new_cookie, 
+    dbg::handle_internal_sv_error, 
     reqwest::{http_request, parse_cookies}
 };
 
@@ -40,7 +40,7 @@ pub async fn authenticate_by_role(cookies: Cookies,
         200 => {
             
             let body: Value = response.json()
-                .await.map_err(|e| handle_error(e))?
+                .await.map_err(|e| handle_internal_sv_error(e))?
             ;
 
             let user = body.get("user").unwrap().clone();
@@ -73,7 +73,7 @@ pub async fn authenticate_by_owner(cookies: Cookies,
         200 => {
             
             let body: Value = response.json()
-                .await.map_err(|e| handle_error(e))?
+                .await.map_err(|e| handle_internal_sv_error(e))?
             ;
 
             let user = body.get("user").unwrap().clone();

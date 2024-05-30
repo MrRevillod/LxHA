@@ -41,5 +41,5 @@ export const ActionIcon = ({ variant, onClick }: ActionIconProps) => {
         "settings": "Settings"
     }
 
-    return <i className={`text-2xl bi bi-${icons[variant]}`} onClick={onClick} title={titles[variant]}></i>
+    return <i className={`text-2xl hover:cursor-pointer hover:opacity-70 bi bi-${icons[variant]}`} onClick={onClick} title={titles[variant]}></i>
 }

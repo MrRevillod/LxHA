@@ -42,7 +42,7 @@ pub async fn login_controller(cookies: Cookies,
     cookies.add(session_cookie);
     cookies.add(refresh_cookie);
 
-    let profile = user.into_json_profile();
+    let profile = user.into_json_public_profile();
 
     Ok(HttpResponse::JSON(200, "Login success", "user", profile))
 }
@@ -76,5 +76,5 @@ pub async fn logout_controller(cookies: Cookies,
 }
 
 pub async fn authenticate(Extension(user): Extension<User>) -> AxumResponse {
-    Ok(HttpResponse::JSON(200, "Authenticated", "user", user.into_json_profile()))
+    Ok(HttpResponse::JSON(200, "Authenticated", "user", user.into_json_public_profile()))
 }

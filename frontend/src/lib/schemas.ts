@@ -1,6 +1,6 @@
 
 import { z } from "zod"
-import { ROLE,INSTANCETYPE } from "./types"
+import { ROLE, INSTANCETYPE } from "./types"
 
 export const registerSchema = z.object({
 
@@ -16,23 +16,8 @@ export const registerSchema = z.object({
         .email({ message: "El email no es válido" })
         .max(50, { message: "El email debe tener menos de 100 caracteres" }),
 
-    password: z.string()
-        .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
-        .max(30, { message: "La contraseña debe tener menos de 30 caracteres" })
-        .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,30}$/, { message: "La contraseña debe tener al menos un número, una letra mayúscula, una minúscula y un carácter especial" }),
-
-    confirmPassword: z.string()
-        .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
-        .max(30, { message: "La contraseña debe tener menos de 30 caracteres" })
-        .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,30}$/, { message: "La contraseña debe tener al menos un número, una letra mayúscula, una minúscula y un carácter especial" }),
-
     role: z.nativeEnum(ROLE)
 })
-
-    .refine((data) => data.password === data.confirmPassword, {
-        message: "Las contraseñas no coinciden",
-        path: ["confirmPassword"],
-    })
 
 export const profileSchema = z.object({
 
@@ -100,7 +85,6 @@ export const passwordSchema = z.object({
         message: "Las contraseñas no coinciden",
         path: ["confirmPassword"],
     })
-
 
 export const loginFormSchema = z.object({
 

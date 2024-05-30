@@ -35,6 +35,5 @@ pub fn new_cookie(kind: &str, name: &str, value: Option<&String>) -> Cookie<'sta
     
     cookie.set_path("/");
     cookie.set_max_age(exp);
-
     cookie.into_owned()
 }

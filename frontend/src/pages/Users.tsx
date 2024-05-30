@@ -1,29 +1,23 @@
 
-<<<<<<< HEAD
 import { For } from "../components/ui/For"
 import { api } from "../lib/axios"
 import { User } from "../lib/types"
 import { Helmet } from "react-helmet"
-import { useEffect } from "react"
 import { SearchBar } from "../components/SearchBar"
 import { Pagination } from "../components/Pagination"
 import { MainLayout } from "../layouts/MainLayout"
 import { ActionIcon } from "../components/Actions"
 import { useUserStore } from "../store/UserStore"
 import { Table, TableField } from "../components/Table"
-=======
-import { useState } from "react"
-import { MainLayout } from "../layouts/MainLayout"
+import { useEffect, useState } from "react"
 import { ModalLayout } from "../layouts/ModalLayout"
 import { RegisterUserForm } from "../components/forms/RegisterUserForm"
-// import { useUserStore } from "../store/UserStore"
->>>>>>> dev-auth
 
 export const UsersPage = () => {
+
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
-    //const { createUser } = useUserStore()
-    const handleCreateUser =  () => {
+    const handleCreateUser = () => {
         setIsOpen(true)
     }
 
@@ -31,8 +25,6 @@ export const UsersPage = () => {
         setIsOpen(false)
     }
 
-
-<<<<<<< HEAD
     const userStore = useUserStore()
 
     useEffect(() => { userStore.getUsers() }, [])
@@ -43,29 +35,22 @@ export const UsersPage = () => {
         console.log("user", user)
         await api.post("/mailer/contact-test")
     }
-=======
->>>>>>> dev-auth
 
     return (
 
         <MainLayout>
 
-<<<<<<< HEAD
             <Helmet>
                 <title>Lx High Availability - Users</title>
             </Helmet>
-=======
-            <div className="w-full  h-full flex flex-col gap-4 items-center justify-center text-neutral-950">
->>>>>>> dev-auth
 
             <div className="w-full flex flex-col justify-between mt-20 gap-8 text-neutral-950 relative">
 
                 <div className="w-full flex flex-row justify-between items-center">
 
-<<<<<<< HEAD
                     <SearchBar dataStore={userStore} variant="users" />
 
-                    <button className="flex items-center justify-center text-lg w-44 h-12 px-4 rounded-md bg-primary text-white font-semibold">
+                    <button onClick={handleCreateUser} className="flex items-center justify-center text-lg w-44 h-12 px-4 rounded-md bg-primary text-white font-semibold">
                         Create User
                     </button>
 
@@ -101,15 +86,13 @@ export const UsersPage = () => {
 
                 </Table>
 
-                <Pagination dataStore={userStore} />
-=======
-                <button onClick={handleCreateUser} className="w-42 h-12 px-4 mt-4 bg-primary text-white font-bold rounded-md border-none">
-                    Create User Tester
-                </button>
                 <ModalLayout isOpen={isOpen} onClose={handleClose}>
-                        <RegisterUserForm onClose={handleClose}/>
+
+                    <RegisterUserForm />
+
                 </ModalLayout>
->>>>>>> dev-auth
+
+                <Pagination dataStore={userStore} />
 
             </div>
 

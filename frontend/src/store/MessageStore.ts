@@ -25,7 +25,7 @@ export const useMessageStore = create<MessageStore & MessageActions>((set, get) 
     data: [],
     dataSplice: [],
     filteredData: [],
-    itemsPerPage: 6,
+    itemsPerPage: 7,
 
     setSplicedData: (pageNumber: number) => {
 

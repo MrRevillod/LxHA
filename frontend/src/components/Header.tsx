@@ -1,9 +1,9 @@
 
-import { Link, useLocation } from "react-router-dom"
-import { useAppStore } from "../store/AppStore"
-import { useAuth } from "../store/AuthContext"
 import { Show } from "./ui/Show"
+import { useAuth } from "../store/AuthContext"
+import { useAppStore } from "../store/AppStore"
 import { toUpperAndLower } from "../lib/string"
+import { Link, useLocation } from "react-router-dom"
 
 export const Header = () => {
 
@@ -24,7 +24,7 @@ export const Header = () => {
                 <Show when={isRoot}>
                     <div className="flex flex-row gap-8 items-center">
                         <Link to="/"><i className="bi bi-box text-5xl"></i></Link>
-                        <h1 className="text-2xl font-bold">{`Welcome again ${user?.username}!`}</h1>
+                        <h1 className="text-2xl font-bold">{`Welcome again ${user?.name}!`}</h1>
                     </div>
                 </Show>
 
@@ -42,7 +42,7 @@ export const Header = () => {
 
                     <Show when={!isRoot}>
                         <div className="flex flex-col">
-                            <h4 className="font-semibold">{user?.username}</h4>
+                            <h4 className="font-semibold">{user?.name}</h4>
                             <h5>{toUpperAndLower(role?.toString() || "")}</h5>
                         </div>
                     </Show>

@@ -1,17 +1,29 @@
 
 import { For } from "../components/ui/For"
 import { Helmet } from "react-helmet"
-import { useEffect } from "react"
 import { ActionIcon } from "../components/Actions"
 import { MainLayout } from "../layouts/MainLayout"
 import { useInstanceStore } from "../store/InstanceStore"
 import { Table, TableField } from "../components/Table"
 import { InstanceStatusIcon } from "../components/ui/Icons"
+import { useEffect, useState } from "react"
 
 import { SearchBar } from "../components/SearchBar"
 import { Pagination } from "../components/Pagination"
+import { ModalLayout } from "../layouts/ModalLayout"
+import { CreateInstanceForm } from "../components/forms/CreateInstanceForm"
 
 export const DashboardPage = () => {
+
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+
+    const handleCreateInstance = () => {
+        setIsOpen(true)
+    }
+
+    const handleClose = () => {
+        setIsOpen(false)
+    }
 
     const instanceStore = useInstanceStore()
 
@@ -31,8 +43,8 @@ export const DashboardPage = () => {
 
                     <SearchBar dataStore={instanceStore} variant="users" />
 
-                    <button className="flex items-center justify-center text-lg w-44 h-12 px-4 rounded-md bg-primary text-white font-semibold">
-                        Create User
+                    <button onClick={handleCreateInstance} className="flex items-center justify-center text-lg w-44 h-12 px-4 rounded-md bg-primary text-white font-semibold">
+                        Create Instance
                     </button>
 
                 </div>
@@ -66,6 +78,10 @@ export const DashboardPage = () => {
                     )} />
 
                 </Table>
+
+                <ModalLayout isOpen={isOpen} onClose={handleClose}>
+                    <CreateInstanceForm onClose={handleClose} />
+                </ModalLayout>
 
                 <Pagination dataStore={instanceStore} />
 

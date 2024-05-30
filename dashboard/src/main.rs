@@ -63,7 +63,7 @@ async fn main() {
 
     let app = Router::new()
         .nest("/api/dashboard/instances", instances_router(Arc::clone(&ctx)))
-        .nest("/api/dashboard/user", user_router(Arc::clone(&ctx)))
+        .nest("/api/dashboard/users", user_router(Arc::clone(&ctx)))
         .layer(cookies)
         .layer(cors)
         .with_state(ctx)

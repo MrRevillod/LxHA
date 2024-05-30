@@ -37,5 +37,14 @@ export default {
     'grid-cols-6',
     'grid-cols-7',
     'grid-cols-8',
+    'h-1/2',
+    'h-1/3',
+    'h-2/3',
+    'h-1/4',
+    'h-3/4',
+    'h-1/5',
+    'h-2/5',
+    'h-1/6',
+    'h'
   ]
 }
