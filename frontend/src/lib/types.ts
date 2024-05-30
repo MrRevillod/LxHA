@@ -26,6 +26,11 @@ export enum ROLE {
     USER = "USER"
 }
 
+export enum INSTANCETYPE {
+    vm = "VIRTUAL-MACHINE",
+    container = "CONTAINER"
+}
+
 export type RegisterData = {
     username: string,
     email: string,
@@ -43,6 +48,28 @@ export type RequestResetPasswordData = {
     email: string
 }
 
+<<<<<<< HEAD
+=======
+
+export type Instance = {
+    id: string,
+    name: string
+}
+
+export type CreateInstance = {
+    name: string,
+    owner: string,
+    type: INSTANCETYPE,
+    cpu: number,
+    memory: number,
+    storage: number,
+}
+
+export type PublicInstanceData = {
+    name: string
+}
+
+>>>>>>> dev-auth
 export type JwtPayload = {
     id: string,
     username: string,

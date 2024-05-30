@@ -42,7 +42,11 @@ export const Navbar = () => {
 
     return (
 
+<<<<<<< HEAD
         <nav className="h-full w-28 px-4 py-12 pt-16 flex flex-col items-center justify-between bg-primary">
+=======
+        <nav className="h-full w-28 m-0 px-4 py-12 flex flex-col items-center justify-between bg-primary">
+>>>>>>> dev-auth
 
             <div>
                 <Link to="/"><i className="bi bi-box text-white text-4xl"></i></Link>

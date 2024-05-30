@@ -3,6 +3,7 @@ import { User } from "../lib/types"
 import { users } from "../lib/data"
 import { create } from "zustand"
 
+<<<<<<< HEAD
 export interface UserStore {
     data: User[],
     dataSplice: User[],
@@ -17,6 +18,18 @@ export interface UserStore {
 export interface UserActions {
     getUsers: () => void
 }
+=======
+interface UserStore {
+
+    user: User | null,
+    setUser: (user: User | null) => void,
+    createUser: (userData:RegisterData) => Promise<void>,
+    updateUser: () => Promise<void>,
+    deleteUser: (id: string) => Promise<void>,
+}
+
+export const  useUserStore = create<UserStore>((set) => ({
+>>>>>>> dev-auth
 
 export const useUserStore = create<UserStore & UserActions>((set, get) => ({
 
@@ -25,6 +38,7 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
     filteredData: [],
     itemsPerPage: 10,
 
+<<<<<<< HEAD
     nColumns: 7,
     columns: ["ID", "NAME", "USERNAME", "EMAIL", "ROLE", "INSTANCES", "ACTIONS"],
 
@@ -34,6 +48,26 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
         const endIndex = Math.min(startIndex + get().itemsPerPage, get().filteredData.length)
 
         set({ dataSplice: get().filteredData.slice(startIndex, endIndex) })
+=======
+    createUser: async (userData : RegisterData) => {
+
+        // const userData: RegisterData = {
+        //     email: "mail_test@mail.com",
+        //     username: "test_user",
+        //     role: ROLE.ADMINISTRATOR,
+        //     password: "aaa",
+        //     confirmPassword: "aaa"
+        // }
+
+        console.log("userData: ", userData)
+        try {
+
+            await api.post("/dashboard/user/register-account", userData)
+
+        } catch (error: any) {
+            console.error(error)
+        }
+>>>>>>> dev-auth
     },
 
     getUsers: async () => {

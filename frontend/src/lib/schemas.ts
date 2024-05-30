@@ -1,5 +1,6 @@
 
 import { z } from "zod"
+import { ROLE,INSTANCETYPE } from "./types"
 
 export const registerSchema = z.object({
 
@@ -23,8 +24,9 @@ export const registerSchema = z.object({
     confirmPassword: z.string()
         .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
         .max(30, { message: "La contraseña debe tener menos de 30 caracteres" })
-        .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,30}$/, { message: "La contraseña debe tener al menos un número, una letra mayúscula, una minúscula y un carácter especial" })
+        .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,30}$/, { message: "La contraseña debe tener al menos un número, una letra mayúscula, una minúscula y un carácter especial" }),
 
+    role: z.nativeEnum(ROLE)
 })
 
     .refine((data) => data.password === data.confirmPassword, {
@@ -108,4 +110,13 @@ export const loginFormSchema = z.object({
 
     password: z.string()
         .min(1, { message: "The password is required" })
+})
+
+export const instanceSchema = z.object({
+    name: z.string(),
+    owner: z.string(),
+    cpu: z.number(),
+    memory: z.number(),
+    storage: z.number(),
+    type: z.nativeEnum(INSTANCETYPE)
 })
