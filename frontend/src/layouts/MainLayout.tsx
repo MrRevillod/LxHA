@@ -1,18 +1,27 @@
 
+import { Show } from "../components/ui/Show"
+import { Header } from "../components/Header"
 import { Navbar } from "../components/Navbar"
+import { useAuth } from "../store/AuthContext"
+import { useLocation } from "react-router-dom"
 import { PropsWithChildren } from "react"
 
 export const MainLayout = ({ children }: PropsWithChildren) => {
 
+    const location = useLocation()
+    const isRootPage = location.pathname === "/"
+
+    const { isAuthenticated } = useAuth()
+
     return (
 
-        <div className="h-screen w-screen bg-neutral-950 flex flex-row">
+        <div className="h-screen w-screen flex flex-row">
 
-            <Navbar />
+            <Show when={isAuthenticated && !isRootPage}><Navbar /></Show>
 
-            <main className="
-                h-full w-11/12 flex-grow items-center justify-center pt-28 pb-12 px-6 md:px-12 lg:px-28 
-            ">
+            <main className="h-full w-full flex flex-col px-12 lg:px-10 xl:16 2xl:px-28 py-8">
+
+                <Header />
 
                 <div className="w-full h-full">
 

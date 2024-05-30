@@ -1,73 +1,118 @@
 
 import { api } from "../lib/axios"
+import { users } from "../lib/data"
 import { create } from "zustand"
-import { ROLE, RegisterData, User } from "../lib/types"
+import { useHttpStore } from "./HttpStore"
+import { RegisterData, User } from "../lib/types"
+import { toast } from "sonner"
 
-interface UserStore {
-
-    user: User | null,
-    setUser: (user: User | null) => void,
-    createUser: () => Promise<void>,
-    updateUser: () => Promise<void>,
-    deleteUser: (id: string) => Promise<void>,
+export interface UserStore {
+    data: User[],
+    dataSplice: User[],
+    filteredData: User[],
+    itemsPerPage: number,
+    nColumns: number,
+    columns: string[],
+    setSplicedData: (page: number) => void,
+    filterBySearch: (search: string) => void
 }
 
-export const useUserStore = create<UserStore>((set) => ({
+export interface UserActions {
+    getUsers: () => Promise<void>,
+    createUser: (user: RegisterData) => Promise<void>,
+    deleteUser: (id: string) => Promise<void>,
+    updateUser: (id: string, fields: any) => Promise<void>
+}
 
-    user: null,
+const { setIsLoading, setResponse } = useHttpStore.getState()
 
-    setUser: (user: User | null) => set({ user }),
+export const useUserStore = create<UserStore & UserActions>((set, get) => ({
 
-    createUser: async () => {
+    data: [],
+    dataSplice: [],
+    filteredData: [],
+    itemsPerPage: 10,
 
-        const userData: RegisterData = {
-            email: "mail_test@mail.com",
-            username: "test_user",
-            role: ROLE.ADMINISTRATOR,
-            password: "aaa",
-            confirmPassword: "aaa"
-        }
+    nColumns: 7,
+    columns: ["ID", "NAME", "USERNAME", "EMAIL", "ROLE", "INSTANCES", "ACTIONS"],
 
-        console.log("userData: ", userData)
+    setSplicedData: (pageNumber: number) => {
 
-        try {
+        const startIndex = (pageNumber - 1) * get().itemsPerPage
+        const endIndex = Math.min(startIndex + get().itemsPerPage, get().filteredData.length)
 
-            await api.post("/dashboard/user/register-account", userData)
-
-        } catch (error: any) {
-
-            console.error(error)
-        }
+        set({ dataSplice: get().filteredData.slice(startIndex, endIndex) })
     },
 
-    updateUser: async () => {
+    getUsers: async () => {
 
-        const id = "664ba271d0c2f9a2d17bbea0" // replace with your user id
-        const updateFields = {
-            password: "abc",
-            confirmPassword: "abc"
-        }
+        const fetchedMessages = users
+        const dataSplice = fetchedMessages.slice(0, get().itemsPerPage);
+
+        set({ data: fetchedMessages, filteredData: fetchedMessages, dataSplice });
+    },
+
+    createUser: async (user: RegisterData) => {
 
         try {
 
-            await api.patch(`/dashboard/user/update-account/${id}`, updateFields)
+            setIsLoading(true)
+            const res = await api.post("/dashboard/users", user)
+            setResponse(res.status, res.data.message, res.data, true)
 
         } catch (error: any) {
 
-            console.error(error)
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+            console.log(error)
+
+        } finally {
+            setIsLoading(false)
         }
     },
 
     deleteUser: async (id: string) => {
 
+        const { setResponse, setIsLoading } = useHttpStore()
+
         try {
 
-            await api.delete(`/dashboard/user/delete-account/${id}`)
+            setIsLoading(true)
+            const res = await api.delete(`/dashboard/users/${id}`)
+            setResponse(res.status, res.data.message, res.data, true)
 
         } catch (error: any) {
-
-            console.error(error)
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+        } finally {
+            setIsLoading(false)
         }
+    },
+
+    updateUser: async (id: string, fields: any) => {
+
+        try {
+
+            setIsLoading(true)
+            const res = await api.patch(`/dashboard/users/${id}`, fields)
+            setResponse(res.status, res.data.message, res.data, true)
+
+        } catch (error: any) {
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+
+        } finally {
+            setIsLoading(false)
+        }
+    },
+
+    filterBySearch: (search: string) => {
+
+        const filteredData = get().data.filter((user: User) =>
+            user.name.toLowerCase().includes(search.toLowerCase()) ||
+            user.username.toLowerCase().includes(search.toLowerCase()) ||
+            user.role.toLowerCase().includes(search.toLowerCase()) ||
+            user.email.toLowerCase().includes(search.toLowerCase())
+        )
+
+        set({ filteredData, dataSplice: filteredData.slice(0, get().itemsPerPage) })
     }
 
 }))

@@ -76,6 +76,7 @@ name = "authentication"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "axum-client-ip",
  "axum_responses",
  "bcrypt",
  "chrono",
@@ -140,6 +141,17 @@ dependencies = [
  "tower-layer",
  "tower-service",
  "tracing",
+]
+
+[[package]]
+name = "axum-client-ip"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72188bed20deb981f3a4a9fe674e5980fd9e9c2bd880baa94715ad5d60d64c67"
+dependencies = [
+ "axum",
+ "forwarded-header-value",
+ "serde",
 ]
 
 [[package]]
@@ -626,6 +638,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "forwarded-header-value"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8835f84f38484cc86f110a805655697908257fb9a7af005234060891557198e9"
+dependencies = [
+ "nonempty",
+ "thiserror",
+]
+
+[[package]]
 name = "funty"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1108,13 +1130,17 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "axum_responses",
+ "chrono",
+ "cookie 0.18.1",
  "dotenv",
  "futures",
+ "jsonwebtoken",
  "lazy_static",
  "mongodb",
  "reqwest",
  "serde",
  "serde_json",
+ "time",
  "tokio",
  "tower-cookies",
 ]
@@ -1253,6 +1279,12 @@ dependencies = [
  "security-framework-sys",
  "tempfile",
 ]
+
+[[package]]
+name = "nonempty"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9e591e719385e6ebaeb5ce5d3887f7d5676fceca6411d1925ccc95745f3d6f7"
 
 [[package]]
 name = "num-bigint"

@@ -1,13 +1,13 @@
 
-use crate::utils::session::*;
-
 use mongodb::bson::doc;
 use tower_cookies::Cookies;
 use axum_responses::HttpResponse;
 
 use lxha_lib::{
-    utils::oid_from_str,
-    app::{Context, constants::JWT_SECRET}
+    models::token::AuthJwtPayload, 
+    app::{constants::JWT_SECRET, Context}, 
+    utils::{cookies::{get_cookie_from_req, new_cookie}, 
+    jsonwebtoken::{decode_jwt, new_session_token_from_refresh}, oid_from_str}
 };
 
 use axum::{
@@ -19,27 +19,37 @@ use axum::{
 pub async fn session_validation(cookies: Cookies, 
     State(ctx): Context, mut req: Request, next: Next) -> Result<MwResponse, HttpResponse> {
 
-    let mut token = cookies.get("session").map(|cookie| cookie.value().to_string());
+    let mut token = get_cookie_from_req(&cookies, "session");
+    let refresh = get_cookie_from_req(&cookies, "refresh");
 
-    let user_id = match &token {
-        
-        Some(token) => decode_jwt(&token, &JWT_SECRET)?.id,
+    let token_clone = token.clone();
 
-        None => {
+    if refresh.is_none() {
+        return Err(HttpResponse::UNAUTHORIZED)
+    }
 
-            let refresh_token = match cookies.get("refresh") {
-                Some(refresh_token) => refresh_token.value().to_string(),
-                None => return Err(HttpResponse::UNAUTHORIZED)
-            };
+    let mut session_from_refresh = |refresh: &String| -> Result<String, HttpResponse> {
 
-            let (new_token, user_id) = new_token_from_refresh(&refresh_token)?;
-            let session_cookie = new_cookie("SESSION", "token", Some(&new_token));
+        let (new_token, user_id) = new_session_token_from_refresh(&refresh)?;
+        let session_cookie = new_cookie("SESSION", "session", Some(&new_token));
 
-            cookies.add(session_cookie);
+        cookies.add(session_cookie);
+        token = Some(new_token);
 
-            token = Some(new_token);
-            user_id
-        }
+        Ok(user_id)
+    };
+    
+    let user_id = match &token_clone {
+
+        Some(session) => {
+
+            match decode_jwt::<AuthJwtPayload>(&session, &JWT_SECRET) {
+                Ok(payload) => payload.id,
+                Err(_) => session_from_refresh(&refresh.unwrap())?
+            }
+        },
+
+        None => session_from_refresh(&refresh.unwrap())?
     };
 
     if ctx.tokens.find_one(doc! { "token": &token }).await?.is_some() {
@@ -50,9 +60,9 @@ pub async fn session_validation(cookies: Cookies,
 
     let user = match ctx.users.find_one_by_id(&id).await? {
         Some(user) => user,
-        None   => return Err(HttpResponse::UNAUTHORIZED)
+        None => return Err(HttpResponse::UNAUTHORIZED)
     };
-
+    
     req.extensions_mut().insert(id);
     req.extensions_mut().insert(user);
     req.extensions_mut().insert(token.unwrap());

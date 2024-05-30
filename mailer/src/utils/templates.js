@@ -1,3 +1,8 @@
+import { FRONTEND_SERVICE_URL } from "../config.js "
+
+//const logoUrl = FRONTEND_SERVICE_URL.concat("/logowm-03.png")
+
+const logoUrl = "https://i.ibb.co/C7B657H/logowm-03.pngD"
 
 export const changeEmailTemplate = (url) => {
 
@@ -11,7 +16,7 @@ export const changeEmailTemplate = (url) => {
                     </td>
                     <td style="width: 70%;"></td>
                     <td >
-                        <img style="max-width: 60px;" src="https://i.ibb.co/C7B657H/logowm-03.pngD" alt="logo">
+                        <img style="max-width: 60px;" src=${logoUrl} alt="logo">
                     </td>
                 </tr>
             </table>
@@ -55,7 +60,7 @@ export const resetPasswordTemplate = (url) => {
                     </td>
                     <td style="width: 70%;"></td>
                     <td >
-                        <img style="max-width: 60px;" src="https://i.ibb.co/C7B657H/logowm-03.pngD" alt="logo">
+                        <img style="max-width: 60px;" src=${logoUrl} alt="logo">
                     </td>
                 </tr>
             </table>

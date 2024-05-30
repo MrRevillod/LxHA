@@ -1,26 +1,17 @@
 
-import { z } from "zod"
+import { Input } from "../ui/Input"
+import { useAuth } from "../../store/AuthContext"
+import { LoginData } from "../../lib/types"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { loginFormSchema } from "../../lib/schemas"
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
 
-import { Input } from "./ui/Input"
-import { useAuth } from "../store/AuthContext"
-import { LoginData } from "../lib/types"
-
-const formSchema = z.object({
-
-    email: z.string()
-        .min(1, { message: "El correo electrónico es requerido" })
-        .email({ message: "El correo electrónico no es válido" }),
-
-    password: z.string()
-        .min(1, { message: "La contraseña es requerida" })
-})
+import "../../index.css"
 
 export const LoginForm = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm({
-        resolver: zodResolver(formSchema)
+        resolver: zodResolver(loginFormSchema)
     })
 
     const { useLogin } = useAuth()
@@ -31,19 +22,19 @@ export const LoginForm = () => {
 
     return (
 
-        <div className="flex flex-col justify-center gap-8 px-4 h-full w-full md:w-1/2 lg:w-7/12">
+        <div className="-mt-8 w-4/6 lg:w-3/6 2xl:w-2/6 h-3/4 form">
 
             <div className="flex flex-col items-center gap-2">
-                <h2 className="text-3xl font-bold text-neutral-100 text-center">
-                    Inicia sesión
+                <h2 className="text-4xl font-bold text-primary text-center">
+                    Login
                 </h2>
 
-                <p className="text-center font-light text-neutral-300 text-sm">
-                    Disfruta la experiencia completa de Lxd High Av.
+                <p className="text-center font-normal text-neutral-900 text-sm">
+                    Enjoy the full experience of Lx High Availability.
                 </p>
             </div>
 
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}>
+            <form className="w-11/12 flex flex-col gap-4" onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}>
 
                 <Input label="Email"
                     type="email"
@@ -61,12 +52,14 @@ export const LoginForm = () => {
                 />
 
                 <button type="submit"
-                    className="bg-neutral-100 text-neutral-950 rounded-lg p-2 font-bold mt-4"
+                    className="bg-primary text-neutral-100 rounded-lg p-2 h-11 font-bold mt-4"
                 >
-                    Ingresar
+                    Login
+
                 </button>
 
             </form>
+
         </div>
     )
 }

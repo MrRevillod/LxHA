@@ -1,34 +1,24 @@
 
 import { Router } from "express"
-import { sender } from "./utils/mailer.js"
-import { changeEmailTemplate, resetPasswordTemplate } from "./utils/templates.js"
+import { authenticate } from "./middlewares.js"
+
+import {
+    adminToUserMessageController, newAccountMessageController,
+    newInstanceMessageController, resetPasswordController,
+    updateEmailController, userToAdminMessageController
+} from "./controllers.js"
 
 export const router = Router()
 
-router.post("/api/mailer/email-change", async (req, res) => {
-
-    const { email, url } = await req.body
-
-    const subject = "LXHA - Cambio de dirección de correo"
-
-    sender(changeEmailTemplate, subject, email, url).then(() => {
-        return res.status(200).json({ message: "Email sent" })
-
-    }).catch(() => {
-        return res.status(500).json({ message: "Internal server error" })
-    })
+router.post("/api/mailer/contact-test", authenticate("ROLE"), (req, res) => {
+    res.status(200).send("Contact test successful")
 })
 
-router.post("/api/mailer/reset-password", async (req, res) => {
+router.post("/api/mailer/email-change", updateEmailController)
+router.post("/api/mailer/reset-password", resetPasswordController)
 
-    const { email, url } = await req.body
+router.post("/api/mailer/support-req", authenticate("SESSION"), userToAdminMessageController)
+router.post("/api/mailer/admin-message", authenticate("ROLE"), adminToUserMessageController)
 
-    const subject = "LXHA - Restauración de contraseña"
-
-    sender(resetPasswordTemplate, subject, email, url).then(() => {
-        return res.status(200).json({ message: "Email sent" })
-
-    }).catch(() => {
-        return res.status(500).json({ message: "Internal server error" })
-    })
-})
+router.post("/api/mailer/new-instance", newInstanceMessageController)
+router.post("/api/mailer/new-account", newAccountMessageController)

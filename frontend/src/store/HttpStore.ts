@@ -34,14 +34,14 @@ export const useHttpStore = create<HttpStore>((set) => ({
         if (notification && data?.type == "success") {
 
             toast.success(data.message, {
-                duration: 2000,
+                duration: 3000,
                 style: { fontSize: "1rem" }
             })
 
         } else if (notification && data?.type == "error") {
 
             toast.error(data.message, {
-                duration: 2000,
+                duration: 3000,
                 style: { fontSize: "1rem" }
             })
         }

@@ -1,12 +1,14 @@
 
 import cors from "cors"
 import express from "express"
+import cookieParser from "cookie-parser"
 
 import { router } from "./router.js"
 import { MAILER_SERVICE_URL } from "./config.js"
 
 const app = express()
 
+app.use(cookieParser())
 app.use(cors({ origin: "*" }))
 
 app.use(express.json())

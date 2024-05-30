@@ -20,27 +20,8 @@ pub struct InstanceData {
 #[allow(non_snake_case)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RegisterData {
+    pub name: String,
     pub username: String,
     pub email: String,
-    pub password: String,
-    pub confirmPassword: String,
     pub role: Role,
-}
-
-#[allow(non_snake_case)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct UpdateUserData {
-    pub username: String,
-    pub password: String,
-    pub confirmPassword: String,
-    pub role: Role,
-}
-
-impl UpdateUserData {
-    pub fn role_to_string(&self) -> String {
-        match self.role {
-            Role::USER => "USER".to_string(),
-            Role::ADMINISTRATOR => "ADMINISTRATOR".to_string(),
-        }
-    }
 }

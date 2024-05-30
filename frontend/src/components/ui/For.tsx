@@ -7,7 +7,6 @@ interface ForProps<T> {
 }
 
 export const For = <T,>({ render, of }: ForProps<T>): React.ReactElement => {
-
     return (
         <>
             {Children.toArray(of.map((item, index) => render(item, index)))}

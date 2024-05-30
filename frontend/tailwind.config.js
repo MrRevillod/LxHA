@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-import daisyui from 'daisyui'
 export default {
   content: [
     "./index.html",
@@ -9,6 +8,10 @@ export default {
     extend: {
       colors: {
         'primary': '#3873F2',
+        'action-b': '#1e88e5',
+        'action-g': '#43a047',
+        'action-r': '#e53935',
+        'action-gr': '#757575',
       },
 
       backgroundImage: {
@@ -24,7 +27,24 @@ export default {
       },
     },
   },
-  plugins: [
-    daisyui
-  ],
+  plugins: [],
+  safelist: [
+    'grid-cols-1',
+    'grid-cols-2',
+    'grid-cols-3',
+    'grid-cols-4',
+    'grid-cols-5',
+    'grid-cols-6',
+    'grid-cols-7',
+    'grid-cols-8',
+    'h-1/2',
+    'h-1/3',
+    'h-2/3',
+    'h-1/4',
+    'h-3/4',
+    'h-1/5',
+    'h-2/5',
+    'h-1/6',
+    'h'
+  ]
 }

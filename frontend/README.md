@@ -1,30 +1,34 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Lx High Availability Frontend Application
 
-Currently, two official plugins are available:
+## Development To Do!
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [] Create the Actions Functionalities (UseUserStore, UseInstanceStore)
+- [] Create the Contact by Email Functionalities (SendEmail) Admin -> User
 
-## Expanding the ESLint configuration
+- [*] Responsividad de la aplicación
+  
+  - Mejorar responsividad de las tablas
+  - Mejorar responsividad de la paginación, fijar en la parte inferior
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- [] Crear Analytics page
+  
+  - Crear gráficos en base a información solicitada por http
 
-- Configure the top-level `parserOptions` property like this:
+- [] Manejo de toats
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+  - En actions lanzar toasts de error o éxito dependiendo de la acción
+    Por ejemplo, si intentas stoppear una instancia que ya está stoppeada, lanzar un toast de error
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+- [] Creación layout de modal
+
+  - Luego de crear el layout, implementar en las acciones de la aplicación además de un modal de confirmación.
+
+
+## Cosas a añadir
+
+- [] añadir type: vm | container a la instancia
+- [] añadir os a la instancia
+
+- [] añadir name al user

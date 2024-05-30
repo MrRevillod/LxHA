@@ -1,6 +1,8 @@
 
 pub mod dbg;
 pub mod reqwest;
+pub mod cookies;
+pub mod jsonwebtoken;
 
 use std::str::FromStr;
 

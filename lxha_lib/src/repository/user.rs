@@ -1,21 +1,12 @@
 
-use mongodb::bson;
+use std::vec;
 use std::sync::Arc;
 use futures::TryStreamExt;
-
-use std::vec;
-use serde_json::Value;
-
-use mongodb::{
-    Collection,
-    bson::{doc, oid::ObjectId, Document},
-};
-
-use axum_responses::{extra::ToJson, AxumResult, HttpResponse};
+use axum_responses::AxumResult;
+use mongodb::{Collection, bson::{doc, oid::ObjectId, Document}};
 
 use crate::app::DatabaseReference;
-
-use crate::models::user::*;
+use crate::{models::user::*, utils::dbg::handle_internal_sv_error};
 
 #[derive(Debug, Clone)]
 pub struct UserRespository {
@@ -32,9 +23,8 @@ impl UserRespository {
 
     pub async fn create(&self, user: &User) -> AxumResult<()> {
         
-        self.collection
-            .insert_one(user, None).await
-            .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)?
+        self.collection.insert_one(user, None).await
+            .map_err(|e| handle_internal_sv_error(e))?
         ;
 
         Ok(())
@@ -42,9 +32,8 @@ impl UserRespository {
 
     pub async fn find_one_by_id(&self, id: &ObjectId) -> AxumResult<Option<User>> {
 
-        let user = self.collection
-            .find_one(doc! { "_id": id }, None).await
-            .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)?
+        let user = self.collection.find_one(doc! { "_id": id }, None).await
+            .map_err(|e| handle_internal_sv_error(e))?
         ;
 
         Ok(user)
@@ -52,78 +41,24 @@ impl UserRespository {
 
     pub async fn find_one(&self, filter: Document) -> AxumResult<Option<User>> {
 
-        let user = self.collection
-            .find_one(filter, None).await
-            .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)?
+        let user = self.collection.find_one(filter, None).await
+            .map_err(|e| handle_internal_sv_error(e))?
         ;
 
         Ok(user)
     }
 
-    pub async fn find_one_with_instances(&self, id: &ObjectId) -> AxumResult<Option<ProfileWithInstance>> {
+    pub async fn find(&self) -> AxumResult<Vec<PrivateProfile>> {
 
-        let pipeline = vec![
-            doc! {
-                "$match": {
-                    "_id": id,
-                }
-            },
-            doc! {
-                "$lookup": {
-                    "from": "instances",
-                    "localField": "instances",
-                    "foreignField": "_id",
-                    "as": "instances",
-                }
-            },
-            doc! {
-                "$unwind": {
-                    "path": "$instances",
-                }
-            },
-            doc! {
-                "$replaceRoot": {
-                    "newRoot": {
-                        "$mergeObjects": ["$instances", "$$ROOT"],
-                    }
-                }
-            },
-            doc! {
-                "$project": {
-                    "_id": 1,
-                    "username": 1,
-                    "email": 1,
-                    "password": 1,
-                    "validated": 1,
-                    "role": 1,
-                    "instances": 1,
-                }
-            },
-        ];
-
-        let mut cursor = self.collection.aggregate(pipeline, None).await
-            .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)?
-        ;
-
-        let user_with_instances = cursor.try_next().await
-            .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)?
-            .map(|doc| bson::from_document::<ProfileWithInstance>(doc).unwrap())
-        ;
-
-        Ok(user_with_instances)
-    }
-
-    pub async fn find(&self) -> AxumResult<Vec<Value>> {
-
-        let mut profiles: Vec<Value> = vec![];
+        let mut profiles: Vec<PrivateProfile> = vec![];
         let mut cursor = self.collection.find(None, None).await
-            .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)?
+            .map_err(|e| handle_internal_sv_error(e))?
         ;
 
-        while let Some(result) = cursor.try_next().await
-            .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)? {
+        while let Some(user) = cursor.try_next().await
+            .map_err(|e| handle_internal_sv_error(e))? {
 
-            profiles.push(result.into_profile().to_json())
+            profiles.push(user.into_priv_profile())
         }
 
         Ok(profiles)
@@ -131,9 +66,8 @@ impl UserRespository {
 
     pub async fn update(&self, id: &ObjectId, update: Document) -> AxumResult<()> {
 
-        self.collection
-            .update_one(doc! { "_id": id }, update, None).await
-            .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)?
+        self.collection.update_one(doc! { "_id": id }, update, None).await
+            .map_err(|e| handle_internal_sv_error(e))?
         ;
 
         Ok(())
@@ -141,13 +75,11 @@ impl UserRespository {
 
     pub async fn delete(&self, id: &ObjectId) -> AxumResult<()> {
 
-        self.collection
-            .delete_one(doc! { "_id": id }, None).await
-            .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)?
+        self.collection.delete_one(doc! { "_id": id }, None).await
+            .map_err(|e| handle_internal_sv_error(e))?
         ;
 
         Ok(())
     }
 }
-
 
