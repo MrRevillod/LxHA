@@ -1,15 +1,28 @@
 
+export interface MessageUserData {
+    name: string,
+    email: string
+}
+
+export enum FROM_KIND {
+    ADMINISTRATOR = "ADMINISTRATOR",
+    USER = "USER"
+}
+
 export type Message = {
     id: string
-    from: string
+    from: MessageUserData
+    to: MessageUserData
     subject: string
-    message: string
-    date: string
+    body: string
+    date: string,
+    from_kind: FROM_KIND,
 }
 
 export type MessageData = {
-    from: string
-    message: string
+    from: MessageUserData,
+    subject: string,
+    body: string
 }
 
 export type User = {

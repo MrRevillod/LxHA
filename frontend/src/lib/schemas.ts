@@ -2,14 +2,19 @@
 import { z } from "zod"
 import { ROLE, INSTANCETYPE } from "./types"
 
+export const messageSchema = z.object({
+    subject: z.string().min(1).max(100),
+    body: z.string().min(1).max(500)
+})
+
 export const registerSchema = z.object({
 
     name: z.string()
-        .min(5, { message: "El nombre debe tener al menos 5 caracteres" })
+        .min(5, { message: "Must be at least 5 characters" })
         .max(30, { message: "El nombre debe tener menos de 30 caracteres" }),
 
     username: z.string()
-        .min(5, { message: "El apodo debe tener al menos 5 caracteres" })
+        .min(5, { message: "Must be at least 5 characters" })
         .max(20, { message: "El apodo debe tener menos de 30 caracteres" }),
 
     email: z.string()

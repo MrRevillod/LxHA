@@ -1,33 +1,30 @@
 
 import { For } from "../components/ui/For"
+import { ROLE } from "../lib/types"
+import { Show } from "../components/ui/Show"
 import { Helmet } from "react-helmet"
-import { ActionIcon } from "../components/Actions"
-import { MainLayout } from "../layouts/MainLayout"
-import { useInstanceStore } from "../store/InstanceStore"
-import { Table, TableField } from "../components/Table"
-import { InstanceStatusIcon } from "../components/ui/Icons"
-import { useEffect, useState } from "react"
-
+import { useAuth } from "../store/AuthContext"
 import { SearchBar } from "../components/SearchBar"
 import { Pagination } from "../components/Pagination"
-import { ModalLayout } from "../layouts/ModalLayout"
-import { CreateInstanceForm } from "../components/forms/CreateInstanceForm"
+import { ActionIcon } from "../components/Actions"
+import { MainLayout } from "../layouts/MainLayout"
+import { useModalStore } from "../store/ModalStore"
+import { useInstanceStore } from "../store/InstanceStore"
+import { Table, TableField } from "../components/Table"
+import { useEffect, useMemo } from "react"
+import { InstanceStatusIcon } from "../components/ui/Icons"
 
 export const DashboardPage = () => {
 
-    const [isOpen, setIsOpen] = useState<boolean>(false)
-
-    const handleCreateInstance = () => {
-        setIsOpen(true)
-    }
-
-    const handleClose = () => {
-        setIsOpen(false)
-    }
+    const { user } = useAuth()
+    const { role } = useAuth()
+    const { setModal } = useModalStore()
 
     const instanceStore = useInstanceStore()
 
     useEffect(() => { instanceStore.getInstances() }, [])
+
+    const memoSlice = useMemo(() => instanceStore.dataSplice, [instanceStore.dataSplice])
 
     return (
 
@@ -41,17 +38,25 @@ export const DashboardPage = () => {
 
                 <div className="w-full flex flex-row justify-between items-center">
 
-                    <SearchBar dataStore={instanceStore} variant="users" />
+                    <SearchBar dataStore={instanceStore} variant="instances" />
 
-                    <button onClick={handleCreateInstance} className="flex items-center justify-center text-lg w-44 h-12 px-4 rounded-md bg-primary text-white font-semibold">
-                        Create Instance
-                    </button>
+                    <Show when={role === ROLE.ADMINISTRATOR}>
+                        <button onClick={() => setModal("newInstance", user)} className="flex items-center justify-center text-lg w-44 h-12 px-4 rounded-md bg-primary text-white font-semibold">
+                            Create Instance
+                        </button>
+                    </Show>
+
+                    <Show when={role === ROLE.USER}>
+                        <button onClick={() => setModal("newMessage", user, "fromUser")} className="flex items-center justify-center text-lg w-52 h-12 px-4 rounded-md bg-primary text-white font-semibold">
+                            Request for support
+                        </button>
+                    </Show>
 
                 </div>
 
                 <Table dataStore={instanceStore}>
 
-                    <For of={instanceStore.dataSplice} render={(instance, index) => (
+                    <For of={memoSlice} render={(instance, index) => (
 
                         <div key={index} className={`w-full grid grid-cols-${instanceStore?.nColumns} gap-4 pb-4`}>
 
@@ -78,10 +83,6 @@ export const DashboardPage = () => {
                     )} />
 
                 </Table>
-
-                <ModalLayout isOpen={isOpen} onClose={handleClose}>
-                    <CreateInstanceForm onClose={handleClose} />
-                </ModalLayout>
 
                 <Pagination dataStore={instanceStore} />
 

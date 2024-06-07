@@ -1,10 +1,8 @@
 
 import { api } from "../lib/axios"
-import { users } from "../lib/data"
 import { create } from "zustand"
 import { useHttpStore } from "./HttpStore"
 import { RegisterData, User } from "../lib/types"
-import { toast } from "sonner"
 
 export interface UserStore {
     data: User[],
@@ -19,9 +17,9 @@ export interface UserStore {
 
 export interface UserActions {
     getUsers: () => Promise<void>,
-    createUser: (user: RegisterData) => Promise<void>,
-    deleteUser: (id: string) => Promise<void>,
-    updateUser: (id: string, fields: any) => Promise<void>
+    createUser: (user: RegisterData) => Promise<number>,
+    deleteUser: (id: string) => Promise<number>,
+    updateUser: (id: string, fields: any) => Promise<void>,
 }
 
 const { setIsLoading, setResponse } = useHttpStore.getState()
@@ -46,10 +44,17 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
 
     getUsers: async () => {
 
-        const fetchedMessages = users
-        const dataSplice = fetchedMessages.slice(0, get().itemsPerPage);
+        try {
 
-        set({ data: fetchedMessages, filteredData: fetchedMessages, dataSplice });
+            const res = await api.get("/dashboard/users")
+            const users = res.data.users
+            const dataSplice = users.slice(0, get().itemsPerPage);
+
+            set({ data: users, filteredData: users, dataSplice });
+
+        } catch (error: any) {
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+        }
     },
 
     createUser: async (user: RegisterData) => {
@@ -60,10 +65,11 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
             const res = await api.post("/dashboard/users", user)
             setResponse(res.status, res.data.message, res.data, true)
 
-        } catch (error: any) {
+            return res.status
 
+        } catch (error: any) {
             setResponse(error.response.status, error.response.data.message, error.response.data, true)
-            console.log(error)
+            return error.response.status
 
         } finally {
             setIsLoading(false)
@@ -72,16 +78,17 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
 
     deleteUser: async (id: string) => {
 
-        const { setResponse, setIsLoading } = useHttpStore()
-
         try {
 
             setIsLoading(true)
             const res = await api.delete(`/dashboard/users/${id}`)
             setResponse(res.status, res.data.message, res.data, true)
 
+            return res.status
+
         } catch (error: any) {
             setResponse(error.response.status, error.response.data.message, error.response.data, true)
+            return error.response.status
         } finally {
             setIsLoading(false)
         }
@@ -95,8 +102,11 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
             const res = await api.patch(`/dashboard/users/${id}`, fields)
             setResponse(res.status, res.data.message, res.data, true)
 
+            return res.status
+
         } catch (error: any) {
             setResponse(error.response.status, error.response.data.message, error.response.data, true)
+            return error.response.status
 
         } finally {
             setIsLoading(false)
@@ -113,6 +123,6 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
         )
 
         set({ filteredData, dataSplice: filteredData.slice(0, get().itemsPerPage) })
-    }
+    },
 
 }))

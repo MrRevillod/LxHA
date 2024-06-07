@@ -5,7 +5,7 @@ export const Loading = () => {
 
     return (
 
-        <div className="h-screen w-screen flex items-center justify-center gap-4">
+        <div className="z-50 h-screen w-screen flex items-center justify-center gap-4">
             <Spinner />
         </div>
     )

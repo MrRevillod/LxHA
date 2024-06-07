@@ -1,9 +1,8 @@
 
-import { Message } from "./types"
 import { Instance, ROLE, User } from "./types"
 
 export const users: User[] = [
-    { id: "1u", name: "Alice Johnson", email: "alice.johnson@example.com", username: "AJohnson", role: ROLE.USER, n_instances: 2 },
+    { id: "6658d32560ae43d4567d553c", name: "Luci clone feka", email: "lrevillod2022@alu.uct.cl", username: "AJohnson", role: ROLE.USER, n_instances: 2 },
     { id: "2u", name: "Luciano Revillod", email: "lrevillod@example.com", username: "lrevillod", role: ROLE.ADMINISTRATOR, n_instances: 0 },
     { id: "3u", name: "Carol White", email: "carol.white@example.com", username: "CWhite", role: ROLE.USER, n_instances: 1 },
     { id: "4u", name: "Albert Johnson", email: "albert.johnson@example.com", username: "AlbertJ", role: ROLE.USER, n_instances: 1 },
@@ -36,8 +35,8 @@ export const instances: Instance[] = [
     { id: "8i", type: "VM", status: "Running", name: "My Instance 8", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "3", user_id: "7u" },
     { id: "9i", type: "Container", status: "Running", name: "My Instance 9", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "2", user_id: "8u" },
     { id: "10i", type: "Container", status: "Running", name: "My Instance 10", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "1", user_id: "9u" },
-    { id: "11i", type: "Container", status: "Running", name: "My Instance 1", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "1", user_id: "1u" },
-    { id: "21i", type: "VM", status: "Running", name: "My Instance 2", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "2", user_id: "1u" },
+    { id: "11i", type: "Container", status: "Running", name: "My Instance 11", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "1", user_id: "1u" },
+    { id: "21i", type: "VM", status: "Running", name: "My Instance 21", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "2", user_id: "1u" },
     { id: "31i", type: "Container", status: "Stopped", name: "My Instance 3", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "2", user_id: "3u" },
     { id: "41i", type: "Container", status: "Running", name: "My Instance 4", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "1", user_id: "4u" },
     { id: "51i", type: "Container", status: "Rebooting", name: "My Instance 5", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "3", user_id: "5u" },
@@ -48,25 +47,3 @@ export const instances: Instance[] = [
     { id: "110i", type: "Container", status: "Running", name: "My Instance 10", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "1", user_id: "9u" }
 ]
 
-export const messages: Message[] = [
-    { id: "1", subject: "General support", from: "John Doe", message: "Hello, how are you Hello, how are youHello, how are youHello, how are youHello, how are youHello, how are youHello, how are youHello, how are youHello, how are youHello, how are youHello, how are youHello, how are youHello, how are youHello, how are youHello, how are you?", date: "2021-09-01" },
-    { id: "2", subject: "General support", from: "Jane Doe", message: "I'm fine, thank you", date: "2021-09-02" },
-    { id: "3", subject: "General support", from: "John Doe", message: "I'm glad to hear that", date: "2021-09-03" },
-    { id: "4", subject: "General support", from: "Jane Doe", message: "How about you?", date: "2021-09-04" },
-    { id: "5", subject: "General support", from: "John Doe", message: "I'm fine too", date: "2021-09-05" },
-    { id: "6", subject: "General support", from: "Jane Doe", message: "That's great", date: "2021-09-06" },
-    { id: "7", subject: "General support", from: "John Doe", message: "Yes, it is", date: "2021-09-07" },
-    { id: "8", subject: "General support", from: "Jane Doe", message: "I have to go now", date: "2021-09-08" },
-    { id: "9", subject: "General support", from: "John Doe", message: "Ok, see you later", date: "2021-09-09" },
-    { id: "10", subject: "General support", from: "Jane Doe", message: "Bye", date: "2021-09-10" },
-    { id: "11", subject: "General support", from: "Second John Doe", message: "Hello, how are you?", date: "2021-09-01" },
-    { id: "21", subject: "General support", from: "Second Jane Doe", message: "I'm fine, thank you", date: "2021-09-02" },
-    { id: "31", subject: "General support", from: "Second John Doe", message: "I'm glad to hear that", date: "2021-09-03" },
-    { id: "41", subject: "General support", from: "Second Jane Doe", message: "How about you?", date: "2021-09-04" },
-    { id: "51", subject: "General support", from: "Second John Doe", message: "I'm fine too", date: "2021-09-05" },
-    { id: "61", subject: "General support", from: "Second Jane Doe", message: "That's great", date: "2021-09-06" },
-    { id: "71", subject: "General support", from: "Second John Doe", message: "Yes, it is", date: "2021-09-07" },
-    { id: "81", subject: "General support", from: "Second Jane Doe", message: "I have to go now", date: "2021-09-08" },
-    { id: "91", subject: "General support", from: "Second John Doe", message: "Ok, see you later", date: "2021-09-09" },
-    { id: "10", subject: "General support", from: "Second Jane Doe", message: "Bye", date: "2021-09-10" }
-]
