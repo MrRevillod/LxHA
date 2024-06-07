@@ -13,7 +13,6 @@ use mongodb::bson::oid::ObjectId;
 
 use crate::{
     middlewares::role::*,
-    middlewares::network::*,
     controllers::account::*,
     controllers::authentication::*,
     middlewares::session::session_validation,
@@ -23,11 +22,11 @@ pub async fn test_register(State(ctx): Context) -> AxumResponse {
 
     let user = User {
         id: ObjectId::new(),
-        name: "Luciano Revillod".to_string(),
-        username: "lrevillod".to_string(),
-        email: "lrevillod2022@alu.uct.cl".to_string(),
+        name: "LUCI 2016".to_string(),
+        username: "rev 2016".to_string(),
+        email: "revillod2016luciano@gmail.com".to_string(),
         password: hash("aaa", 8).unwrap(),
-        role: Role::ADMINISTRATOR,
+        role: Role::USER,
         instances: vec![],
         n_instances: 0
     };

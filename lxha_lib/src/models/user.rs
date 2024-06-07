@@ -1,7 +1,7 @@
 
 use serde_json::Value;
-use axum_responses::extra::ToJson;
 use mongodb::bson::oid::ObjectId;
+use axum_responses::extra::ToJson;
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -25,8 +25,7 @@ pub struct User {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PublicProfile {
-    #[serde(rename = "_id")]
-    pub id: ObjectId,
+    pub id: String,
     pub name: String,
     pub username: String,
     pub email: String,
@@ -34,8 +33,8 @@ pub struct PublicProfile {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrivateProfile {
-    #[serde(rename = "_id")]
-    pub id: ObjectId,
+    pub id: String,
+    pub name: String,
     pub username: String,
     pub email: String,
     pub role: Role,
@@ -47,7 +46,7 @@ impl User {
     pub fn into_public_profile(&self) -> PublicProfile {
 
         PublicProfile {
-            id: self.id,
+            id: self.id.to_hex(),
             name: self.name.clone(),
             username: self.username.clone(),
             email: self.email.clone(),
@@ -57,7 +56,7 @@ impl User {
     pub fn into_json_public_profile(&self) -> Value {
 
         let profile = PublicProfile {
-            id: self.id,
+            id: self.id.to_hex(),
             name: self.name.clone(),
             username: self.username.clone(),
             email: self.email.clone(),
@@ -69,7 +68,8 @@ impl User {
     pub fn into_priv_profile(&self) -> PrivateProfile {
 
         PrivateProfile {
-            id: self.id,
+            id: self.id.to_hex(),
+            name: self.name.clone(),
             username: self.username.clone(),
             email: self.email.clone(),
             role: self.role.clone(),
@@ -80,7 +80,8 @@ impl User {
     pub fn into_json_priv_profile(&self) -> Value {
 
         let user_data = PrivateProfile {
-            id: self.id,
+            id: self.id.to_hex(),
+            name: self.name.clone(),
             username: self.username.clone(),
             email: self.email.clone(),
             role: self.role.clone(),
@@ -94,3 +95,4 @@ impl User {
 impl ToJson for User {}
 impl ToJson for PublicProfile {}
 impl ToJson for PrivateProfile {}
+

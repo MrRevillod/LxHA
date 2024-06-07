@@ -23,8 +23,9 @@ use lxha_lib::app::{
     state::{database_connection, AppContext}
 };
 
-use routes::instances::instances_router;
 use routes::user::user_router;
+use routes::messages::message_router;
+use routes::instances::instances_router;
 
 #[tokio::main]
 async fn main() {
@@ -64,6 +65,7 @@ async fn main() {
     let app = Router::new()
         .nest("/api/dashboard/instances", instances_router(Arc::clone(&ctx)))
         .nest("/api/dashboard/users", user_router(Arc::clone(&ctx)))
+        .nest("/api/dashboard/messages", message_router(Arc::clone(&ctx)))
         .layer(cookies)
         .layer(cors)
         .with_state(ctx)

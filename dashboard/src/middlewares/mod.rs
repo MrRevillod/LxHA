@@ -1,13 +1,13 @@
 
-use serde_json::Value;
 use tower_cookies::Cookies;
 use axum_responses::HttpResponse;
+use serde_json::{from_value, Value};
 
-use lxha_lib::utils::{
+use lxha_lib::{models::user::PublicProfile, utils::{
     cookies::new_cookie, 
     dbg::handle_internal_sv_error, 
     reqwest::{http_request, parse_cookies}
-};
+}};
 
 use axum::{
     extract::Request,
@@ -15,18 +15,18 @@ use axum::{
     response::Response as MwResponse
 };
 
-pub async fn authenticate_by_role(cookies: Cookies, 
+pub async fn authenticate_by_session(cookies: Cookies, 
     mut req: Request, next: Next) -> Result<MwResponse, HttpResponse> {
 
-    let client_ip: String = req.headers().get("x-forwarded-by")
-        .map(|ip| ip.to_str().unwrap().to_string())
-        .unwrap_or(String::new())
-    ;
+    // let client_ip: String = req.headers().get("x-forwarded-by")
+    //     .map(|ip| ip.to_str().unwrap().to_string())
+    //     .unwrap_or(String::new())
+    // ;
 
     let cookie_jar = parse_cookies(cookies.clone());
     
-    let response = http_request("AUTH", "/validate-role", 
-        "POST", Some(client_ip.clone()), Some(cookie_jar), Value::Null).await
+    let response = http_request("AUTH", "/validate-session", 
+        "POST", None, Some(cookie_jar), Value::Null).await
     ;
 
     let res_cookies = response.cookies();
@@ -43,7 +43,58 @@ pub async fn authenticate_by_role(cookies: Cookies,
                 .await.map_err(|e| handle_internal_sv_error(e))?
             ;
 
-            let user = body.get("user").unwrap().clone();
+            let profile = body.get("user").clone();
+
+            let user = match profile {
+                Some(profile) => match from_value::<PublicProfile>(profile.clone()) {
+                    Ok(user) => user,
+                    Err(_) => return Err(HttpResponse::INTERNAL_SERVER_ERROR),
+                },
+                None => return Err(HttpResponse::INTERNAL_SERVER_ERROR)
+            };
+
+            req.extensions_mut().insert(user);
+            Ok(next.run(req).await)
+        },
+
+        500 => Err(HttpResponse::INTERNAL_SERVER_ERROR),
+        _   => Err(HttpResponse::UNAUTHORIZED)
+    }
+}
+
+pub async fn authenticate_by_role(cookies: Cookies, 
+    mut req: Request, next: Next) -> Result<MwResponse, HttpResponse> {
+
+    let cookie_jar = parse_cookies(cookies.clone());
+    
+    let response = http_request("AUTH", "/validate-role", 
+        "POST", None, Some(cookie_jar), Value::Null).await
+    ;
+
+    let res_cookies = response.cookies();
+
+    res_cookies.for_each(|cookie| {
+        cookies.add(new_cookie("SESSION", cookie.name(), Some(&cookie.value().to_string())))
+    });
+
+    match response.status().as_u16() {
+
+        200 => {
+            
+            let body: Value = response.json()
+                .await.map_err(|e| handle_internal_sv_error(e))?
+            ;
+
+            let profile = body.get("user").clone();
+
+            let user = match profile {
+                Some(profile) => match from_value::<PublicProfile>(profile.clone()) {
+                    Ok(user) => user,
+                    Err(_) => return Err(HttpResponse::INTERNAL_SERVER_ERROR),
+                },
+                None => return Err(HttpResponse::INTERNAL_SERVER_ERROR)
+            };
+
             req.extensions_mut().insert(user);
             Ok(next.run(req).await)
         },

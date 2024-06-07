@@ -1,11 +1,15 @@
 
 use std::sync::Arc;
-use super::{constants::{DB_NAME, DB_URI}, DatabaseReference};
+
+use super::{
+    DatabaseReference,
+    constants::{DB_NAME, DB_URI}, 
+};
 
 use crate::repository::{
-    token::TokenRepository,
     user::UserRespository,
-    instance::InstanceRepository,
+    token::TokenRepository, 
+    instance::InstanceRepository, 
 };
 
 use mongodb::{
@@ -19,7 +23,7 @@ pub struct AppContext {
     pub db: DatabaseReference,
     pub users: UserRespository,
     pub tokens: TokenRepository,
-    pub instances: InstanceRepository
+    pub instances: InstanceRepository,
 }
 
 impl AppContext {
