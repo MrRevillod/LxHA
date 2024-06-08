@@ -23,7 +23,7 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
 
                 <Header />
 
-                <div className="w-full h-full">
+                <div className={`w-full h-full`}>
 
                     {children}
 

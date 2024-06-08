@@ -21,8 +21,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
     const { label, type, placeholder, error, name, islogin = false } = props
 
-    const classes = `border-1 border-neutral-500 rounded-lg 
-        p-2 focus:outline-none  focus:ring-blue-500 focus:border-blue-500 w-full pl-4 placeholder-neutral-400 text-neutral-950
+    const classes = `border-1 ${error ? "border-red-400" : "border-neutral-500"} rounded-lg 
+        p-2 focus:outline-none  focus:ring-blue-500 focus:border-blue-500 w-full 
+        pl-4 placeholder-neutral-400 text-neutral-950
     `
 
     const [inputType, setInputType] = useState<InputType>(type)
@@ -50,7 +51,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
             </Show>
 
             <Show when={label !== "Password" || type !== "password" || !islogin}>
-                <label  >{label}</label>
+                <div className="flex flex-row gap-2 items-center justify-between">
+                    <label className="font-medium">{label}</label>
+                    {error && <div className="text-red-600 text-sm">{error.toString()}</div>}
+                </div>  
             </Show>
 
             <div className="relative flex flex-row justify-center">
@@ -67,8 +71,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
                 </Show>
 
             </div>
-
-            {error && <div className="text-red-500 text-sm">{error.toString()}</div>}
 
         </div>
     )

@@ -37,6 +37,7 @@ lazy_static!(
     pub static ref LOCAL_NET_MASK: String = env("LOCAL_NET_MASK");
 
     pub static ref DEFAULT_USER_PASSWORD: String = env("DEFAULT_USER_PASSWORD");
+    pub static ref LXHA_MAIL_ADRESS: String = env("MAILER_SERVICE_MAIL_ADRESS");
 
     pub static ref SERVICES: HashMap<&'static str, String> = HashMap::from([
         ("AUTH", AUTH_SERVICE_URL.to_string()),

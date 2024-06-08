@@ -19,6 +19,9 @@ export const authenticate = (protectedBy) => async (req, res, next) => {
         const parsedCookies = `
             refresh=${req.cookies?.refresh || ""}; session=${req.cookies?.session || ""}
         `
+        
+        console.log(parsedCookies)
+
         const authResponse = await fetch(`${AUTH_SERVICE_URL}/${authEndpoint[protectedBy]}`, {
 
             credentials: "include",

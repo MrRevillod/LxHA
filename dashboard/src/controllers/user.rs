@@ -42,9 +42,12 @@ pub async fn register_account(State(ctx): Context, Json(body): Json<RegisterData
     };
 
     let body = json!({ "email": &user.email, "password": DEFAULT_USER_PASSWORD.to_string() });
-    let mailer_res = http_request("MAILER", "/new-account", "POST", None, None, body);
+    let mailer_res = http_request("MAILER", "/new-account", "POST", None, None, body).await;
 
-    match mailer_res.await.status().as_u16() {
+    println!("res from mailer");
+    dbg!(&mailer_res);
+
+    match mailer_res.status().as_u16() {
         200 => (),
         _   => return Err(HttpResponse::INTERNAL_SERVER_ERROR)
     }
@@ -63,13 +66,15 @@ pub async fn delete_account(State(ctx): Context,
         None => return Err(HttpResponse::CUSTOM(500, "User doesn't exists"))
     };
 
-    let instances = get_all_instances(user.username).await?;
+    // Uncomment after
 
-    if !instances.is_empty() {
-        for instance in instances {
-            remove_instance(instance.name).await?;
-        }
-    }
+    // let instances = get_all_instances(user.username).await?;
+    //
+    // if !instances.is_empty() {
+    //     for instance in instances {
+    //         remove_instance(instance.name).await?;
+    //     }
+    // }
     
     ctx.users.delete(&oid).await?;
 
