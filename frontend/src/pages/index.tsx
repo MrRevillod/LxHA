@@ -7,6 +7,7 @@ import { LandingPage } from "./Landing"
 import { NotFoundPage } from "./404"
 import { AnalitycsPage } from "./Analitycs"
 import { DashboardPage } from "./Dashboard"
+import { EmailUpdatePage } from "./EmailUpdate"
 import { ForgotPasswordPage } from "./auth/ResetPassword"
 import { ForgotPasswordRequestPage } from "./auth/RequestResetPassword"
 
@@ -21,4 +22,5 @@ export {
     MainLayout,
     AnalitycsPage,
     UsersPage,
+    EmailUpdatePage
 }

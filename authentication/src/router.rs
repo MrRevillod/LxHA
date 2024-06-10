@@ -20,13 +20,17 @@ use crate::{
 
 pub async fn test_register(State(ctx): Context) -> AxumResponse {
 
+    let admin_name = String::from("Luciano Revillod");
+    let admin_username = String::from("lrevillod");
+    let admin_email = String::from("lrevillod2022@alu.uct.cl");
+
     let user = User {
         id: ObjectId::new(),
-        name: "LUCI 2016".to_string(),
-        username: "rev 2016".to_string(),
-        email: "revillod2016luciano@gmail.com".to_string(),
+        name: admin_name,
+        username: admin_username,
+        email: admin_email,
         password: hash("aaa", 8).unwrap(),
-        role: Role::USER,
+        role: Role::ADMINISTRATOR,
         instances: vec![],
         n_instances: 0
     };

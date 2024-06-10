@@ -25,7 +25,7 @@ pub fn user_router(state: Arc<AppContext>) -> Router<Arc<AppContext>> {
         .route("/", post(register_account)
             .route_layer(from_fn(authenticate_by_role))
         )
-        .route("/id", patch(update_account)
+        .route("/:id", patch(update_account)
             .route_layer(from_fn(authenticate_by_owner))
         )
         .route("/:id", delete(delete_account)
