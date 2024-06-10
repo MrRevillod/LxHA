@@ -34,6 +34,15 @@ export type User = {
     n_instances: number,
 }
 
+export type FormProfileValues = {
+    name?: string,
+    username?: string,
+    email?: string,
+    role?: ROLE,
+    password?: string,
+    confirmPassword?: string,
+}
+
 export enum ROLE {
     ADMINISTRATOR = "ADMINISTRATOR",
     USER = "USER"

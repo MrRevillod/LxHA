@@ -33,8 +33,9 @@ const NavbarLink = ({ to, title, icon, hidden }: NavbarLinkProps) => {
 
         if (Object.values(modals).includes(true)) {
             closeAllModals()
-            setPageTitle(title)
         }
+        
+        setPageTitle(title)
     }
 
     return (

@@ -25,6 +25,9 @@ export default {
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
       },
+      height: {
+        'input-px': '42px',
+      }
     },
   },
   plugins: [],

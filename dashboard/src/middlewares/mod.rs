@@ -127,7 +127,18 @@ pub async fn authenticate_by_owner(cookies: Cookies,
                 .await.map_err(|e| handle_internal_sv_error(e))?
             ;
 
-            let user = body.get("user").unwrap().clone();
+            let profile = body.get("user").clone();
+
+            let user = match profile {
+                Some(profile) => match from_value::<PublicProfile>(profile.clone()) {
+                    Ok(user) => user,
+                    Err(_) => return Err(HttpResponse::INTERNAL_SERVER_ERROR),
+                },
+                None => return Err(HttpResponse::INTERNAL_SERVER_ERROR)
+            };
+
+            dbg!(&user);
+
             req.extensions_mut().insert(user);
             Ok(next.run(req).await)
         },

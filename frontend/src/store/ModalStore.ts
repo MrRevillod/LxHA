@@ -25,8 +25,8 @@ export const useModalStore = create<ModalStore>((set, get) => ({
 
     modals: {
         "newAccount": false,
-        "editAccount": false,
-        "editProfile": false,
+        "manageAccount": false,
+        "editUser": false,
         "newInstance": false,
         "editInstance": false,
         "newMessage": false,

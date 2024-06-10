@@ -61,7 +61,9 @@ export const profileSchema = z.object({
                 .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
                 .max(30, { message: "La contraseña debe tener menos de 30 caracteres" })
                 .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,30}$/, { message: "La contraseña debe tener al menos un número, una letra mayúscula, una minúscula y un carácter especial" })
-        )
+        ),
+
+    role: z.nativeEnum(ROLE)
 })
 
     .refine((data) => !data.password || (data.password === data.confirmPassword), {
