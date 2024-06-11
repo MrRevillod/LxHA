@@ -12,7 +12,13 @@ use lxha_lib::{
     app::{constants::{DEFAULT_USER_PASSWORD, FRONTEND_SERVICE_URL, JWT_SECRET}, Context}, 
 };
 
-use crate::{incus_api::{delete::remove_instance, get::get_all_instances}, models::RegisterData};
+use crate::{
+    incus_api::{
+        delete::remove_instance,
+        get::get_all_instances
+    },
+    models::RegisterData
+};
 
 pub async fn register_account(State(ctx): Context, Json(body): Json<RegisterData>) -> AxumResponse {
 

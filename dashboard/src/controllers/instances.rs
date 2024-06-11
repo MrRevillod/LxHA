@@ -1,11 +1,19 @@
+use std::thread::sleep;
+use std::time;
+use lxha_lib::{
+    app::Context,
+    models::user::{
+        self, PublicProfile, Role
+    },
+    utils::oid_from_str
+};
 
-use std::thread::sleep_ms;
-use lxha_lib::app::Context;
-use std::collections::HashMap;
 use lxha_lib::models::instance;
 use axum_responses::extra::ToJson;
-use serde::{Serialize, Deserialize};
-use axum::extract::{State, Query, Path, Json};
+use axum::{
+    Extension,
+    extract::{State, Path, Json}
+};
 use axum_responses::{AxumResponse, HttpResponse};
 
 use mongodb::bson::{doc, oid::ObjectId};
@@ -19,32 +27,36 @@ use crate::incus_api::{
     get::get_all_instances,
     get::get_instance,
     post::new_instance,
-    delete::remove_instance,
-    types,
+    delete::remove_instance
 };
 
-pub async fn list_instances_controller(Query(params): Query<HashMap<String, String>>) -> AxumResponse {
 
-    #[derive(Serialize, Deserialize, Debug)]
-    struct Instances {
-        instances: Vec::<types::Instance>,
+pub async fn list_instances_controller(State(ctx): Context, Extension(user_owner): Extension<PublicProfile>) -> AxumResponse {
+
+    let mut username = "".to_string();
+
+    let mut oid_str = user_owner.id.as_str();
+
+    oid_str = &oid_str[1..user_owner.id.len() - 1];
+
+    let algo = String::from(oid_str);
+
+    let oid = oid_from_str(&algo)?;
+
+    let user_db = match ctx.users.find_one_by_id(&oid).await? {
+        Some(user) => user,
+        None => return Err(HttpResponse::CUSTOM(500, "User doesn't exists"))
+    };
+
+    if user_db.role != Role::ADMINISTRATOR {
+        username = user_db.name;
     }
 
-    impl ToJson for Instances {}
+    let instances_list = get_all_instances(username).await?;
 
-    let user = match params.get("user") {
-        Some(u) => u.to_string(),
-        None => String::from("")
-    };
-
-    let instances_list = get_all_instances(user).await?;
-
-    let instances = Instances {
-        instances: instances_list
-    };
-
-    Ok(HttpResponse::JSON(200, "List successfuly", "content", instances.to_json()))
+    Ok(HttpResponse::JSON(200, "List successfuly", "instances", instances_list.to_json()))
 }
+
 
 pub async fn instance_controller(Path(instance_name): Path<String>) -> AxumResponse {
 
@@ -66,7 +78,7 @@ pub async fn create_instance_controller(State(ctx): Context, Json(body): Json<In
         }
     };
 
-    let (status, message) = new_instance(body.clone(), config.clone()).await?;
+    let (_, _) = new_instance(body.clone(), config.clone()).await?;
 
     let mut created_instance = get_instance(body.name.clone()).await?;
 
@@ -76,7 +88,7 @@ pub async fn create_instance_controller(State(ctx): Context, Json(body): Json<In
     }
 
     while created_instance.ip_addresses.is_empty() {
-        sleep_ms(500);
+        sleep(time::Duration::from_millis(500));
         created_instance = get_instance(body.name.clone()).await?;
     }
     println!("\n[Log] Instancia creada: {:?}", created_instance);
