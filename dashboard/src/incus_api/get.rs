@@ -1,4 +1,3 @@
-
 use std::ops::Deref;
 use reqwest::Error;
 
@@ -94,7 +93,6 @@ pub async fn get_all_instances(user: String) -> AxumResult<Vec<Instance>> {
 }
 
 
-
 pub async fn get_instance(name: String) -> AxumResult<Instance> {
     let client = get_client()?;
 
@@ -109,7 +107,6 @@ pub async fn get_instance(name: String) -> AxumResult<Instance> {
         .json::<ApiResponse::<InstancesStateMetadata>>()
         .await
         .unwrap();
-
 
     let addresses = match json_instance_state.metadata {
         Some(meta) => match meta.network {
@@ -147,4 +144,3 @@ pub async fn get_instance(name: String) -> AxumResult<Instance> {
         None => Instance::default(),
     })
 }
-
