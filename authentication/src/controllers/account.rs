@@ -15,6 +15,8 @@ use axum_responses::{AxumResponse, HttpResponse};
 pub async fn send_reset_password_email(State(ctx): Context, 
     Json(body): Json<Value>) -> AxumResponse {
 
+    dbg!(&body);
+
     if !body.is_object() || body.get("email").is_none() {
         return Err(HttpResponse::BAD_REQUEST)
     }

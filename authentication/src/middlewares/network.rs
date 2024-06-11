@@ -11,7 +11,8 @@ use axum::{
 use lxha_lib::app::constants::{LOCAL_NET_ADDR, LOCAL_NET_MASK};
 
 #[allow(non_snake_case)]
-pub async fn local_network_validation(req: Request, next: Next) -> Result<MwResponse, HttpResponse> {
+#[allow(dead_code)]
+pub async fn _local_network_validation(req: Request, next: Next) -> Result<MwResponse, HttpResponse> {
 
     let CLIENT_IP = match req.headers().get("x-forwarded-by") {
         Some(ip) => ip.to_str().unwrap(),

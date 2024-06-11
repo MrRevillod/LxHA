@@ -3,7 +3,6 @@ import { createTransport } from "nodemailer"
 import { MAIL_ADRESS, MAIL_PASSWORD } from "../config.js"
 
 export const transporter = createTransport({
-
     service: "gmail",
     auth: {
         user: MAIL_ADRESS,
@@ -18,14 +17,23 @@ export const mailValidator = (mail) => {
 
 export const sender = async (template, subject, email, url) => {
 
-    if (!mailValidator(email)) {
-        return { code: 400, message: "Invalid email" }
-    }
+    try {
+        
+        if (!mailValidator(email)) {
+            return { code: 400, message: "Invalid email" }
+        }
 
-    transporter.sendMail({
-        from: `LXHA ${MAIL_ADRESS}`,
-        to: email,
-        subject,
-        html: template(url)
-    })
+        const options = {
+            from: `LXHA ${MAIL_ADRESS}`,
+            to: email,
+            subject,
+            html: template(url)
+        }
+
+        return await transporter.sendMail(options)
+
+    } catch (error) {
+        console.error("Error:", error)
+        throw new Error(error)
+    }
 }

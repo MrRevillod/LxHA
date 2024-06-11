@@ -2,14 +2,19 @@
 import { z } from "zod"
 import { ROLE, INSTANCETYPE } from "./types"
 
+export const messageSchema = z.object({
+    subject: z.string().min(1).max(100),
+    body: z.string().min(1).max(500)
+})
+
 export const registerSchema = z.object({
 
     name: z.string()
-        .min(5, { message: "El nombre debe tener al menos 5 caracteres" })
+        .min(5, { message: "Must be at least 5 characters" })
         .max(30, { message: "El nombre debe tener menos de 30 caracteres" }),
 
     username: z.string()
-        .min(5, { message: "El apodo debe tener al menos 5 caracteres" })
+        .min(5, { message: "Must be at least 5 characters" })
         .max(20, { message: "El apodo debe tener menos de 30 caracteres" }),
 
     email: z.string()
@@ -56,7 +61,9 @@ export const profileSchema = z.object({
                 .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
                 .max(30, { message: "La contraseña debe tener menos de 30 caracteres" })
                 .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,30}$/, { message: "La contraseña debe tener al menos un número, una letra mayúscula, una minúscula y un carácter especial" })
-        )
+        ),
+
+    role: z.nativeEnum(ROLE)
 })
 
     .refine((data) => !data.password || (data.password === data.confirmPassword), {

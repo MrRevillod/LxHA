@@ -1,15 +1,13 @@
 
 use bcrypt::hash;
-use std::collections::HashMap;
+use std::{collections::HashMap};
 use serde_json::{from_value, json, Value};
-use mongodb::bson::{doc, oid::ObjectId};
+use mongodb::bson::{doc, oid::ObjectId, Document};
 use axum::{extract::{Path, State}, Extension, Json};
-use axum_responses::{AxumResponse, HttpResponse, extra::ToJson};
+use axum_responses::{extra::ToJson, AxumResponse, AxumResult, HttpResponse};
 
 use lxha_lib::{
-    models::{token::EmailJwtPayload, user::{Role, User}}, 
-    utils::{jsonwebtoken::decode_jwt, oid_from_str, reqwest::http_request},
-    app::{constants::{DEFAULT_USER_PASSWORD, FRONTEND_SERVICE_URL, JWT_SECRET}, Context}, 
+    app::{constants::{DEFAULT_USER_PASSWORD, FRONTEND_SERVICE_URL, JWT_SECRET}, Context}, models::{token::EmailJwtPayload, user::{PublicProfile, Role, User}}, utils::{jsonwebtoken::decode_jwt, oid_from_str, reqwest::http_request} 
 };
 
 use crate::{
@@ -48,9 +46,9 @@ pub async fn register_account(State(ctx): Context, Json(body): Json<RegisterData
     };
 
     let body = json!({ "email": &user.email, "password": DEFAULT_USER_PASSWORD.to_string() });
-    let mailer_res = http_request("MAILER", "/new-account", "POST", None, None, body);
+    let mailer_res = http_request("MAILER", "/new-account", "POST", None, None, body).await;
 
-    match mailer_res.await.status().as_u16() {
+    match mailer_res.status().as_u16() {
         200 => (),
         _   => return Err(HttpResponse::INTERNAL_SERVER_ERROR)
     }
@@ -69,25 +67,33 @@ pub async fn delete_account(State(ctx): Context,
         None => return Err(HttpResponse::CUSTOM(500, "User doesn't exists"))
     };
 
-    let instances = get_all_instances(user.username).await?;
+    // Uncomment after
 
-    if !instances.is_empty() {
-        for instance in instances {
-            remove_instance(instance.name).await?;
-        }
-    }
+    // let instances = get_all_instances(user.username).await?;
+    //
+    // if !instances.is_empty() {
+    //     for instance in instances {
+    //         remove_instance(instance.name).await?;
+    //     }
+    // }
     
     ctx.users.delete(&oid).await?;
 
     Ok(HttpResponse::CUSTOM(200, "Account deleted successfully"))
 }
 
-pub async fn update_account(State(ctx): Context, Extension(user): Extension<User>,
+pub async fn update_account(State(ctx): Context, Extension(user): Extension<PublicProfile>,
     Path(oid): Path<String>, Json(body): Json<Value>) -> AxumResponse {
 
     let oid = oid_from_str(&oid)?;
+    let req_user_id = oid_from_str(&user.id)?;
 
-    if body.get("role").is_some() && user.role != Role::ADMINISTRATOR {
+    let req_user = match ctx.users.find_one_by_id(&req_user_id).await? {
+        Some(user) => user,
+        None => return Err(HttpResponse::UNAUTHORIZED)
+    };
+
+    if body.get("role").is_some() && req_user.role != Role::ADMINISTRATOR {
         return Err(HttpResponse::UNAUTHORIZED);
     };
 
@@ -106,11 +112,11 @@ pub async fn update_account(State(ctx): Context, Extension(user): Extension<User
     let mut conflicts_hash = HashMap::new();
 
     if ctx.users.find_one(doc! {"username": body_map.get("username")}).await?.is_some() {
-        conflicts_hash.insert("username", "User with this username already exists");
+        conflicts_hash.insert("username", "Already in use");
     }
 
     if ctx.users.find_one(doc! {"email": body_map.get("email")}).await?.is_some() {
-        conflicts_hash.insert("email", "User with this email already exists");
+        conflicts_hash.insert("email", "Already in use");
     }
 
     if !conflicts_hash.is_empty() {
@@ -121,11 +127,11 @@ pub async fn update_account(State(ctx): Context, Extension(user): Extension<User
         let encrypted = hash(pwd, 8).unwrap();
         body_map.insert("password".to_string(), encrypted);
     }
-    
+
     for (key, value) in &body_map {
         
         if !valid_fields.contains(&key.as_str()) {
-            return Err(HttpResponse::BAD_REQUEST);
+            return Err(HttpResponse::NOT_ACCEPTABLE);
         }
 
         if key == "email" || key == "confirmPassword" {
@@ -135,15 +141,13 @@ pub async fn update_account(State(ctx): Context, Extension(user): Extension<User
         doc.insert(key, value);
     }
 
-    ctx.users.update(&oid, doc! { "$set": doc }).await?;
-    
     let mut email_updated = false;
     let mut response_message = "User updated succesfully";
 
     if let Some(email) = body_map.get("email") {
-
+        
         let update_email_url = format!("{}/account/update-email", *FRONTEND_SERVICE_URL);
-
+        
         let body = json!({ "email": &email, "url": update_email_url});
         let response = http_request("MAILER", "/email-change", "POST", None, None, body).await;
         
@@ -157,6 +161,8 @@ pub async fn update_account(State(ctx): Context, Extension(user): Extension<User
             email_updated = true;
         }
     }
+
+    ctx.users.update(&oid, doc! { "$set": doc }).await?;
 
     if email_updated {
         response_message = "User updated succesfully, Check your email and confirm the changes";
@@ -186,7 +192,26 @@ pub async fn update_account_email(State(ctx): Context,
 
     ctx.users.update(&id, doc!{"$set": { "email": payload.email }}).await?;
 
-    Ok(HttpResponse::ACCEPTED)
+    Ok(HttpResponse::OK)
+}
+
+pub async fn validate_email_update(State(ctx): Context, 
+    Path((oid, token)): Path<(String, String)>) -> AxumResponse {
+
+    let id = oid_from_str(&oid)?;
+
+    let user = match ctx.users.find_one_by_id(&id).await? {
+        Some(user) => user,
+        None => return Err(HttpResponse::UNAUTHORIZED)
+    };
+
+    if oid != user.id.to_hex() {
+        return Err(HttpResponse::UNAUTHORIZED)
+    }
+
+    decode_jwt::<EmailJwtPayload>(&token, &JWT_SECRET)?;
+
+    Ok(HttpResponse::OK)
 }
 
 pub async fn get_user(State(ctx): Context, Path(oid): Path<String>) -> AxumResponse {

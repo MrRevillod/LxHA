@@ -4,12 +4,12 @@ import { Link } from "react-router-dom"
 import { ROLE } from "../lib/types"
 import { useAuth } from "../store/AuthContext"
 import { useAppStore } from "../store/AppStore"
+import { useModalStore } from "../store/ModalStore"
 
 const NavbarLinks = [
     { title: "Analitycs", to: "/analitycs", icon: "bi bi-bar-chart-fill", protected: false },
     { title: "Dashboard", to: "/dashboard", icon: "bi bi-pc-display-horizontal", protected: false },
     { title: "Users", to: "/users", icon: "bi bi-people-fill", protected: true },
-    { title: "Messages", to: "/messages", icon: "bi bi-chat-square-text-fill", protected: false },
 ]
 
 interface NavbarLinkProps {
@@ -22,14 +22,24 @@ interface NavbarLinkProps {
 const NavbarLink = ({ to, title, icon, hidden }: NavbarLinkProps) => {
 
     const { role } = useAuth()
+    const { modals, closeAllModals } = useModalStore()
     const { pageTitle, setPageTitle } = useAppStore()
 
     const classes = `${pageTitle === title ? "bg-neutral-300 bg-opacity-30" : "hover:bg-primary"}
         px-4 py-3 rounded-md text-white text-2xl ${hidden && role === ROLE.USER ? "hidden" : "flex"}
     `
 
+    const handleClick = () => {
+
+        if (Object.values(modals).includes(true)) {
+            closeAllModals()
+        }
+        
+        setPageTitle(title)
+    }
+
     return (
-        <Link to={to} title={title} className={classes} onClick={() => setPageTitle(title)}>
+        <Link to={to} title={title} className={classes} onClick={() => handleClick()}>
             <i className={icon}></i>
         </Link>
     )
@@ -38,7 +48,15 @@ const NavbarLink = ({ to, title, icon, hidden }: NavbarLinkProps) => {
 export const Navbar = () => {
 
     const { useLogout } = useAuth()
-    const handleLogout = async () => await useLogout()
+    const { closeAllModals, modals } = useModalStore()
+    const handleLogout = async () => {
+
+        if (Object.values(modals).includes(true)) {
+            closeAllModals()
+        }
+
+        await useLogout()
+    }
 
     return (
 

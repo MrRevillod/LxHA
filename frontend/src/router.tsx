@@ -2,7 +2,6 @@
 import { ROLE } from "./lib/types"
 import { Loading } from "./pages/Loading"
 import { useAuth } from "./store/AuthContext"
-import { useHttpStore } from "./store/HttpStore"
 import { Navigate, Outlet } from "react-router-dom"
 
 interface ProtectedRouteProps {

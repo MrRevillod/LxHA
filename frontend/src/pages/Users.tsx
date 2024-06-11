@@ -1,6 +1,5 @@
 
 import { For } from "../components/ui/For"
-import { api } from "../lib/axios"
 import { User } from "../lib/types"
 import { Helmet } from "react-helmet"
 import { SearchBar } from "../components/SearchBar"
@@ -8,33 +7,27 @@ import { Pagination } from "../components/Pagination"
 import { MainLayout } from "../layouts/MainLayout"
 import { ActionIcon } from "../components/Actions"
 import { useUserStore } from "../store/UserStore"
+import { useModalStore } from "../store/ModalStore"
 import { Table, TableField } from "../components/Table"
-import { useEffect, useState } from "react"
-import { ModalLayout } from "../layouts/ModalLayout"
-import { RegisterUserForm } from "../components/forms/RegisterUserForm"
+import { useEffect, useMemo } from "react"
 
 export const UsersPage = () => {
 
-    const [isOpen, setIsOpen] = useState<boolean>(false)
-
-    const handleCreateUser = () => {
-        setIsOpen(true)
-    }
-
-    const handleClose = () => {
-        setIsOpen(false)
-    }
-
     const userStore = useUserStore()
+    const { setModal } = useModalStore()
 
     useEffect(() => { userStore.getUsers() }, [])
 
-    const handleContact = async (user: User) => {
+    const handleDeleteUser = async (user: User) => {
 
-        console.log("Sending email...")
-        console.log("user", user)
-        await api.post("/mailer/contact-test")
+        const status = await userStore.deleteUser(user.id)
+        if (status === 200) userStore.getUsers()
+
+        setModal("confirmAction")
+        await userStore.getUsers()
     }
+
+    const memoSlice = useMemo(() => userStore.dataSplice, [userStore.dataSplice])
 
     return (
 
@@ -50,7 +43,7 @@ export const UsersPage = () => {
 
                     <SearchBar dataStore={userStore} variant="users" />
 
-                    <button onClick={handleCreateUser} className="flex items-center justify-center text-lg w-44 h-12 px-4 rounded-md bg-primary text-white font-semibold">
+                    <button onClick={() => setModal("newAccount")} className="flex items-center justify-center text-lg w-44 h-12 px-4 rounded-md bg-primary text-white font-semibold">
                         Create User
                     </button>
 
@@ -58,7 +51,7 @@ export const UsersPage = () => {
 
                 <Table dataStore={userStore}>
 
-                    <For of={userStore.dataSplice} render={(user, index) => (
+                    <For of={memoSlice} render={(user: User, index) => (
 
                         <div key={index} className={`w-full grid grid-cols-${userStore?.nColumns} gap-4 pb-4`}>
 
@@ -71,9 +64,9 @@ export const UsersPage = () => {
 
                             <div className="w-full xl:flex flex-row justify-between hidden">
                                 <ActionIcon variant="info" onClick={() => { }} />
-                                <ActionIcon variant="delete" onClick={() => { }} />
-                                <ActionIcon variant="edit" onClick={() => { }} />
-                                <ActionIcon variant="email" onClick={() => handleContact(user)} />
+                                <ActionIcon variant="delete" onClick={() => setModal("confirmAction", null, "deleteAccount", () => handleDeleteUser(user))} />
+                                <ActionIcon variant="edit" onClick={() => setModal("editUser",  user)} />
+                                <ActionIcon variant="email" onClick={() => setModal("newMessage", user, "fromAdmin")} />
                             </div>
 
                             <div className="w-full flex justify-end xl:hidden">
@@ -85,12 +78,6 @@ export const UsersPage = () => {
                     )} />
 
                 </Table>
-
-                <ModalLayout isOpen={isOpen} onClose={handleClose}>
-
-                    <RegisterUserForm />
-
-                </ModalLayout>
 
                 <Pagination dataStore={userStore} />
 

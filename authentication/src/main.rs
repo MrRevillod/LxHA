@@ -14,8 +14,7 @@ use axum::{
 use tokio::net::TcpListener;
 use tower_http::cors::CorsLayer;
 use tower_cookies::CookieManagerLayer;
-use axum_client_ip::SecureClientIpSource;
-use std::{net::SocketAddr, ops::Deref, path::Path, sync::Arc};
+use std::{ops::Deref, path::Path, sync::Arc};
 
 use lxha_lib::app::{
     state::{database_connection, AppContext},
@@ -64,7 +63,6 @@ async fn main() {
         .nest("/api/auth", auth_router(Arc::clone(&ctx)))
         .layer(cookies)
         .layer(cors)
-        .layer(SecureClientIpSource::ConnectInfo.into_extension())
         .with_state(ctx)
     ;
 
@@ -72,6 +70,6 @@ async fn main() {
     
     println!("\n🦀 Authentication server running on {}", *AUTH_SERVICE_ADDR);
 
-    axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()).await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }
 

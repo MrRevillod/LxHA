@@ -1,7 +1,7 @@
 
 use serde_json::Value;
-use axum_responses::extra::ToJson;
 use mongodb::bson::oid::ObjectId;
+use axum_responses::extra::ToJson;
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -34,6 +34,7 @@ pub struct PublicProfile {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrivateProfile {
     pub id: String,
+    pub name: String,
     pub username: String,
     pub email: String,
     pub role: Role,
@@ -68,6 +69,7 @@ impl User {
 
         PrivateProfile {
             id: self.id.to_hex(),
+            name: self.name.clone(),
             username: self.username.clone(),
             email: self.email.clone(),
             role: self.role.clone(),
@@ -79,6 +81,7 @@ impl User {
 
         let user_data = PrivateProfile {
             id: self.id.to_hex(),
+            name: self.name.clone(),
             username: self.username.clone(),
             email: self.email.clone(),
             role: self.role.clone(),
@@ -92,3 +95,4 @@ impl User {
 impl ToJson for User {}
 impl ToJson for PublicProfile {}
 impl ToJson for PrivateProfile {}
+
