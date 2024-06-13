@@ -25,6 +25,7 @@ lazy_static!(
     pub static ref MAILER_SERVICE_URL: String = env("MAILER_SERVICE_URL");
     pub static ref AUTH_SERVICE_URL: String = env("AUTH_SERVICE_URL");
     pub static ref DASHBOARD_SERVICE_URL: String = env("DASHBOARD_SERVICE_URL");
+    pub static ref MONITORING_SERVICE_URL: String = env("MONITORING_SERVICE_URL");
 
     // Other env variables
 

@@ -11,6 +11,7 @@ pub struct Instance {
     pub ip_addresses: Vec<String>,
     pub specs: InstanceSpecs,
     pub cluster_node: String,
+    pub user_id: ObjectId
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -3,7 +3,7 @@ export const toUpperAndLower = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
 
-export const toSuspensive = (str: string | number = "alo", th: number = 20) => {
+export const toSuspensive = (str: string | number = "Lo siento no se encontro este dato, chao chao", th: number = 20) => {
 
     const threshold = th !== 20 ? th : 20
 
