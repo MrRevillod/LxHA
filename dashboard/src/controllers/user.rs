@@ -1,4 +1,4 @@
-
+use rand::{distributions::Alphanumeric, Rng};
 use bcrypt::hash;
 use std::{collections::HashMap};
 use serde_json::{from_value, json, Value};
@@ -34,18 +34,24 @@ pub async fn register_account(State(ctx): Context, Json(body): Json<RegisterData
         return Err(HttpResponse::JSON(409, "There are some conflicts in the user data", "conflicts", conflicts_hash.to_json()));
     }
 
+    let password: String = rand::thread_rng()
+        .sample_iter(&Alphanumeric)
+        .take(32)
+        .map(char::from)
+        .collect();
+
     let user: User = User {
         id: ObjectId::new(),
         name: body.name,
         username: body.username,
         email: body.email,
-        password: hash(DEFAULT_USER_PASSWORD.to_string(), 8).unwrap(),
+        password: hash(password.clone(), 8).unwrap(),
         role: body.role,
         instances: vec![],
         n_instances: 0,
     };
 
-    let body = json!({ "email": &user.email, "password": DEFAULT_USER_PASSWORD.to_string() });
+    let body = json!({ "email": &user.email, "password": password });
     let mailer_res = http_request("MAILER", "/new-account", "POST", None, None, body).await;
 
     match mailer_res.status().as_u16() {

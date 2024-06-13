@@ -19,11 +19,6 @@ use axum::{
 pub async fn authenticate_by_session(cookies: Cookies, 
     mut req: Request, next: Next) -> Result<MwResponse, HttpResponse> {
 
-    // let client_ip: String = req.headers().get("x-forwarded-by")
-    //     .map(|ip| ip.to_str().unwrap().to_string())
-    //     .unwrap_or(String::new())
-    // ;
-
     let cookie_jar = parse_cookies(cookies.clone());
     
     let response = http_request("AUTH", "/validate-session", 

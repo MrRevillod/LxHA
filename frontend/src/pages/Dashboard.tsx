@@ -63,7 +63,7 @@ export const DashboardPage = () => {
                             <InstanceStatusIcon status={instance.status} />
                             <TableField value={instance.name} />
                             <TableField value={instance.specs.cpu} />
-                            <TableField value={instance.specs.ram} />
+                            <TableField value={`${instance.specs.memory} MB`} />
                             <TableField value={instance.type} />
                             <TableField value={instance.ip_addresses[0]} />
 

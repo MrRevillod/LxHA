@@ -1,6 +1,7 @@
 
 import { create } from "zustand"
-import { instances } from "../lib/data"
+// import { instances } from "../lib/data"
+import { api } from "../lib/axios"
 import { Instance, PublicInstanceData } from "../lib/types"
 
 export interface InstanceStore {
@@ -57,10 +58,12 @@ export const useInstanceStore = create<InstanceStore & InstanceActions>((set, ge
 
     getInstances: async () => {
 
-        const fetchedMessages = instances
-        const dataSplice = fetchedMessages.slice(0, get().itemsPerPage);
+        const res = await api.get("/dashboard/instances")
+        const instances = res.data.instances;
 
-        set({ data: fetchedMessages, filteredData: fetchedMessages, dataSplice });
+        const dataSplice = instances.slice(0, get().itemsPerPage);
+
+        set({ data: instances, filteredData: instances, dataSplice });
     },
 
     createInstance: async (instance: PublicInstanceData) => {

@@ -21,7 +21,7 @@ export const LandingPage = () => {
                     <h1 className="text-7xl ">LX <br /> High Availability</h1>
 
                     <p className="w-5/6">
-                        Leveraging LXD technology, we ensure continuous service
+                        Leveraging INCUS technology, we ensure continuous service
                         with automated failover. Easily create, deploy, and monitor
                         instances while optimizing resources. Ideal for web hosting,
                         development, testing, and critical applications. Enjoy reliability,

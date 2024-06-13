@@ -98,7 +98,7 @@ export type Instance = {
 
 export type InstanceSpecs = {
     cpu: number,
-    ram: number,
+    memory: number,
     storage: number
 }
 

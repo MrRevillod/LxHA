@@ -3,11 +3,10 @@ use std::time;
 use lxha_lib::{
     app::Context,
     models::user::{
-        self, PublicProfile, Role
+        PublicProfile, Role
     },
     utils::oid_from_str
 };
-
 use lxha_lib::models::instance;
 use axum_responses::extra::ToJson;
 use axum::{
@@ -15,14 +14,12 @@ use axum::{
     extract::{State, Path, Json}
 };
 use axum_responses::{AxumResponse, HttpResponse};
-
 use mongodb::bson::{doc, oid::ObjectId};
 
 use crate::models::{
     InstanceData,
     InstanceConfig,
 };
-
 use crate::incus_api::{
     get::get_all_instances,
     get::get_instance,
@@ -35,13 +32,7 @@ pub async fn list_instances_controller(State(ctx): Context, Extension(user_owner
 
     let mut username = "".to_string();
 
-    let mut oid_str = user_owner.id.as_str();
-
-    oid_str = &oid_str[1..user_owner.id.len() - 1];
-
-    let algo = String::from(oid_str);
-
-    let oid = oid_from_str(&algo)?;
+    let oid = oid_from_str(&user_owner.id)?;
 
     let user_db = match ctx.users.find_one_by_id(&oid).await? {
         Some(user) => user,
@@ -102,7 +93,8 @@ pub async fn create_instance_controller(State(ctx): Context, Json(body): Json<In
             cpu: config.cpu,
             memory: config.memory,
             storage: config.storage
-        }
+        },
+        user_id: oid_from_str(&body.owner)?
     };
 
     ctx.instances.create(&instance).await?;
@@ -112,21 +104,23 @@ pub async fn create_instance_controller(State(ctx): Context, Json(body): Json<In
 }
 
 
-pub async fn delete_instance_controller(State(ctx): Context, Path(instance_name): Path<String>) -> AxumResponse {
+pub async fn delete_instance_controller(State(ctx): Context, Path(id): Path<String>) -> AxumResponse {
 
-    let response = remove_instance(instance_name.clone()).await?;
+
+    let instance = match ctx.instances.find_one_by_id(&oid_from_str(&id)?).await? {
+        Some(instance) => instance,
+        None => return Err(HttpResponse::NOT_FOUND)
+    };
+
+    let response = remove_instance(instance.name.clone()).await?;
 
     if response.0 != 200 {
         return Err(HttpResponse::INTERNAL_SERVER_ERROR);
     }
 
-    let filter = doc!{ "name": instance_name };
-
-    let instance = ctx.instances.find_one(filter).await?;
-
     println!("\n[Log] Eliminando instancia de la base de datos.");
 
-    ctx.instances.delete(&instance.unwrap().id).await?;
+    ctx.instances.delete(&instance.id).await?;
 
     Ok(HttpResponse::OK)
 }
