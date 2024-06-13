@@ -1,0 +1,19 @@
+[package]
+name = "mailer-rs"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+lxha_lib = { path = "../lxha_lib" }
+axum = "0.7.5"
+axum_responses = "0.1.7"
+dotenv = "0.15.0"
+serde_json = "1.0.116"
+tokio = { version = "1", features = ["full"] }
+tower-cookies = "0.10.0"
+tower-http = { version = "0.5.1", features = ["cors"] }
+lettre = "=0.11.7"
+chrono = "0.4.38"
+regex = "1.10.5"
