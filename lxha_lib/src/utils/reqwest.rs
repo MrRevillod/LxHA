@@ -1,4 +1,3 @@
-
 use serde_json::Value;
 use tower_cookies::Cookies;
 use std::{ops::Deref, sync::Arc};
@@ -12,7 +11,7 @@ use super::cookies::get_cookie_from_req;
 use crate::app::constants::{AUTH_SERVICE_URL, SERVICES};
 
 pub async fn http_request(service: &'static str, 
-    endpoint: &'static str, method: &str, client_ip: Option<String>,
+    endpoint: &str, method: &str, client_ip: Option<String>,
     cookies: Option<Arc<Jar>>, body: Value) -> Response {
 
     let mut client_builder = Client::builder();
@@ -41,6 +40,19 @@ pub async fn http_request(service: &'static str,
             .header(CONTENT_TYPE, "application/json")
             .header("x-forwarded-by", client_ip.unwrap_or(String::new()).as_str())
             .body(body)
+            .send().await.unwrap(),
+
+        "PUT" => client
+            .post(&url)
+            .header(CONTENT_TYPE, "application/json")
+            .header("x-forwarded-by", client_ip.unwrap_or(String::new()).as_str())
+            .body(body)
+            .send().await.unwrap(),
+
+        "DELETE" => client
+            .delete(&url)
+            .header(CONTENT_TYPE, "application/json")
+            .header("x-forwarded-by", client_ip.unwrap_or(String::new()).as_str())
             .send().await.unwrap(),
 
         _ => panic!("Method not allowed")

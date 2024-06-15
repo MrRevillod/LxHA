@@ -1,6 +1,4 @@
 use std::ops::Deref;
-use reqwest::Error;
-
 use axum_responses::{AxumResult, HttpResponse};
 use lxha_lib::app::constants::INCUS_API;
 
@@ -17,14 +15,14 @@ use super::{
 };
 
 
-pub async fn get_all_instances(user: String) -> AxumResult<Vec<Instance>> {
+pub async fn get_all_instances(project: String) -> AxumResult<Vec<Instance>> {
 
     let client = get_client()?;
     
     let mut url = format!("{}/1.0/instances", INCUS_API.deref());
     
-    if user != "" {
-        url = format!("{}/1.0/instances?project={}", INCUS_API.deref(), user);
+    if project != "" {
+        url = format!("{}/1.0/instances?project={}", INCUS_API.deref(), project);
     }
 
     let json_instances = get_wrap(client.clone(), url)
@@ -93,16 +91,16 @@ pub async fn get_all_instances(user: String) -> AxumResult<Vec<Instance>> {
 }
 
 
-pub async fn get_instance(name: String) -> AxumResult<Instance> {
+pub async fn get_instance(project: String, name: String) -> AxumResult<Instance> {
     let client = get_client()?;
 
-    let json_instance_specific = get_wrap(client.clone(), format!("{}/1.0/instances/{}", INCUS_API.deref(), name))
+    let json_instance_specific = get_wrap(client.clone(), format!("{}/1.0/instances/{}?project={}", INCUS_API.deref(), name, project))
         .await?
         .json::<ApiResponse::<InstancesSpecificMetadata>>()
         .await
         .unwrap();
 
-    let json_instance_state = get_wrap(client.clone(), format!("{}/1.0/instances/{}/state", INCUS_API.deref(), name))
+    let json_instance_state = get_wrap(client.clone(), format!("{}/1.0/instances/{}/state?project={}", INCUS_API.deref(), name, project))
         .await?
         .json::<ApiResponse::<InstancesStateMetadata>>()
         .await
@@ -141,6 +139,6 @@ pub async fn get_instance(name: String) -> AxumResult<Instance> {
                     r#type: meta.r#type,
                 }
             },
-        None => Instance::default(),
+        None => return Err(HttpResponse::NOT_FOUND),
     })
 }

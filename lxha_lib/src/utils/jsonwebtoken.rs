@@ -30,7 +30,7 @@ where T: DeserializeOwned + Expirable {
         &Validation::default()
     );
 
-    if let Err(e) = payload {
+    if let Err(_) = payload {
         return Err(HttpResponse::UNAUTHORIZED)
     }
 

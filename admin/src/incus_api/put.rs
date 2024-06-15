@@ -13,11 +13,11 @@ use super::{
     },
 };
 
-pub async fn ch_instance_status(action: String, name: String) -> AxumResult<HttpResponse> {
+pub async fn ch_instance_status(project: String, action: String, name: String) -> AxumResult<HttpResponse> {
     let client = get_client()?;
 
     let body = format!("{{\"action\":\"{}\",\"force\":true,\"stateful\":false,\"timeout\":60}}", action);
-    let mut url = format!("{}/1.0/instances/{}/state", INCUS_API.deref(), name);
+    let mut url = format!("{}/1.0/instances/{}/state?project={}", INCUS_API.deref(), name, project);
     let response_put = put_wrap(client.clone(), body.to_string(), url)
     .await?
     .json::<ApiResponse<OpsMetadata>>()
@@ -30,7 +30,7 @@ pub async fn ch_instance_status(action: String, name: String) -> AxumResult<Http
         }
     );
 
-    let response_get = get_wrap(client.clone(), url)
+    let _ = get_wrap(client.clone(), url)
         .await?
         .json::<ApiResponse::<OpsMetadata>>()
         .await

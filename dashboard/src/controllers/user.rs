@@ -1,22 +1,45 @@
 use rand::{distributions::Alphanumeric, Rng};
 use bcrypt::hash;
-use std::{collections::HashMap};
+use std::collections::HashMap;
 use serde_json::{from_value, json, Value};
-use mongodb::bson::{doc, oid::ObjectId, Document};
-use axum::{extract::{Path, State}, Extension, Json};
-use axum_responses::{extra::ToJson, AxumResponse, AxumResult, HttpResponse};
-
-use lxha_lib::{
-    app::{constants::{DEFAULT_USER_PASSWORD, FRONTEND_SERVICE_URL, JWT_SECRET}, Context}, models::{token::EmailJwtPayload, user::{PublicProfile, Role, User}}, utils::{jsonwebtoken::decode_jwt, oid_from_str, reqwest::http_request} 
-};
-
-use crate::{
-    incus_api::{
-        delete::remove_instance,
-        get::get_all_instances
+use mongodb::bson::{doc, oid::ObjectId};
+use axum::{
+    extract::{
+        Path,
+        State
     },
-    models::RegisterData
+    Extension,
+    Json
 };
+use axum_responses::{
+    extra::ToJson,
+    AxumResponse,
+    HttpResponse
+};
+use lxha_lib::{
+    app::{
+        constants::{
+            FRONTEND_SERVICE_URL,
+            JWT_SECRET
+        },
+        Context
+    },
+    models::{
+        token::EmailJwtPayload,
+        user::{
+            PublicProfile,
+            Role,
+            User
+        }
+    },
+    utils::{
+        jsonwebtoken::decode_jwt, 
+        oid_from_str,
+        reqwest::http_request
+    }
+};
+
+use crate::models::RegisterData;
 
 pub async fn register_account(State(ctx): Context, Json(body): Json<RegisterData>) -> AxumResponse {
 
@@ -51,24 +74,42 @@ pub async fn register_account(State(ctx): Context, Json(body): Json<RegisterData
         n_instances: 0,
     };
 
-    let body = json!({ "email": &user.email, "password": password });
-    let mailer_res = http_request("MAILER", "/new-account", "POST", None, None, body).await;
+    let body_mailer = json!({ "email": &user.email, "password": password });
+    let mailer_res = http_request("MAILER", "/new-account", "POST", None, None, body_mailer).await;
 
     match mailer_res.status().as_u16() {
         200 => (),
         _   => return Err(HttpResponse::INTERNAL_SERVER_ERROR)
     }
+
+    let oid = user.id.to_hex();
+
+    let body_project = json!({ "user": &oid });
+    let mut admin_res = http_request("ADMIN", "/projects", "POST", None, None, body_project).await;
     
+    match admin_res.status().as_u16() {
+        200 => (),
+        _   => return Err(HttpResponse::INTERNAL_SERVER_ERROR)
+    }
+
+    admin_res = http_request("ADMIN", format!("/profiles/{}", oid).as_str(), "GET", None, None, json!({})).await;
+
+    match admin_res.status().as_u16() {
+        200 => (),
+        _   => return Err(HttpResponse::INTERNAL_SERVER_ERROR)
+    }
+
     ctx.users.create(&user).await?;
     Ok(HttpResponse::CUSTOM(200, "Account registred successfully"))
 }
 
 pub async fn delete_account(State(ctx): Context,
-    Path(oid): Path<String>) -> AxumResponse {
+    Path(id): Path<String>) -> AxumResponse {
 
-    let oid = oid_from_str(&oid)?;
+    let oid = oid_from_str(&id)?;
 
-    let user = match ctx.users.find_one_by_id(&oid).await? {
+    // let user
+    let _ = match ctx.users.find_one_by_id(&oid).await? {
         Some(user) => user,
         None => return Err(HttpResponse::CUSTOM(500, "User doesn't exists"))
     };
@@ -83,6 +124,13 @@ pub async fn delete_account(State(ctx): Context,
     //     }
     // }
     
+    let admin_res = http_request("ADMIN", format!("/projects/{}", id).as_str(), "DELETE", None, None, json!({})).await;
+
+    match admin_res.status().as_u16() {
+        200 => (),
+        _   => return Err(HttpResponse::INTERNAL_SERVER_ERROR)
+    }
+
     ctx.users.delete(&oid).await?;
 
     Ok(HttpResponse::CUSTOM(200, "Account deleted successfully"))

@@ -1,15 +1,15 @@
-
+use axum_responses::extra::ToJson;
 use serde::{Serialize, Deserialize};
 use lxha_lib::models::user::Role;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, Default)]
 pub struct InstanceConfig {
     pub cpu: u8,
     pub memory: u16,
     pub storage: u16,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct InstanceData {
     pub name: String,
     pub owner: String,
@@ -25,3 +25,6 @@ pub struct RegisterData {
     pub email: String,
     pub role: Role,
 }
+
+impl ToJson for InstanceData {}
+impl ToJson for InstanceConfig {}
