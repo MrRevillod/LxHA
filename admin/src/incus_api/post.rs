@@ -3,9 +3,10 @@ use crate::models::{
     InstanceData,
     InstanceConfig
 };
+use serde_json::Value;
 
 use lxha_lib::app::constants::INCUS_API;
-use axum_responses::{AxumResult, HttpResponse};
+use axum_responses::AxumResult;
 
 use super::{
     get_client,
@@ -19,11 +20,11 @@ use super::{
     }
 };
 
-pub async fn new_instance(instance: InstanceData, config: InstanceConfig) -> AxumResult<(u16, String)> {
+pub async fn new_instance(instance: InstanceData) -> AxumResult<(u16, String)> {
 
     let client = get_client()?;
 
-    let mut url = format!("{}/1.0/instances", INCUS_API.deref());
+    let mut url = format!("{}/1.0/instances?project={}", INCUS_API.deref(), instance.owner);
 
     let template_instance = format!("{{\"architecture\":\"x86_64\",\
                                        \"ephemeral\":false,\
@@ -57,9 +58,8 @@ pub async fn new_instance(instance: InstanceData, config: InstanceConfig) -> Axu
                                        \"start\":true,\
                                        \"stateful\":true,\
                                        \"type\":\"{}\"}}",
-                                    config.cpu, config.memory, config.storage,
+                                    instance.config.cpu, instance.config.memory, instance.config.storage,
                                     instance.name, instance.r#type);
-    // println!("{}", template_instance);
 
     let instance_status = post_wrap(client.clone(), template_instance, url)
         .await?
@@ -69,7 +69,7 @@ pub async fn new_instance(instance: InstanceData, config: InstanceConfig) -> Axu
 
     println!("\nCreando instancia: {:?}", instance_status);
 
-    url = format!("{}/1.0/operations/{}", INCUS_API.deref(),
+    url = format!("{}/1.0/operations/{}/wait", INCUS_API.deref(),
         match instance_status.metadata {
             Some(meta) => meta.id,
             None => "".to_string()
@@ -88,4 +88,34 @@ pub async fn new_instance(instance: InstanceData, config: InstanceConfig) -> Axu
         Some(meta) => meta.description,
         None => "".to_string()
     }))
+}
+
+
+pub async fn new_project(name: String) -> AxumResult<()> {
+
+    let client = get_client()?;
+    let mut url = format!("{}/1.0/projects", INCUS_API.deref());
+
+    let template_project = format!("{{\"config\":{{\
+                                      \"features.images\":\"true\",\
+                                      \"features.networks\":\"true\",\
+                                      \"features.networks.zones\":\"true\",\
+                                      \"features.profiles\":\"true\",\
+                                      \"features.storage.buckets\":\"true\",\
+                                      \"features.storage.volumes\":\"true\"\
+                                    }},\
+                                    \"description\":\"Project for user {}\",\
+                                    \"name\":\"{}\"\
+                                    }}",
+                                name, name);
+
+    let project_status: Value = post_wrap(client.clone(), template_project, url)
+        .await?
+        .json()
+        .await
+        .unwrap();
+
+    println!("{:#?}", project_status);
+
+    Ok(())
 }

@@ -17,6 +17,7 @@ lazy_static!(
 
     pub static ref AUTH_SERVICE_ADDR: String = env("AUTH_SERVICE_ADDR");
     pub static ref DASHBOARD_SERVICE_ADDR: String = env("DASHBOARD_SERVICE_ADDR");
+    pub static ref ADMIN_SERVICE_ADDR: String = env("ADMIN_SERVICE_ADDR");
     pub static ref MAILER_SERVICE_ADDR: String = env("MAILER_SERVICE_ADDR");
 
     // - Microservices complete url for http requests
@@ -24,6 +25,7 @@ lazy_static!(
     pub static ref FRONTEND_SERVICE_URL: String = env("FRONTEND_SERVICE_URL");
     pub static ref MAILER_SERVICE_URL: String = env("MAILER_SERVICE_URL");
     pub static ref AUTH_SERVICE_URL: String = env("AUTH_SERVICE_URL");
+    pub static ref ADMIN_SERVICE_URL: String = env("ADMIN_SERVICE_URL");
     pub static ref DASHBOARD_SERVICE_URL: String = env("DASHBOARD_SERVICE_URL");
     pub static ref MONITORING_SERVICE_URL: String = env("MONITORING_SERVICE_URL");
 
@@ -43,9 +45,12 @@ lazy_static!(
     pub static ref LXHA_MAIL_USERNAME: String = env("MAILER_SERVICE_MAIL_USERNAME");
     pub static ref LXHA_MAIL_PASSWORD: String = env("MAILER_SERVICE_MAIL_PASSWORD");
 
+    pub static ref NET_INTERFACE: String = env("NET_INTERFACE");
+
     pub static ref SERVICES: HashMap<&'static str, String> = HashMap::from([
         ("AUTH", AUTH_SERVICE_URL.to_string()),
         ("DASHBOARD", DASHBOARD_SERVICE_URL.to_string()),
         ("MAILER", MAILER_SERVICE_URL.to_string()),
+        ("ADMIN", ADMIN_SERVICE_URL.to_string()),
     ]);
 );

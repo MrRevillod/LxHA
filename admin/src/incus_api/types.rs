@@ -22,6 +22,7 @@ pub struct NetDevice {
     pub counters: HashMap<String, u64>
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Debug, Clone)]
 pub struct InstancesStateMetadata {
     pub memory: HashMap<String, u64>,

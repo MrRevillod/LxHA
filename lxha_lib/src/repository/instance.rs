@@ -1,4 +1,5 @@
 use mongodb::bson;
+use core::ascii;
 use std::sync::Arc;
 use futures::TryStreamExt;
 
@@ -57,17 +58,50 @@ impl InstanceRepository {
         Ok(instance)
     }
 
+    pub async fn find_many_by_user_id(&self, id: &ObjectId) -> AxumResult<Vec<PublicInstance>> {
+        let mut instances: Vec<PublicInstance> = vec![];
+        let filter = doc! { "user_id": id };
 
-    pub async fn find(&self) -> AxumResult<Vec<Value>> {
+        let mut cursor = self.collection.find(filter, None).await
+            .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)?
+        ;
 
-        let mut instances: Vec<Value> = vec![];
+        while let Some(result) = cursor.try_next().await
+            .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)? {
+            instances.push(PublicInstance {
+                id: result.id.to_hex(),
+                name: result.name,
+                r#type: result.r#type,
+                status: result.status,
+                ip_addresses: result.ip_addresses.clone(),
+                specs: result.specs.clone(),
+                cluster_node: result.cluster_node,
+                user_id: result.user_id.to_hex()
+            });
+        }
+
+        Ok(instances)
+    }
+
+    pub async fn find(&self) -> AxumResult<Vec<PublicInstance>> {
+
+        let mut instances: Vec<PublicInstance> = vec![];
         let mut cursor = self.collection.find(None, None).await
             .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)?
         ;
 
         while let Some(result) = cursor.try_next().await
             .map_err(|_e| HttpResponse::INTERNAL_SERVER_ERROR)? {
-            instances.push(result.to_json())
+            instances.push(PublicInstance {
+                id: result.id.to_hex(),
+                name: result.name,
+                status: result.status,
+                r#type: result.r#type,
+                ip_addresses: result.ip_addresses.clone(),
+                specs: result.specs.clone(),
+                cluster_node: result.cluster_node,
+                user_id: result.user_id.to_hex()
+            });
         }
 
         Ok(instances)

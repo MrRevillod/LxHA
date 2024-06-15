@@ -61,6 +61,8 @@ export const useInstanceStore = create<InstanceStore & InstanceActions>((set, ge
         const res = await api.get("/dashboard/instances")
         const instances = res.data.instances;
 
+        console.log(instances);
+
         const dataSplice = instances.slice(0, get().itemsPerPage);
 
         set({ data: instances, filteredData: instances, dataSplice });

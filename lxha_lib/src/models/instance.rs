@@ -1,4 +1,3 @@
-
 use mongodb::bson::oid::ObjectId;
 use serde::{Serialize, Deserialize};
 use axum_responses::extra::ToJson;
@@ -8,10 +7,24 @@ pub struct Instance {
     #[serde(rename = "_id")]
     pub id: ObjectId,
     pub name: String,
+    pub status: String,
+    pub r#type: String,
     pub ip_addresses: Vec<String>,
     pub specs: InstanceSpecs,
     pub cluster_node: String,
     pub user_id: ObjectId
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PublicInstance {
+    pub id: String,
+    pub name: String,
+    pub status: String,
+    pub r#type: String,
+    pub ip_addresses: Vec<String>,
+    pub specs: InstanceSpecs,
+    pub cluster_node: String,
+    pub user_id: String
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -23,3 +36,4 @@ pub struct InstanceSpecs {
 
 impl ToJson for Instance {}
 impl ToJson for InstanceSpecs {}
+impl ToJson for PublicInstance {}

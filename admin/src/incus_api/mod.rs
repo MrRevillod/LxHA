@@ -1,9 +1,9 @@
-
 pub mod get;
 pub mod types;
 pub mod post;
 pub mod delete;
 pub mod put;
+pub mod patch;
 
 use std::fs;
 use reqwest::{Client, Identity};
@@ -65,6 +65,17 @@ pub async fn post_wrap(client: Client, body: String, url: String) -> AxumResult<
 
 pub async fn put_wrap(client: Client, body: String, url: String) -> AxumResult<reqwest::Response> {
     Ok(client.put(url)
+        .body(body)
+        .send()
+        .await
+        .map_err(|e| {
+            println!("{:#?}", e);
+            HttpResponse::INTERNAL_SERVER_ERROR
+        })?)
+}
+
+pub async fn patch_wrap(client: Client, body: String, url: String) -> AxumResult<reqwest::Response> {
+    Ok(client.patch(url)
         .body(body)
         .send()
         .await
