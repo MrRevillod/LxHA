@@ -13,6 +13,7 @@ export const ProtectedRoute = ({ protectedBy, redirectTo = "/auth/login" }: Prot
 
     const { user, isAuthenticated, isCheckingSession, role, isLoading } = useAuth()
 
+    
     if (isCheckingSession || isLoading) {
         return <Loading />
     }

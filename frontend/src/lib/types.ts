@@ -35,8 +35,8 @@ export type User = {
 }
 
 export enum ROLE {
-    ADMINISTRATOR = "ADMINISTRATOR",
-    USER = "USER"
+    ADMINISTRATOR="ADMINISTRATOR",
+    USER="USER"
 }
 
 export enum INSTANCETYPE {

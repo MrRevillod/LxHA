@@ -12,7 +12,7 @@ const getInitialPageTitle = () => {
 
     const path = window.location.pathname.split("/")[1]
 
-    const pages = ["users", "analytics", "messages", "dashboard"]
+    const pages = ["users", "analytics", "dashboard"]
 
     if (pages.includes(path)) {
         return toUpperAndLower(path)

@@ -10,9 +10,12 @@ import { useUserStore } from "../store/UserStore"
 import { useModalStore } from "../store/ModalStore"
 import { Table, TableField } from "../components/Table"
 import { useEffect, useMemo } from "react"
+import { Show } from "../components/ui/Show"
+import { useAppStore } from "../store/AppStore"
 
 export const UsersPage = () => {
 
+    const { setPageTitle } = useAppStore()
     const userStore = useUserStore()
     const { setModal } = useModalStore()
 
@@ -25,6 +28,10 @@ export const UsersPage = () => {
 
         setModal("confirmAction")
         await userStore.getUsers()
+    }
+
+    const handleInfo = (user: User) => {
+        setPageTitle(user.name)
     }
 
     const memoSlice = useMemo(() => userStore.dataSplice, [userStore.dataSplice])
@@ -48,9 +55,7 @@ export const UsersPage = () => {
                     </button>
 
                 </div>
-
                 <Table dataStore={userStore}>
-
                     <For of={memoSlice} render={(user: User, index) => (
 
                         <div key={index} className={`w-full grid grid-cols-${userStore?.nColumns} gap-4 pb-4`}>
@@ -63,7 +68,7 @@ export const UsersPage = () => {
                             <TableField value={user.n_instances} />
 
                             <div className="w-full xl:flex flex-row justify-between hidden">
-                                <ActionIcon variant="info" onClick={() => { }} />
+                                <ActionIcon variant="info" onClick={() => handleInfo(user)} />
                                 <ActionIcon variant="delete" onClick={() => setModal("confirmAction", null, "deleteAccount", () => handleDeleteUser(user))} />
                                 <ActionIcon variant="edit" onClick={() => { }} />
                                 <ActionIcon variant="email" onClick={() => setModal("newMessage", user, "fromAdmin")} />
