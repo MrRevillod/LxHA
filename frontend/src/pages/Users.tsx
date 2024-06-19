@@ -70,7 +70,7 @@ export const UsersPage = () => {
                             <div className="w-full xl:flex flex-row justify-between hidden">
                                 <ActionIcon variant="info" onClick={() => handleInfo(user)} />
                                 <ActionIcon variant="delete" onClick={() => setModal("confirmAction", null, "deleteAccount", () => handleDeleteUser(user))} />
-                                <ActionIcon variant="edit" onClick={() => { }} />
+                                <ActionIcon variant="edit" onClick={() => setModal("editUser",  user)} />
                                 <ActionIcon variant="email" onClick={() => setModal("newMessage", user, "fromAdmin")} />
                             </div>
 

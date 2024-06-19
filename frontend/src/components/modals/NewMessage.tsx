@@ -68,7 +68,6 @@ export const NewMessageModal = () => {
             handleClose()
             resetStore()
         }
-
     }
 
     return (

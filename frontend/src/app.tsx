@@ -7,7 +7,7 @@ import {
 
     ForgotPasswordRequestPage, DashboardPage,
     AnalitycsPage, UsersPage, LandingPage,
-    LoginPage, ForgotPasswordPage, NotFoundPage
+    LoginPage, ForgotPasswordPage, NotFoundPage, EmailUpdatePage
 
 } from "./pages"
 
@@ -28,6 +28,7 @@ export const App = () => {
                     </Route>
 
                     <Route path="/auth/reset-password/:id/:token" element={<ForgotPasswordPage />} />
+                    <Route path="/auth/update-email/:id/:token" element={<EmailUpdatePage />} />
 
                     <Route element={<ProtectedRoute protectedBy="session" />}>
                         <Route path="/dashboard" element={<DashboardPage />} />

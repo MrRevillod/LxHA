@@ -19,7 +19,8 @@ export interface UserActions {
     getUsers: () => Promise<void>,
     createUser: (user: RegisterData) => Promise<number>,
     deleteUser: (id: string) => Promise<number>,
-    updateUser: (id: string, fields: any) => Promise<void>,
+    updateUser: (id: string, fields: any) => Promise<number>,
+    emailUpdate: (id: string, token: string) => Promise<number>
 }
 
 const { setIsLoading, setResponse } = useHttpStore.getState()
@@ -101,6 +102,40 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
             const res = await api.patch(`/dashboard/users/${id}`, fields)
             setResponse(res.status, res.data.message, res.data, true)
 
+            return res.status
+
+        } catch (error: any) {
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+            return error.response.status
+
+        } finally {
+            setIsLoading(false)
+        }
+    },
+
+    validateEmailUpdateParams: async (id: string, token: string) => {
+
+        try {
+
+            setIsLoading(true)
+            const res = await api.post(`/dashboard/update-email/${id}/${token}`)
+            return res.status
+
+        } catch (error: any) {
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+            return error.response.status
+
+        } finally {
+            setIsLoading(false)
+        }
+    },
+
+    emailUpdate: async (id: string, token: string) => {
+
+        try {
+
+            setIsLoading(true)
+            const res = await api.post(`/dashboard/update-email/${id}/${token}`)
             return res.status
 
         } catch (error: any) {
