@@ -50,7 +50,6 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
             const res = await api.get("/dashboard/users")
             const users = res.data.users
             const dataSplice = users.slice(0, get().itemsPerPage);
-
             set({ data: users, filteredData: users, dataSplice });
 
         } catch (error: any) {
@@ -155,6 +154,14 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
             user.username.toLowerCase().includes(search.toLowerCase()) ||
             user.role.toLowerCase().includes(search.toLowerCase()) ||
             user.email.toLowerCase().includes(search.toLowerCase())
+        )
+
+        set({ filteredData, dataSplice: filteredData.slice(0, get().itemsPerPage) })
+    },
+    filterByName: (search: string) => {
+
+        const filteredData = get().data.filter((user: User) =>
+            user.name.toLowerCase().includes(search.toLowerCase()) 
         )
 
         set({ filteredData, dataSplice: filteredData.slice(0, get().itemsPerPage) })

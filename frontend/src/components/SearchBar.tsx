@@ -4,12 +4,13 @@ import { MessageStore } from "../store/MessageStore"
 import { useEffect, useState } from "react"
 import { InstanceStore } from "../store/InstanceStore"
 
-interface Props {
+export interface SearchBarProps {
     variant: string
     dataStore: MessageStore | UserStore | InstanceStore
+    value?: string
 }
 
-export const SearchBar = ({ dataStore, variant }: Props) => {
+export const SearchBar = ({ dataStore, value, variant }: SearchBarProps) => {
 
     const [search, setSearch] = useState<string>("")
 
@@ -21,11 +22,11 @@ export const SearchBar = ({ dataStore, variant }: Props) => {
 
     return (
 
-        <div className="relative w-1/3 flex flex-row items-center">
+        <div className="relative w-1/3  flex flex-row items-center">
 
             <input type="text" placeholder={`Search ${variant}`}
                 className="pl-10 p-2 border border-neutral-300 rounded-md w-full"
-                value={search}
+                value={value || search}
                 onChange={handleSearch}
             />
 

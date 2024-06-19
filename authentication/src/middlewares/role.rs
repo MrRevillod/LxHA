@@ -8,7 +8,6 @@ use axum::response::Response as MwResponse;
 
 pub async fn protected_role_validation(
     req: Request, next: Next) -> Result<MwResponse, HttpResponse> {
-
     let user = req.extensions().get::<User>().unwrap().clone();
 
     match user.role {

@@ -44,8 +44,8 @@ export type FormProfileValues = {
 }
 
 export enum ROLE {
-    ADMINISTRATOR = "ADMINISTRATOR",
-    USER = "USER"
+    ADMINISTRATOR="ADMINISTRATOR",
+    USER="USER"
 }
 
 export enum INSTANCETYPE {

@@ -4,6 +4,9 @@ import { ReactNode } from "react"
 import { UserStore } from "../store/UserStore"
 import { toSuspensive } from "../lib/string"
 import { InstanceStore } from "../store/InstanceStore"
+import { Show } from "./ui/Show"
+import { Spinner } from "./ui/Spinner"
+import { useHttpStore } from "../store/HttpStore"
 
 interface Props {
     dataStore: UserStore | InstanceStore,
@@ -25,6 +28,7 @@ export const Table = ({ dataStore, children }: Props) => {
                 )} />
 
             </div>
+
 
             <div className="w-full h-full flex flex-col -mt-4">
                 {children}
