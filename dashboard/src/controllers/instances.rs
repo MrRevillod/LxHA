@@ -7,7 +7,7 @@ use lxha_lib::{
         user::{
             PublicProfile, Role
         }},
-    utils::{dbg, oid_from_str, reqwest::http_request}
+    utils::{oid_from_str, reqwest::http_request}
 };
 
 use serde_json::Value;
