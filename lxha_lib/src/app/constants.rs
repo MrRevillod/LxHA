@@ -18,6 +18,7 @@ lazy_static!(
     pub static ref AUTH_SERVICE_ADDR: String = env("AUTH_SERVICE_ADDR");
     pub static ref DASHBOARD_SERVICE_ADDR: String = env("DASHBOARD_SERVICE_ADDR");
     pub static ref ADMIN_SERVICE_ADDR: String = env("ADMIN_SERVICE_ADDR");
+    pub static ref MAILER_SERVICE_ADDR: String = env("MAILER_SERVICE_ADDR");
 
     // - Microservices complete url for http requests
 
@@ -41,6 +42,8 @@ lazy_static!(
 
     pub static ref DEFAULT_USER_PASSWORD: String = env("DEFAULT_USER_PASSWORD");
     pub static ref LXHA_MAIL_ADRESS: String = env("MAILER_SERVICE_MAIL_ADRESS");
+    pub static ref LXHA_MAIL_USERNAME: String = env("MAILER_SERVICE_MAIL_USERNAME");
+    pub static ref LXHA_MAIL_PASSWORD: String = env("MAILER_SERVICE_MAIL_PASSWORD");
 
     pub static ref NET_INTERFACE: String = env("NET_INTERFACE");
 
