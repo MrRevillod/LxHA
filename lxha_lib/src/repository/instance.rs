@@ -1,17 +1,14 @@
-use mongodb::bson;
-use core::ascii;
 use std::sync::Arc;
 use futures::TryStreamExt;
 
 use std::vec;
-use serde_json::Value;
 
 use mongodb::{
     Collection,
     bson::{doc, oid::ObjectId, Document},
 };
 
-use axum_responses::{extra::ToJson, AxumResult, HttpResponse};
+use axum_responses::{AxumResult, HttpResponse};
 use crate::app::DatabaseReference;
 use crate::models::instance::*;
 
