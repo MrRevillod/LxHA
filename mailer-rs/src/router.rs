@@ -1,14 +1,10 @@
 
-use std::sync::Arc;
-use lxha_lib::app::state::AppContext;
-use axum::{
-    middleware::from_fn, 
-    routing::{post,Router}
-};
+use axum::Router;
+use axum::routing::post;
 
 use crate::controllers::{email_change, reset_password, contact_from_admin, contact_from_user, new_account_message};
 
-pub fn mailer_router(state: Arc<AppContext>) -> Router<Arc<AppContext>> {
+pub fn mailer_router() -> Router {
 
     Router::new()
 
@@ -27,5 +23,4 @@ pub fn mailer_router(state: Arc<AppContext>) -> Router<Arc<AppContext>> {
         .route("/new-account", post(new_account_message)
 
         )                
-    .with_state(state)
 }

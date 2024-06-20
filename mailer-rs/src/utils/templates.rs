@@ -1,12 +1,13 @@
 use chrono::Datelike;
 
 const LOGO_URL: &str = "https://i.ibb.co/C7B657H/logowm-03.pngD";
+const DEFAULT_COLOR: &str = "#387EF2";
 
 pub fn change_email_template(url: &str) -> String {
     format!(
         r#"
         <body>
-            <table width="100%" bgcolor="0x387EF2">
+            <table width="100%" bgcolor="{}">
                 <tr>
                     <td>
                         <h1 style="color: white; padding: 0px;">LXHA</h1>
@@ -21,17 +22,17 @@ pub fn change_email_template(url: &str) -> String {
             <table width="100%">
                 <tr>
                     <td>
-                        <h2 style="color: black;">Cambio de Correo Electrónico</h2>
-                        <p style="color: black;">¡Gracias por unirte a LXHA! Para cambiar tu correo electrónico, por favor haz clic en el siguiente enlace:</p>
-                        <p><a href="{}" style="color: #F5F5F5; background-color: #387EF2; padding: 8px 16px; text-decoration: none; border-radius: 4px;">Cambiar correo electrónico</a></p>
-                        <p style="color: black;">Si no reconoces esta solicitud, puedes ignorar este mensaje.</p>
-                        <p style="color: black;">Atentamente,</p>
-                        <p style="color: black;">El equipo de LXHA</p>
+                        <h2 style="color: black;">Email Change</h2>
+                        <p style="color: black;">Thank you for joining LXHA! To change your email, please click on the following link:</p>
+                        <p><a href="{}" style="color: #F5F5F5; background-color: {}; padding: 8px 16px; text-decoration: none; border-radius: 4px;">Change email</a></p>
+                        <p style="color: black;">If you do not recognize this request, you can ignore this message.</p>
+                        <p style="color: black;">Regards,</p>
+                        <p style="color: black;">The LXHA Team</p>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <table width="100%" bgcolor="0x387EF2">
+                        <table width="100%" bgcolor="{}">
                             <tr>
                                 <td>
                                     <p style="color: white; text-align: center; padding: 10px;">© {} LXHA</p>
@@ -43,7 +44,7 @@ pub fn change_email_template(url: &str) -> String {
             </table>
         </body>
     "#,
-        LOGO_URL, url, chrono::Utc::now().year()
+        DEFAULT_COLOR, LOGO_URL, url, DEFAULT_COLOR, DEFAULT_COLOR, chrono::Utc::now().year()
     )
 }
 
@@ -51,7 +52,7 @@ pub fn reset_password_template(url: &str) -> String {
     format!(
         r#"
         <body>
-            <table width="100%" bgcolor="0x387EF2">
+            <table width="100%" bgcolor="{}">
                 <tr>
                     <td>
                         <h1 style="color: white; padding: 0px;">LXHA</h1>
@@ -66,17 +67,17 @@ pub fn reset_password_template(url: &str) -> String {
             <table width="100%">
                 <tr>
                     <td>
-                        <h2 style="color: black;">Restauración de Contraseña</h2>
-                        <p style="color: black;">Hemos recibido una solicitud para restaurar tu contraseña. Para hacerlo, por favor haz clic en el siguiente enlace:</p>
-                        <p><a href="{}" style="color: #F5F5F5; background-color: #387EF2; padding: 8px 16px; text-decoration: none; border-radius: 4px;">Restaurar Contraseña</a></p>
-                        <p style="color: black;">Si no reconoces esta solicitud, puedes ignorar este mensaje.</p>
-                        <p style="color: black;">Atentamente,</p>
-                        <p style="color: black;">El equipo de LXHA</p>
+                        <h2 style="color: black;">Password Reset</h2>
+                        <p style="color: black;">We have received a request to reset your password. To do so, please click on the following link:</p>
+                        <p><a href="{}" style="color: #F5F5F5; background-color: {}; padding: 8px 16px; text-decoration: none; border-radius: 4px;">Restore Password</a></p>
+                        <p style="color: black;">If you do not recognize this request, you can ignore this message.</p>
+                        <p style="color: black;">Regards,</p>
+                        <p style="color: black;">The LXHA Team</p>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <table width="100%" bgcolor="0x387EF2">
+                        <table width="100%" bgcolor="{}">
                             <tr>
                                 <td>
                                     <p style="color: white; text-align: center; padding: 10px;">© {} LXHA</p>
@@ -88,45 +89,134 @@ pub fn reset_password_template(url: &str) -> String {
             </table>
         </body>
     "#,
-        LOGO_URL, url, chrono::Utc::now().year()
+        DEFAULT_COLOR, LOGO_URL, url, DEFAULT_COLOR, DEFAULT_COLOR, chrono::Utc::now().year()
     )
 }
 
 pub fn contact_from_admin_template(body: &str) -> String {
     format!(
         r#"
-        <div>
-            New message from Admin
-        </div>
-        </br>
-        <div>
-            {}
-        </div>
+        <body>
+            <table width="100%" bgcolor="{}">
+                <tr>
+                    <td>
+                        <h1 style="color: white; padding: 0px;">LXHA</h1>
+                    </td>
+                    <td style="width: 70%;"></td>
+                    <td >
+                        <img style="max-width: 60px;" src="{}" alt="logo">
+                    </td>
+                </tr>
+            </table>
+
+            <table width="100%">
+                <tr>
+                    <td>
+                        <h2 style="color: black;">Message from lxHA Admin</h2>
+                        <p style="color: black;">{}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table width="100%" bgcolor="{}">
+                            <tr>
+                                <td>
+                                    <p style="color: white; text-align: center; padding: 10px;">© {} LXHA</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
     "#,
-        body
+        DEFAULT_COLOR, LOGO_URL, body, DEFAULT_COLOR, chrono::Utc::now().year()
     )
 }
 
 pub fn contact_from_user_template(body: &str, from_name: &str, from_email: &str) -> String {
     format!(
         r#"
-            <div>
-                New message from user {} - {}
-            </div>
-            </br>
-            <div>
-                {}
-            </div>
+        <body>
+            <table width="100%" bgcolor="{}">
+                <tr>
+                    <td>
+                        <h1 style="color: white; padding: 0px;">LXHA</h1>
+                    </td>
+                    <td style="width: 70%;"></td>
+                    <td >
+                        <img style="max-width: 60px;" src="{}" alt="logo">
+                    </td>
+                </tr>
+            </table>
+
+            <table width="100%">
+                <tr>
+                    <td>
+                        <h2 style="color: black;">Message from: </h2>
+                        <p style="color: black;">User: {}</p>
+                        <p style="color: black;">Email: {}</p>
+                        <p style="color: black;">{}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table width="100%" bgcolor="{}">
+                            <tr>
+                                <td>
+                                    <p style="color: white; text-align: center; padding: 10px;">© {} LXHA</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
     "#,
-        from_name, from_email, body
+        DEFAULT_COLOR, LOGO_URL, from_name, from_email, body, DEFAULT_COLOR, chrono::Utc::now().year()
     )
 }
 
 pub fn new_account_message_template(user_email: &str, user_password: &str) -> String {
     format!(
         r#"
-            <div>{}</div><br/><div>{}</div>
+        <body>
+            <table width="100%" bgcolor="{}">
+                <tr>
+                    <td>
+                        <h1 style="color: white; padding: 0px;">LXHA</h1>
+                    </td>
+                    <td style="width: 70%;"></td>
+                    <td >
+                        <img style="max-width: 60px;" src="{}" alt="logo">
+                    </td>
+                </tr>
+            </table>
+
+            <table width="100%">
+                <tr>
+                    <td>
+                        <h2 style="color: black;">Welcome to lxHA</h2>
+                        <p style="color: black;">Your user account has been created successfully, your credentials are:</p>
+                        <p style="color: black;">Email: {}</p>
+                        <p style="color: black;">Password: {}</p>
+                        <p style="color: black;">It is your responsibility not to share your credentials.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table width="100%" bgcolor="{}">
+                            <tr>
+                                <td>
+                                    <p style="color: white; text-align: center; padding: 10px;">© {} LXHA</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
     "#,
-        user_email, user_password
+        DEFAULT_COLOR, LOGO_URL, user_email, user_password, DEFAULT_COLOR, chrono::Utc::now().year()
     )
 }

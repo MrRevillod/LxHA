@@ -30,6 +30,8 @@ pub fn sender(template: String, subject: &str, user_email: &str) -> AxumResponse
     
     match transporter.send(&email) {
         Ok(_) => return Ok(HttpResponse::CUSTOM(200, "Email sent successfully!")),
-        Err(_) => return Err(HttpResponse::CUSTOM(400, "Email was not sent")),
+        Err(e) => {
+            dbg!(&e);
+            return Err(HttpResponse::CUSTOM(400, "Email was not sent"))},
     }
 }
