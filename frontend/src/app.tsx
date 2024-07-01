@@ -11,6 +11,10 @@ import {
 
 } from "./pages"
 
+import Select from "react-select"
+
+
+
 export const App = () => {
 
     return (
@@ -37,6 +41,7 @@ export const App = () => {
 
                     <Route element={<ProtectedRoute protectedBy="role" />}>
                         <Route path="/users" element={<UsersPage />} />
+                        <Route path="/test" element={<Test />} />
                     </Route>
 
                     <Route path="*" element={<NotFoundPage />} />
@@ -46,6 +51,27 @@ export const App = () => {
             </BrowserRouter>
 
             <Modals />
+        </>
+    )
+}
+
+
+interface Option {
+    readonly value: string
+    readonly label: string
+}
+
+
+const options: readonly Option[] = [
+    { label: "Hola", value: "xd" },
+    { label: "Hola1", value: "xd1" }
+]
+
+const Test = () => {
+
+    return (
+        <>
+            <Select options={options} />
         </>
     )
 }

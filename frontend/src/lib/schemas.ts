@@ -105,9 +105,9 @@ export const loginFormSchema = z.object({
 
 export const instanceSchema = z.object({
     name: z.string(),
-    owner: z.string(),
     cpu: z.number(),
     memory: z.number(),
     storage: z.number(),
-    type: z.nativeEnum(INSTANCETYPE)
+    type: z.nativeEnum(INSTANCETYPE),
+    owner: z.string()
 })
