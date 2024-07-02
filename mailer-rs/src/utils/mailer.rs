@@ -1,7 +1,7 @@
 use lettre::message::header;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
-use lxha_lib::app::constants::{LXHA_MAIL_ADRESS, LXHA_MAIL_USERNAME, LXHA_MAIL_PASSWORD};
+use lxha_lib::app::constants::{LXHA_MAIL_ADRESS, LXHA_MAIL_PASSWORD, LXHA_MAIL_HOST};
 use axum_responses::{AxumResponse, HttpResponse};
 
 pub fn mail_validator(mail: &str) -> bool {
@@ -25,9 +25,9 @@ pub fn sender(template: String, subject: &str, user_email: &str) -> AxumResponse
         .body(template)
         .unwrap();
 
-    let creds = Credentials::new(LXHA_MAIL_USERNAME.to_owned(),LXHA_MAIL_PASSWORD.to_owned());
-    let transporter = SmtpTransport::relay("smtp.gmail.com").unwrap().credentials(creds).build();
-    
+    let creds = Credentials::new(LXHA_MAIL_ADRESS.to_owned(),LXHA_MAIL_PASSWORD.to_owned());
+    let transporter = SmtpTransport::relay(&LXHA_MAIL_HOST).unwrap().credentials(creds).build();
+
     match transporter.send(&email) {
         Ok(_) => return Ok(HttpResponse::CUSTOM(200, "Email sent successfully!")),
         Err(e) => {
