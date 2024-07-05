@@ -12,10 +12,12 @@ import { Table, TableField } from "../components/Table"
 import { useEffect, useMemo } from "react"
 import { Show } from "../components/ui/Show"
 import { useAppStore } from "../store/AppStore"
+import { useNavigate } from "react-router-dom"
 
 export const UsersPage = () => {
 
-    const { setPageTitle } = useAppStore()
+    const navigate = useNavigate()
+    // const { setPageTitle } = useAppStore()
     const userStore = useUserStore()
     const { setModal } = useModalStore()
 
@@ -31,7 +33,8 @@ export const UsersPage = () => {
     }
 
     const handleInfo = (user: User) => {
-        setPageTitle(user.name)
+       // setPageTitle(user.name)
+        navigate(`/users/${user.id}`)
     }
 
     const memoSlice = useMemo(() => userStore.dataSplice, [userStore.dataSplice])

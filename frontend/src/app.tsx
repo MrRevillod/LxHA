@@ -7,9 +7,12 @@ import {
 
     ForgotPasswordRequestPage, DashboardPage,
     AnalitycsPage, UsersPage, LandingPage,
-    LoginPage, ForgotPasswordPage, NotFoundPage, EmailUpdatePage
-
+    LoginPage, ForgotPasswordPage, NotFoundPage, EmailUpdatePage,
 } from "./pages"
+
+import Select from "react-select"
+// import { UserPage } from "./pages/User"
+
 
 export const App = () => {
 
@@ -37,6 +40,7 @@ export const App = () => {
 
                     <Route element={<ProtectedRoute protectedBy="role" />}>
                         <Route path="/users" element={<UsersPage />} />
+                        <Route path="/test" element={<Test />} />
                     </Route>
 
                     <Route path="*" element={<NotFoundPage />} />
@@ -46,6 +50,28 @@ export const App = () => {
             </BrowserRouter>
 
             <Modals />
+        </>
+    )
+}
+                        // <Route path="/users/:userId" element={<UserPage />} />
+
+
+interface Option {
+    readonly value: string
+    readonly label: string
+}
+
+
+const options: readonly Option[] = [
+    { label: "Hola", value: "xd" },
+    { label: "Hola1", value: "xd1" }
+]
+
+const Test = () => {
+
+    return (
+        <>
+            <Select options={options} />
         </>
     )
 }

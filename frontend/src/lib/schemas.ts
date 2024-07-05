@@ -65,8 +65,7 @@ export const profileSchema = z.object({
 
     role: z.nativeEnum(ROLE)
 })
-
-    .refine((data) => !data.password || (data.password === data.confirmPassword), {
+  .refine((data) => !data.password || (data.password === data.confirmPassword), {
         message: "Las contraseñas no coinciden",
         path: ["confirmPassword"],
     })
@@ -105,7 +104,9 @@ export const loginFormSchema = z.object({
 
 export const instanceSchema = z.object({
     name: z.string(),
-    owner: z.string(),
+    cpu: z.number(),
+    memory: z.number(),
+    storage: z.number(),
     type: z.nativeEnum(INSTANCETYPE),
-    config: z.any()
+    owner: z.string()
 })

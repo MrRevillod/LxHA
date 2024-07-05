@@ -1,7 +1,7 @@
 
-import { Instance } from "./types"
+// import { Instance } from "./types"
 
-
+/*
 export const instances: Instance[] = [
    { id: "1i", type: "Container", status: "Running", name: "My Instance 1", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "1", user_id: "1u" },
    { id: "2i", type: "VM", status: "Running", name: "My Instance 2", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "2", user_id: "1u" },
@@ -24,3 +24,4 @@ export const instances: Instance[] = [
    { id: "91i", type: "Container", status: "Running", name: "My Instance 9", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "2", user_id: "8u" },
    { id: "110i", type: "Container", status: "Running", name: "My Instance 10", ip_addresses: ["127.0.0.2"], specs: { cpu: 2, ram: 4, storage: 100 }, cluster_node: "1", user_id: "9u" }
 ]
+*/

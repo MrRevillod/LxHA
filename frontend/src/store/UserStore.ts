@@ -17,6 +17,7 @@ export interface UserStore {
 
 export interface UserActions {
     getUsers: () => Promise<void>,
+    // getUser: (id:string) => User,
     createUser: (user: RegisterData) => Promise<number>,
     deleteUser: (id: string) => Promise<number>,
     updateUser: (id: string, fields: any) => Promise<number>,
@@ -46,17 +47,32 @@ export const useUserStore = create<UserStore & UserActions>((set, get) => ({
     getUsers: async () => {
 
         try {
-
+            setIsLoading(true)
             const res = await api.get("/dashboard/users")
             const users = res.data.users
             const dataSplice = users.slice(0, get().itemsPerPage);
             set({ data: users, filteredData: users, dataSplice });
 
         } catch (error: any) {
+
             setResponse(error.response.status, error.response.data.message, error.response.data, true)
+        } finally {
+            setIsLoading(false)
+
         }
     },
 
+    
+    // getUser: (id: string) => {
+    //     setIsLoading(true)
+    //     const users = get().data
+    //     const u = users.filter((u) => (u.id = id))
+    //     setIsLoading(false)
+    //     
+    //     return u[0]
+
+
+    // },
     createUser: async (user: RegisterData) => {
 
         try {

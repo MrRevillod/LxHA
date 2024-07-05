@@ -15,11 +15,12 @@ interface InputProps {
     name: string,
     islogin?: string | boolean,
     value?: string | number
+    defautlValue?: number
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
-    const { label, type, placeholder, error, name, islogin = false } = props
+    const { label, type, placeholder, error, name, islogin = false,defautlValue } = props
 
     const classes = `border-1 ${error ? "border-red-400" : "border-neutral-500"} rounded-lg 
         p-2 focus:outline-none  focus:ring-blue-500 focus:border-blue-500 w-full 
@@ -64,6 +65,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
                     placeholder={placeholder}
                     {...props}
                     type={inputType}
+                    defaultValue={defautlValue }
+                    
                 />
 
                 <Show when={type === "password"} >

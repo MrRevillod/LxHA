@@ -5,7 +5,8 @@ interface Modals {
     [key: string]: boolean;
 }
 
-type ModalVariant = "fromUser" | "fromAdmin" | "deleteInstance" | "deleteAccount" | null
+type ModalVariant =   "fromUser"  | "fromAdmin" | "deleteInstance" | "deleteAccount" 
+                    | "startInstance" | "stopInstance" | "rebuildInstance" | "rebootInstance" | null 
 
 interface ModalStore {
     data?: any,
@@ -30,7 +31,12 @@ export const useModalStore = create<ModalStore>((set, get) => ({
         "newInstance": false,
         "editInstance": false,
         "newMessage": false,
+        "startInstance": false,
+        "stopInstance": false,
+        "rebootInstance": false,
+        "rebuildInstance": false,
         "confirmAction": false,
+
     },
 
     data: null,

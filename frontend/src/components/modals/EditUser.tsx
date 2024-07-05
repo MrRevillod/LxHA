@@ -27,7 +27,7 @@ export const EditUserModal = () => {
                     </p>
                 </div>
 
-                <UpdateUserForm user={data}/>
+                <UpdateUserForm handleClose={handleClose} user={data}/>
 
             </div>
 
