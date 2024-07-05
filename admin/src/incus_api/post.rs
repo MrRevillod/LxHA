@@ -31,7 +31,8 @@ pub async fn new_instance(instance: InstanceData) -> AxumResult<(u16, String)> {
                                        \"config\":{{\
                                            \"migration.stateful\":\"true\",\
                                            \"limits.cpu\":\"{}\",\
-                                           \"limits.memory\":\"{}MiB\"\
+                                           \"limits.memory\":\"{}MiB\",\
+                                           \"cloud-init.user-data\":\"#cloud-config\\nusers:\\n  - name: {}\\n    lock_passwd: false\\n    passwd: {}\\n    shell: /bin/bash\\n    groups: sudo\\n    sudo: ALL=(ALL:ALL) ALL\\n    ssh_authorized_keys:\\n      - {}\\npackages:\\n  - openssh-server\"\
                                         }},\
                                        \"devices\":{{\
                                            \"root\":{{\
@@ -44,7 +45,7 @@ pub async fn new_instance(instance: InstanceData) -> AxumResult<(u16, String)> {
                                        \"name\":\"{}\",\
                                        \"profiles\":[\"default\"],\
                                        \"source\":{{\
-                                           \"alias\":\"ubuntu/22.04\",\
+                                           \"alias\":\"ubuntu/22.04/cloud\",\
                                            \"properties\":{{\
                                                \"os\":\"Ubuntu\",\
                                                \"release\":\"jammy\",\
@@ -58,7 +59,7 @@ pub async fn new_instance(instance: InstanceData) -> AxumResult<(u16, String)> {
                                        \"start\":true,\
                                        \"stateful\":true,\
                                        \"type\":\"{}\"}}",
-                                    instance.config.cpu, instance.config.memory, instance.config.storage,
+                                    instance.config.cpu, instance.config.memory, instance.username, instance.passwd, instance.public_key, instance.config.storage,
                                     instance.name, instance.r#type);
 
     let instance_status = post_wrap(client.clone(), template_instance, url)
@@ -67,7 +68,7 @@ pub async fn new_instance(instance: InstanceData) -> AxumResult<(u16, String)> {
         .await
         .unwrap();
 
-    println!("\nCreando instancia: {:?}", instance_status);
+    println!("\nCreando instancia: {:#?}", instance_status);
 
     url = format!("{}/1.0/operations/{}/wait", INCUS_API.deref(),
         match instance_status.metadata {
@@ -82,7 +83,7 @@ pub async fn new_instance(instance: InstanceData) -> AxumResult<(u16, String)> {
         .await
         .unwrap();
 
-    println!("Instancia creada: {:?}", response);
+    println!("Instancia creada: {:#?}", response);
 
     Ok((response.status_code, match response.metadata {
         Some(meta) => meta.description,

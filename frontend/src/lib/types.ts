@@ -49,8 +49,8 @@ export enum ROLE {
 }
 
 export enum INSTANCETYPE {
-    vm = "VIRTUAL-MACHINE",
-    container = "CONTAINER"
+    vm = "virtual-machine",
+    container = "container"
 }
 
 export type RegisterData = {
@@ -68,13 +68,17 @@ export type RequestResetPasswordData = {
     email: string
 }
 
-export type CreateInstance = {
+export type CreateInstanceMinimal = {
     name: string,
     owner: string,
     type: INSTANCETYPE,
-    cpu: number,
-    memory: number,
-    storage: number,
+}
+
+export type InstanceData = {
+    name: string,
+    owner: string,
+    type: INSTANCETYPE,
+    config: InstanceSpecs
 }
 
 export type JwtPayload = {

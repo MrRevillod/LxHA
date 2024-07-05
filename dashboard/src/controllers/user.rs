@@ -281,7 +281,7 @@ pub async fn get_user(State(ctx): Context, Path(oid): Path<String>) -> AxumRespo
 }
 
 pub async fn get_users(State(ctx): Context) -> AxumResponse {
-    
+
     let users = ctx.users.find().await?;
 
     Ok(HttpResponse::JSON(200, "Users obtained succesfully", "users", users.to_json())) 

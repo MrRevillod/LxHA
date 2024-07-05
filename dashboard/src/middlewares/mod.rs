@@ -134,8 +134,6 @@ pub async fn authenticate_by_owner(cookies: Cookies,
                 None => return Err(HttpResponse::INTERNAL_SERVER_ERROR)
             };
 
-            dbg!(&user);
-
             req.extensions_mut().insert(user);
             Ok(next.run(req).await)
         },

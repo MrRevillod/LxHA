@@ -17,6 +17,17 @@ pub struct InstanceData {
     pub config: Option<InstanceConfig>,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+pub struct InstanceDataToAdmin {
+    pub name: String,
+    pub username: String,
+    pub passwd: String,
+    pub public_key: String,
+    pub owner: String,
+    pub r#type: String,
+    pub config: Option<InstanceConfig>,
+}
+
 #[allow(non_snake_case)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RegisterData {
@@ -28,3 +39,4 @@ pub struct RegisterData {
 
 impl ToJson for InstanceData {}
 impl ToJson for InstanceConfig {}
+impl ToJson for InstanceDataToAdmin {}

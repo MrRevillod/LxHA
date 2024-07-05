@@ -30,26 +30,26 @@ pub async fn remove_instance(project: &String, name: &String) -> AxumResult<(u16
 
     let client = get_client()?;
 
-    let mut url = format!("{}/1.0/instances/{}?project={}", INCUS_API.deref(), name, project);
+    let url = format!("{}/1.0/instances/{}?project={}", INCUS_API.deref(), name, project);
 
     let response_del = delete_wrap(client.clone(), url).await?.json::<ApiResponse<OpsMetadata>>().await.unwrap();
 
     println!("\n[Log::Delete] Eliminando instancia: {:?}", response_del);
 
-    url = format!("{}/1.0/operations/{}/wait", INCUS_API.deref(),
-        match response_del.metadata {
-            Some(meta) => meta.id,
-            None => "".to_string()
-        }
-    );
+    // url = format!("{}/1.0/operations/{}/wait", INCUS_API.deref(),
+    //     match response_del.metadata {
+    //         Some(meta) => meta.id,
+    //         None => "".to_string()
+    //     }
+    // );
 
-    let response_get = get_wrap(client.clone(), url)
-        .await?
-        .json::<ApiResponse::<OpsMetadata>>()
-        .await
-        .unwrap();
+    // let response_get = get_wrap(client.clone(), url)
+    //     .await?
+    //     .json::<ApiResponse::<OpsMetadata>>()
+    //     .await
+    //     .unwrap();
 
-    println!("\n[Log::Delete] Instancia eliminada: {:?}", response_get);
+    // println!("\n[Log::Delete] Instancia eliminada: {:?}", response_get);
 
     Ok((200, "Delete success"))
 }

@@ -1,16 +1,20 @@
 use std::ops::Deref;
+// use std::collections::HashMap;
 use axum_responses::{AxumResult, HttpResponse};
+// use serde_json::{,};
 use lxha_lib::app::constants::INCUS_API;
 
 use super::{
     get_client,
     get_wrap,
     types::{
+        ApiResponse,
         Instance,
         InstanceSpecs,
-        InstancesStateMetadata,
+        InstanceStatus,
         InstancesSpecificMetadata,
-        ApiResponse,
+        InstancesStateMetadata,
+        JustLocationAndStatus
     }
 };
 
@@ -140,5 +144,33 @@ pub async fn get_instance(project: String, name: String) -> AxumResult<Instance>
                 }
             },
         None => return Err(HttpResponse::NOT_FOUND),
+    })
+}
+
+
+pub async fn get_instance_state(project: String, name: String) -> AxumResult<InstanceStatus> {
+    let client = get_client()?;
+
+    let json_instance_location = get_wrap(client.clone(), format!("{}/1.0/instances/{}?project={}", INCUS_API.deref(), name, project))
+        .await?
+        .json::<ApiResponse::<JustLocationAndStatus>>()
+        .await
+        .unwrap();
+
+    let (location, status) = match json_instance_location.metadata {
+        Some(loca) => (loca.location, loca.status),
+        None => return Err(HttpResponse::INTERNAL_SERVER_ERROR)
+    };
+
+    let json_instance_state = get_wrap(client.clone(), format!("{}/1.0/instances/{}/state?project={}", INCUS_API.deref(), name, project))
+        .await?
+        .json::<ApiResponse::<InstancesStateMetadata>>()
+        .await
+        .unwrap();
+
+    Ok(InstanceStatus {
+        location: location,
+        status: status,
+        stats: json_instance_state.metadata.unwrap()
     })
 }

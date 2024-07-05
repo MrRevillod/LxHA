@@ -9,6 +9,7 @@ pub fn instances_router(state: Arc<AppContext>) -> Router<Arc<AppContext>> {
     Router::new()
         .route("/:project", post(create_instance_controller))
         .route("/:project/:instance", delete(delete_instance_controller))
+        .route("/:project/:instance/state", get(state_instance_controller))
         // .route("/:project/:instance", put(update_instance_controller))
         // .route("/:project/:instance/start", get(start_instance_controller))
         // .route("/:project/:instance/stop", get(start_instance_controller))

@@ -3,11 +3,12 @@ import { Input } from "../ui/Input"
 import { SpecialSearchBar } from "../SpecialSearchBar"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ModalLayout } from "../../layouts/ModalLayout"
-import { INSTANCETYPE, User } from "../../lib/types"
+import { INSTANCETYPE, InstanceData } from "../../lib/types"
 import { useModalStore } from "../../store/ModalStore"
 import { instanceSchema } from "../../lib/schemas"
 import { FieldValues, SubmitHandler, useForm, } from "react-hook-form"
 import { useUserStore } from "../../store/UserStore"
+import { useInstanceStore } from "../../store/InstanceStore"
 import { useEffect, useMemo } from "react"
 import { For } from "../ui/For"
 
@@ -20,7 +21,7 @@ export const NewInstanceModal = () => {
 
 
     const { modals, setModal } = useModalStore()
-
+    const { createInstance, getInstances } = useInstanceStore()
     const userStore = useUserStore()
 
     const memoSlice = useMemo(() => userStore.dataSplice, [userStore.dataSplice])
@@ -29,7 +30,30 @@ export const NewInstanceModal = () => {
 
 
 
-    const onSubmit = async (formData: any) => { }
+    const onSubmit = async (formData: any) => {
+
+        console.log(formData);
+        // if (status === 409 && data.conflicts) {
+
+        //     Object.entries(data.conflicts).forEach(([key, value]) => {
+
+        //         setError(key, {
+        //             type: "manual",
+        //             message: value?.toString()
+        //         })
+        //     })
+
+        //     return
+        // }
+
+        // if (status === 200) {
+        //     handleClose()
+        //     resetStore()
+        // }
+
+
+        await getInstances();
+    }
 
     return (
 
@@ -76,7 +100,6 @@ export const NewInstanceModal = () => {
                                     type="number"
                                     {...register("cpu", { valueAsNumber: true })}
                                     error={errors.cpu ? (errors.cpu.message?.toString()) : ""}
-                                    value={0}
                                 />
                             </div>
                         </div>
@@ -87,7 +110,6 @@ export const NewInstanceModal = () => {
                                 type="number"
                                 {...register("memory", { valueAsNumber: true })}
                                 error={errors.cpu ? (errors.cpu.message?.toString()) : ""}
-                                value={0}
                             />
 
                             <Input
@@ -95,7 +117,6 @@ export const NewInstanceModal = () => {
                                 type="number"
                                 {...register("storage", { valueAsNumber: true })}
                                 error={errors.storage ? (errors.storage.message?.toString()) : ""}
-                                value={0}
                             />
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 
 import { z } from "zod"
-import { ROLE, INSTANCETYPE } from "./types"
+import { ROLE, INSTANCETYPE, InstanceSpecs } from "./types"
 
 export const messageSchema = z.object({
     subject: z.string().min(1).max(100),
@@ -106,8 +106,6 @@ export const loginFormSchema = z.object({
 export const instanceSchema = z.object({
     name: z.string(),
     owner: z.string(),
-    cpu: z.number(),
-    memory: z.number(),
-    storage: z.number(),
-    type: z.nativeEnum(INSTANCETYPE)
+    type: z.nativeEnum(INSTANCETYPE),
+    config: z.any()
 })

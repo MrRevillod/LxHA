@@ -15,20 +15,42 @@ pub struct InstancesSpecificMetadata {
     pub r#type: String,
 }
 
-#[allow(dead_code)]
 #[derive(Deserialize, Debug, Clone)]
+pub struct JustLocationAndStatus {
+    pub location: String,
+    pub status: String
+}
+
+#[allow(dead_code)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct NetDevice {
     pub addresses: Vec<HashMap<String, String>>,
     pub counters: HashMap<String, u64>
 }
 
 #[allow(dead_code)]
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, Default)]
 pub struct InstancesStateMetadata {
     pub memory: HashMap<String, u64>,
-    pub disk: HashMap<String, HashMap<String, u64>>,
+    pub disk: Option<HashMap<String, HashMap<String, u64>>>,
     pub network: Option<HashMap<String, NetDevice>>,
     pub cpu: HashMap<String, u64>
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct InstanceStatus {
+    pub location: String,
+    pub status: String,
+    pub stats: InstancesStateMetadata
+}
+
+#[derive(Serialize, Debug, Clone)]
+pub struct InstancePublicStatus {
+    pub location: String,
+    pub status: String,
+    pub memory: HashMap<String, u64>,
+    pub disk: HashMap<String, HashMap<String, u64>>,
+    pub network: Vec<String>,
 }
 
 #[allow(dead_code)]
@@ -89,3 +111,4 @@ pub struct InstanceCreated {
 
 impl ToJson for InstanceSpecs {}
 impl ToJson for Instance {}
+impl ToJson for InstancePublicStatus {}

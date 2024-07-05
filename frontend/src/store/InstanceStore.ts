@@ -2,7 +2,7 @@
 import { create } from "zustand"
 // import { instances } from "../lib/data"
 import { api } from "../lib/axios"
-import { Instance, PublicInstanceData } from "../lib/types"
+import { InstanceData, Instance, PublicInstanceData } from "../lib/types"
 
 export interface InstanceStore {
     data: Instance[],
@@ -18,8 +18,8 @@ export interface InstanceStore {
 export interface InstanceActions {
     getInstances: () => Promise<void>,
     getInstance: (id: string) => Promise<void>,
-    createInstance: (instance: PublicInstanceData) => Promise<void>,
-    updateInstance: (instance: PublicInstanceData) => Promise<void>,
+    createInstance: (instance: InstanceData) => Promise<void>,
+    updateInstance: (instance: InstanceData) => Promise<void>,
     deleteInstance: (id: string) => Promise<void>,
 }
 
@@ -68,11 +68,12 @@ export const useInstanceStore = create<InstanceStore & InstanceActions>((set, ge
         set({ data: instances, filteredData: instances, dataSplice });
     },
 
-    createInstance: async (instance: PublicInstanceData) => {
+    createInstance: async (instance: InstanceData) => {
+        console.log(instance)
         return new Promise(() => instance)
     },
 
-    updateInstance: async (instance: PublicInstanceData) => {
+    updateInstance: async (instance: InstanceData) => {
         return new Promise(() => instance)
     },
 
