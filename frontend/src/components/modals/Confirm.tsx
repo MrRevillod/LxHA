@@ -18,7 +18,13 @@ export const ConfirmModal = () => {
 
     const subtitles: { [key: string]: string } = {
         "deleteAccount": "This account will be deleted",
-        "deleteInstance": "This instance will be deleted"
+        "deleteInstance": "This instance will be deleted",
+        "stopInstance": "This instance will be stoped",
+        "startInstance": "This instance will be started",
+        "rebuildInstance": "This instance will be rebuiled",
+        "rebootInstance": "This instance will be rebooted",
+
+
     }
 
     const subtitle = subtitles[modalVariant]

@@ -22,6 +22,13 @@ export interface InstanceActions {
     createInstance: (instance: PublicInstanceData) => Promise<void>,
     updateInstance: (instance: PublicInstanceData) => Promise<void>,
     deleteInstance: (id: string) => Promise<void>,
+    startInstance: (id: string) => Promise<void>,
+    stopInstance: (id: string) => Promise<void>,
+    rebuildInstance: (id: string) => Promise<void>,
+    restartInstance: (id: string) => Promise<void>,
+
+
+    
 }
 const { setIsLoading, setResponse } = useHttpStore.getState()
 
@@ -56,7 +63,20 @@ export const useInstanceStore = create<InstanceStore & InstanceActions>((set, ge
     },
 
     getInstance: async (id: string) => {
-        return new Promise(() => id)
+        try {
+            setIsLoading(true)
+            const res = await api.get(`/dashboard/instances/${id}`)
+            setResponse(res.status, res.data.message, res.data, true)
+
+            return res.status
+
+        } catch (error: any) {
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+            return error.response.status
+
+        } finally {
+            setIsLoading(false)
+        }
     },
 
     getInstances: async () => {
@@ -89,7 +109,90 @@ export const useInstanceStore = create<InstanceStore & InstanceActions>((set, ge
     },
 
     deleteInstance: async (id: string) => {
-        return new Promise(() => id)
-    }
+        try {
+            setIsLoading(true)
+            const res = await api.delete(`/dashboard/instances/${id}`)
+            setResponse(res.status, res.data.message, res.data, true)
+
+            return res.status
+
+        } catch (error: any) {
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+            return error.response.status
+
+        } finally {
+            setIsLoading(false)
+        }
+    },
+
+    startInstance: async (id: string) => {
+        try {
+            setIsLoading(true)
+            const res = await api.post(`/dashboard/instances/start/${id}`)
+            setResponse(res.status, res.data.message, res.data, true)
+
+            return res.status
+
+        } catch (error: any) {
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+            return error.response.status
+
+        } finally {
+            setIsLoading(false)
+        }
+    },
+
+    stopInstance: async (id: string) => {
+        try {
+            setIsLoading(true)
+            const res = await api.post(`/dashboard/instances/delete/${id}`)
+            setResponse(res.status, res.data.message, res.data, true)
+
+            return res.status
+
+        } catch (error: any) {
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+            return error.response.status
+
+        } finally {
+            setIsLoading(false)
+        }
+    },
+
+    rebuildInstance: async (id: string) => {
+        try {
+            setIsLoading(true)
+            const res = await api.post(`/dashboard/instances/rebuild/${id}`)
+            setResponse(res.status, res.data.message, res.data, true)
+
+            return res.status
+
+        } catch (error: any) {
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+            return error.response.status
+
+        } finally {
+            setIsLoading(false)
+        }
+    },
+
+    restartInstance: async (id: string) => {
+        try {
+            setIsLoading(true)
+            const res = await api.post(`/dashboard/instances/restart/${id}`)
+            setResponse(res.status, res.data.message, res.data, true)
+
+            return res.status
+
+        } catch (error: any) {
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+            return error.response.status
+
+        } finally {
+            setIsLoading(false)
+        }
+    },
+
+
 
 }))

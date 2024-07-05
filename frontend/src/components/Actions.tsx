@@ -5,9 +5,9 @@ interface ActionIconProps {
 }
 
 type ActionIconVariant =
-    "edit" | "email" | "play" |
+    "edit" | "email" | "start" |
     "info" | "delete" | "reply" |
-    "stop" | "reboot" | "settings"
+    "stop" | "reboot" | "settings" | "rebuild"
 
 export const ActionIcon = ({ variant, onClick }: ActionIconProps) => {
 
@@ -23,10 +23,10 @@ export const ActionIcon = ({ variant, onClick }: ActionIconProps) => {
         "delete": `trash3-fill ${colors.red}`,
         "edit": `pencil-square ${colors.green}`,
         "email": `envelope-fill ${colors.neutral}`,
-        "play": `play-fill ${colors.green}`,
+        "start": `play-fill ${colors.green}`,
         "stop": `stop-fill ${colors.red}`,
         "reboot": `arrow-clockwise ${colors.blue}`,
-        "settings": `gear-wide-connected ${colors.neutral}`,
+        "rebuild": `gear-wide-connected ${colors.neutral}`,
         "reply": `envelope-at-fill ${colors.green}`
     }
 
@@ -35,10 +35,11 @@ export const ActionIcon = ({ variant, onClick }: ActionIconProps) => {
         "delete": "Delete",
         "edit": "Edit",
         "email": "Send email",
-        "play": "Start instance",
+        "start": "Start instance",
         "stop": "Stop instance",
         "reboot": "Reboot instance",
-        "settings": "Settings"
+        "settings": "Settings",
+        "rebuild" : "Rebuild instance"
     }
 
     return <i className={`text-2xl hover:cursor-pointer hover:opacity-70 bi bi-${icons[variant]}`} onClick={onClick} title={titles[variant]}></i>

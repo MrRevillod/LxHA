@@ -26,6 +26,11 @@ export const DashboardPage = () => {
 
     const memoSlice = useMemo(() => instanceStore.dataSplice, [instanceStore.dataSplice])
 
+    const handleStart =   async (id: any) => { await instanceStore.startInstance(id) }
+    const handleStop =    async (id: any) => { await instanceStore.stopInstance(id) }
+    const handleRestart = async (id: any) => { await instanceStore.restartInstance(id) }
+    const handleRebuild = async (id: any) => { await instanceStore.rebuildInstance(id) }
+
     return (
 
         <MainLayout>
@@ -68,10 +73,12 @@ export const DashboardPage = () => {
                             <TableField value={instance.ip_addresses[0]} />
 
                             <div className="w-full xl:flex flex-row justify-between hidden">
-                                <ActionIcon variant="play" onClick={() => { }} />
-                                <ActionIcon variant="stop" onClick={() => { }} />
-                                <ActionIcon variant="reboot" onClick={() => { }} />
-                                <ActionIcon variant="settings" onClick={() => { }} />
+                                <ActionIcon variant="start" onClick={() => setModal("confirmAction", null, "startInstance", () => handleStart(instance.id))} />
+                                <ActionIcon variant="stop" onClick={() => setModal("confirmAction", null, "stopInstance", () => handleStop(instance.id))} />
+                                <ActionIcon variant="reboot" onClick={() => setModal("confirmAction", null, "rebootInstance", () => handleRestart(instance.id))} />
+                                <ActionIcon variant="rebuild" onClick={() => setModal("confirmAction", null, "rebuildInstance", () => handleRebuild(instance.id))} />
+
+
                             </div>
 
                             <div className="w-full flex justify-end xl:hidden">
