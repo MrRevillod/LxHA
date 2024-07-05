@@ -24,7 +24,7 @@ export const NewInstanceModal = () => {
         resolver: zodResolver(instanceSchema)
     })
 
-    // const { createInstance } = useInstanceStore()
+    const { createInstance } = useInstanceStore()
 
 
     const { modals, setModal } = useModalStore()
@@ -40,23 +40,23 @@ export const NewInstanceModal = () => {
 
     const onSubmit = async (formData: any) => {
         console.log(formData)
-        // const specs: InstanceSpecs = {
-        //     cpu: formData.cpu || 0,
-        //     ram: formData.memory || 0,
-        //     storage: formData.storage || 0,
-        // }
+        const specs: InstanceSpecs = {
+            cpu: formData.cpu || 0,
+            ram: formData.memory || 0,
+            storage: formData.storage || 0,
+        }
 
 
-        // const data: PublicInstanceData = {
-        //     name: formData.name || "myInstance",
-        //     specs: specs,
-        //     cluster_node: (Math.random() * 100 / 3).toString(),
-        //     user_id: formData.owner
-        // }
+        const data: PublicInstanceData = {
+            name: formData.name || "myInstance",
+            specs: specs,
+            cluster_node: (Math.random() * 100 / 3).toString(),
+            user_id: formData.owner
+        }
 
-        // const res = await createInstance(data)
-        // console.log(res)
-        // onClose()
+        const res = await createInstance(data)
+        console.log(res)
+        onClose()
     }
     const onClose = () => {
         setModal("newInstance")

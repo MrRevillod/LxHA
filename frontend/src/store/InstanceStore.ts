@@ -1,7 +1,9 @@
+import { api } from "../lib/axios"
 
 import { create } from "zustand"
 import { instances } from "../lib/data"
 import { Instance, PublicInstanceData } from "../lib/types"
+import { useHttpStore } from "./HttpStore"
 
 export interface InstanceStore {
     data: Instance[],
@@ -21,6 +23,8 @@ export interface InstanceActions {
     updateInstance: (instance: PublicInstanceData) => Promise<void>,
     deleteInstance: (id: string) => Promise<void>,
 }
+const { setIsLoading, setResponse } = useHttpStore.getState()
+
 
 export const useInstanceStore = create<InstanceStore & InstanceActions>((set, get) => ({
 
@@ -64,7 +68,20 @@ export const useInstanceStore = create<InstanceStore & InstanceActions>((set, ge
     },
 
     createInstance: async (instance: PublicInstanceData) => {
-        return new Promise(() => instance)
+        try {
+            // setIsLoading(true)
+            const res = await api.post("/dashboard/instances", instance)
+            setResponse(res.status, res.data.message, res.data, true)
+
+            return res.status
+
+        } catch (error: any) {
+            setResponse(error.response.status, error.response.data.message, error.response.data, true)
+            return error.response.status
+
+        } finally {
+            // setIsLoading(false)
+        }
     },
 
     updateInstance: async (instance: PublicInstanceData) => {
