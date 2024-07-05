@@ -4,6 +4,7 @@ use axum::routing::post;
 
 use crate::controllers::{email_change, reset_password, contact_from_admin, contact_from_user, new_account_message};
 
+// Function to create and return a router with email-related routes
 pub fn mailer_router() -> Router {
 
     Router::new()
