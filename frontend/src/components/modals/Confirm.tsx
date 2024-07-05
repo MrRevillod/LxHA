@@ -51,7 +51,7 @@ export const ConfirmModal = () => {
                 <div className="flex flex-row gap-8">
 
                     <button onClick={() => setModal("confirmAction")} className="px-10 py-2 text-white bg-gray-500 rounded-md">Cancel</button>
-                    <button onClick={() => handleConfirm()} className="px-10 py-2 text-white bg-red-500 rounded-md">Delete</button>
+                    <button onClick={() => handleConfirm()} className="px-10 py-2 text-white bg-primary rounded-md">Confirm</button>
 
                 </div>
 

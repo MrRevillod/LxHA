@@ -83,7 +83,7 @@ export const DashboardPage = () => {
 
                             <div className="w-full flex justify-end xl:hidden">
                                 <i className="text-black text-2xl bi bi-three-dots-vertical"></i>
-                            </div>
+                            </div>  
 
                         </div>
 

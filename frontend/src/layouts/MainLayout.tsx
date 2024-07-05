@@ -8,6 +8,7 @@ import { PropsWithChildren } from "react"
 
 export const MainLayout = ({ children }: PropsWithChildren) => {
 
+    
     const location = useLocation()
     const isRootPage = location.pathname === "/"
 

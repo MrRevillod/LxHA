@@ -7,12 +7,11 @@ import {
 
     ForgotPasswordRequestPage, DashboardPage,
     AnalitycsPage, UsersPage, LandingPage,
-    LoginPage, ForgotPasswordPage, NotFoundPage, EmailUpdatePage
-
+    LoginPage, ForgotPasswordPage, NotFoundPage, EmailUpdatePage,
 } from "./pages"
 
 import Select from "react-select"
-
+import { UserPage } from "./pages/User"
 
 
 export const App = () => {
@@ -41,6 +40,7 @@ export const App = () => {
 
                     <Route element={<ProtectedRoute protectedBy="role" />}>
                         <Route path="/users" element={<UsersPage />} />
+                        <Route path="/users/:userId" element={<UserPage />} />
                         <Route path="/test" element={<Test />} />
                     </Route>
 
