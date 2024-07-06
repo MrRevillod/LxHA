@@ -42,7 +42,7 @@ lazy_static!(
 
     pub static ref DEFAULT_USER_PASSWORD: String = env("DEFAULT_USER_PASSWORD");
     pub static ref LXHA_MAIL_ADRESS: String = env("MAILER_SERVICE_MAIL_ADRESS");
-    pub static ref LXHA_MAIL_USERNAME: String = env("MAILER_SERVICE_MAIL_USERNAME");
+    pub static ref LXHA_MAIL_HOST: String = env("MAILER_SERVICE_MAIL_HOST");
     pub static ref LXHA_MAIL_PASSWORD: String = env("MAILER_SERVICE_MAIL_PASSWORD");
 
     pub static ref NET_INTERFACE: String = env("NET_INTERFACE");
