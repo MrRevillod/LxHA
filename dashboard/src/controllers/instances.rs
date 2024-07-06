@@ -186,8 +186,9 @@ pub async fn create_instance_controller(State(ctx): Context, Json(body): Json<In
     };
 
     ctx.users.update(&oid, doc! { "$inc": doc! { "n_instances": 1 } }).await?;
-
     ctx.instances.create(&instance).await?;
+
+    
 
     Ok(HttpResponse::OK)
 }
