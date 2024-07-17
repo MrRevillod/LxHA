@@ -10,6 +10,7 @@ import { useUserStore } from "../../store/UserStore"
 import Select from "react-select";
 import { useAuth } from "../../store/AuthContext"
 import { useInstanceStore } from "../../store/InstanceStore"
+import { useEffect } from "react"
 
 
 
@@ -36,6 +37,9 @@ export const NewInstanceModal = () => {
         options.push({ value: user.id, label: user.name })
     })
 
+    useEffect(() => {
+        userStore.getUsers()
+    }, [])
 
     const onSubmit = async (formData: any) => {
         const specs: InstanceSpecs = {

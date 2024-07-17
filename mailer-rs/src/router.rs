@@ -2,7 +2,7 @@
 use axum::Router;
 use axum::routing::post;
 
-use crate::controllers::{email_change, reset_password, contact_from_admin, contact_from_user, new_account_message};
+use crate::controllers::{email_change, reset_password, contact_from_admin, contact_from_user, new_account_message, new_instance_message};
 
 // Function to create and return a router with email-related routes
 pub fn mailer_router() -> Router {
@@ -22,6 +22,9 @@ pub fn mailer_router() -> Router {
 
         )
         .route("/new-account", post(new_account_message)
+
+        )                
+        .route("/new-instance", post(new_instance_message)
 
         )                
 }

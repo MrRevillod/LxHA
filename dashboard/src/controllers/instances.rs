@@ -120,7 +120,9 @@ pub async fn create_instance_controller(State(ctx): Context, Json(body): Json<In
 
     let mut ssh_private_key = String::from_utf8(ssh_output_priv.stdout).unwrap();
     ssh_private_key.pop();
-    let _ssh_private_key = ssh_private_key;
+    let ssh_private_key = ssh_private_key;
+
+    println!("{}", ssh_private_key);
 
     let password: String = rand::thread_rng()
         .sample_iter(&Alphanumeric)
@@ -188,7 +190,15 @@ pub async fn create_instance_controller(State(ctx): Context, Json(body): Json<In
     ctx.users.update(&oid, doc! { "$inc": doc! { "n_instances": 1 } }).await?;
     ctx.instances.create(&instance).await?;
 
-    
+    let will_send = json!({
+        "email": user_db.email,
+        "password": password,
+        "private_key": ssh_private_key
+    });
+
+    let response_mailer = http_request("MAILER", "/new-instance", "POST", None, None, will_send).await;
+
+    dbg!(response_mailer);
 
     Ok(HttpResponse::OK)
 }

@@ -220,3 +220,46 @@ pub fn new_account_message_template(user_email: &str, user_password: &str) -> St
         DEFAULT_COLOR, LOGO_URL, user_email, user_password, DEFAULT_COLOR, chrono::Utc::now().year()
     )
 }
+
+pub fn new_instance_message_template(password: &str) -> String {
+    format!(
+        r#"
+        <body>
+            <table width="100%" bgcolor="{}">
+                <tr>
+                    <td>
+                        <h1 style="color: white; padding: 0px;">LXHA</h1>
+                    </td>
+                    <td style="width: 70%;"></td>
+                    <td >
+                        <img style="max-width: 60px;" src="{}" alt="logo">
+                    </td>
+                </tr>
+            </table>
+
+            <table width="100%">
+                <tr>
+                    <td>
+                        <h2 style="color: black;">Welcome to lxHA</h2>
+                        <p style="color: black;">Your user account has been created successfully, your credentials are:</p>
+                        <p style="color: black;">Password: {}</p>
+                        <p style="color: black;">It is your responsibility not to share your credentials.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table width="100%" bgcolor="{}">
+                            <tr>
+                                <td>
+                                    <p style="color: white; text-align: center; padding: 10px;">© {} LXHA</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+    "#,
+        DEFAULT_COLOR, LOGO_URL, password, DEFAULT_COLOR, chrono::Utc::now().year()
+    )
+}
